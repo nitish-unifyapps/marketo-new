@@ -50,6 +50,8 @@ export const paletteNodes: Record<PaletteTab, Array<{ icon: string; name: string
   ],
   Actions: [
     { icon: '✉', name: 'Send Email', description: 'Send approved Marketo email' },
+    { icon: '▤', name: 'Use Form', description: 'Use an approved Marketo form' },
+    { icon: '▣', name: 'Landing Page', description: 'Use a published landing page' },
     { icon: '◷', name: 'Wait', description: 'Pause for a duration or date' },
     { icon: '⇄', name: 'Change Data Value', description: 'Update a person field' },
     { icon: '+', name: 'Add to List', description: 'Add person to a static list' },

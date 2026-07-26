@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
+import { contentTemplateDefinitions } from '../../data/contentData'
 import { flowForTemplate, paletteNodes, programFlows } from '../../data/executionData'
+import type { ContentTemplateDefinition, ContentTemplateVariable, PersonalizableContentType } from '../../types/content'
 import type { ExecutionRecord, ExecutionTemplate, FlowNode, PaletteTab } from '../../types/execution'
 import { Modal } from '../common/Modal'
 import { WireframeIcon } from '../common/WireframeIcon'
@@ -11,7 +13,7 @@ interface ExecutionCanvasProps {
 }
 
 const paletteTabs: PaletteTab[] = ['Triggers', 'Filters', 'Actions', 'Flow Control']
-const iconByKind: Record<FlowNode['kind'], string> = { 'smart-list': '☷', email: '✉', wait: '◷', choice: '◇', 'change-data': '⇄', alert: '!', 'smart-filter': '☷', action: '⚡', end: '⊗' }
+const iconByKind: Record<FlowNode['kind'], string> = { 'smart-list': '☷', email: '✉', form: '▤', 'landing-page': '▣', wait: '◷', choice: '◇', 'change-data': '⇄', alert: '!', 'smart-filter': '☷', action: '⚡', end: '⊗' }
 
 type TokenType = 'Text' | 'Number' | 'Date' | 'Boolean' | 'Image URL'
 
@@ -28,8 +30,23 @@ const defaultProgramTokens: ProgramToken[] = [
   { id: 'token-3', name: 'SpeakerName', type: 'Text', defaultValue: 'Sarah Jones' },
 ]
 
+const smartListColumns = [
+  { group: 'Person', value: 'Person.FirstName', label: 'First Name', sample: 'John' },
+  { group: 'Person', value: 'Person.LastName', label: 'Last Name', sample: 'Smith' },
+  { group: 'Person', value: 'Person.Email', label: 'Email Address', sample: 'john@northlane.com' },
+  { group: 'Person', value: 'Person.JobTitle', label: 'Job Title', sample: 'VP of Marketing' },
+  { group: 'Person', value: 'Person.LifecycleStage', label: 'Lifecycle Stage', sample: 'MQL' },
+  { group: 'Person', value: 'Person.Score', label: 'Person Score', sample: '82' },
+  { group: 'Account', value: 'Account.Name', label: 'Company Name', sample: 'Northlane Systems' },
+  { group: 'Account', value: 'Account.Industry', label: 'Industry', sample: 'SaaS Infrastructure' },
+  { group: 'Account', value: 'Account.Revenue', label: 'Annual Revenue', sample: '$68M' },
+  { group: 'Owner', value: 'Owner.FullName', label: 'Owner Name', sample: 'Maya Chen' },
+  { group: 'Owner', value: 'Owner.Email', label: 'Owner Email', sample: 'maya@marketonext.com' },
+]
+
 export function ExecutionCanvas({ execution, template, onBack }: ExecutionCanvasProps) {
   const canvasRef = useRef<HTMLElement | null>(null)
+  const nextContentNodeId = useRef(1)
   const programKind = template?.category === 'Smart Campaign' || execution?.type === 'Smart Campaign' ? 'smart' : template?.category === 'Event Program' || execution?.type === 'Event Program' ? 'event' : 'engagement'
   const initialMode = template?.mode ?? (programKind === 'engagement' ? 'Filter' : 'Trigger')
   const [campaignMode, setCampaignMode] = useState<'Trigger' | 'Filter'>(initialMode)
@@ -99,6 +116,30 @@ export function ExecutionCanvas({ execution, template, onBack }: ExecutionCanvas
     setCampaignMode(mode === 'Trigger' ? 'Trigger' : 'Filter')
   }
 
+  function addContentStep(stepName: string) {
+    const kindByName: Partial<Record<string, FlowNode['kind']>> = {
+      'Send Email': 'email',
+      'Use Form': 'form',
+      'Landing Page': 'landing-page',
+    }
+    const kind = kindByName[stepName]
+    if (!kind) return
+
+    const title = kind === 'email' ? 'Send Email' : kind === 'form' ? 'Form' : 'Landing Page'
+    const addedCount = nodes.filter((node) => ['email', 'form', 'landing-page'].includes(node.kind)).length
+    const newNode: FlowNode = {
+      id: `content-${nextContentNodeId.current++}`,
+      kind,
+      title,
+      subtitle: `Select ${kind === 'email' ? 'an email' : kind === 'form' ? 'a form' : 'a landing page'} · Configure`,
+      x: 250,
+      y: 170 + addedCount * 125,
+    }
+    setNodes((current) => [...current, newNode])
+    setSelectedNode(newNode)
+    setConfigOpen(true)
+  }
+
   const programType = execution?.type ?? template?.category ?? 'Engagement Program'
 
   return <section className={`executionDesigner marketingProgramDesigner program-${programKind}`}>
@@ -116,7 +157,7 @@ export function ExecutionCanvas({ execution, template, onBack }: ExecutionCanvas
     </div>
 
     <div className={`executionCanvasLayout ${paletteOpen ? '' : 'paletteClosed'}`}>
-      <aside className='nodePalette'><button type='button' className='paletteCollapse' onClick={() => setPaletteOpen(false)}>‹</button><div className='paletteTitle'><strong>Flow Steps</strong><small>Drag a step onto the canvas</small></div><div className='paletteTabs'>{paletteTabs.map((tab) => <button type='button' key={tab} className={paletteTab === tab ? 'active' : ''} onClick={() => setPaletteTab(tab)}>{tab}</button>)}</div><div className='paletteNodeList'>{paletteNodes[paletteTab].map((node) => <button key={node.name} type='button' className={`paletteNodeCard ${node.name === 'End' ? 'end' : ''}`} draggable><span>{node.icon}</span><div><strong>{node.name}</strong><small>{node.description}</small></div><b>⋮⋮</b></button>)}</div></aside>
+      <aside className='nodePalette'><button type='button' className='paletteCollapse' onClick={() => setPaletteOpen(false)}>‹</button><div className='paletteTitle'><strong>Flow Steps</strong><small>Drag a step onto the canvas</small></div><div className='paletteTabs'>{paletteTabs.map((tab) => <button type='button' key={tab} className={paletteTab === tab ? 'active' : ''} onClick={() => setPaletteTab(tab)}>{tab}</button>)}</div><div className='paletteNodeList'>{paletteNodes[paletteTab].map((node) => <button key={node.name} type='button' className={`paletteNodeCard ${node.name === 'End' ? 'end' : ''}`} draggable onClick={() => addContentStep(node.name)}><span>{node.icon}</span><div><strong>{node.name}</strong><small>{node.description}</small></div><b>⋮⋮</b></button>)}</div></aside>
       {!paletteOpen && <button type='button' className='paletteOpenButton' onClick={() => setPaletteOpen(true)}>＋</button>}
 
       <main ref={canvasRef} className='nodeCanvas' onClick={() => { setSelectedNode(null); setConfigOpen(false) }}>
@@ -202,11 +243,105 @@ function TokenEditorModal({ open, token, onClose, onSave }: { open: boolean; tok
 }
 
 function NodeConfiguration({ node, smartListMode, programTokens, onModeChange, onClose, onApply }: { node: FlowNode; smartListMode: 'Trigger' | 'Filter'; programTokens: ProgramToken[]; onModeChange: (mode: 'Trigger' | 'Filter') => void; onClose: () => void; onApply: () => void }) {
-  return <><div className='nodeConfigTitle'><div><span>{iconByKind[node.kind]}</span><div><strong>Configure {node.title}</strong><small>Marketo Flow Step</small></div></div><button type='button' onClick={onClose}>×</button></div><div className='executionSettingsBody'>{node.kind === 'smart-list' ? <SmartListConfig mode={smartListMode} onModeChange={onModeChange} /> : node.kind === 'email' ? <SendEmailConfig programTokens={programTokens} showTriggerTokens={smartListMode === 'Trigger'} /> : node.kind === 'wait' ? <WaitConfig /> : node.kind === 'choice' ? <ChoiceConfig /> : node.kind === 'smart-filter' ? <SmartListFilterConfig /> : node.kind === 'change-data' ? <ChangeDataConfig /> : node.kind === 'alert' ? <SendAlertConfig /> : node.kind === 'end' ? <EndConfig /> : <GenericConfig node={node} />}<footer className='nodeConfigFooter'><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' onClick={onApply}>Apply</button></footer></div></>
+  const contentType: PersonalizableContentType | null = node.kind === 'email' ? 'Email' : node.kind === 'form' ? 'Form' : node.kind === 'landing-page' ? 'Landing Page' : null
+  return <><div className='nodeConfigTitle'><div><span>{iconByKind[node.kind]}</span><div><strong>Configure {node.title}</strong><small>{contentType ? 'Personalized Content Step' : 'Marketo Flow Step'}</small></div></div><button type='button' onClick={onClose}>×</button></div><div className='executionSettingsBody'>{node.kind === 'smart-list' ? <SmartListConfig mode={smartListMode} onModeChange={onModeChange} /> : contentType ? <ContentNodeConfiguration key={node.id} contentType={contentType} programTokens={programTokens} showTriggerTokens={smartListMode === 'Trigger'} /> : node.kind === 'wait' ? <WaitConfig /> : node.kind === 'choice' ? <ChoiceConfig /> : node.kind === 'smart-filter' ? <SmartListFilterConfig /> : node.kind === 'change-data' ? <ChangeDataConfig /> : node.kind === 'alert' ? <SendAlertConfig /> : node.kind === 'end' ? <EndConfig /> : <GenericConfig node={node} />}<footer className='nodeConfigFooter'><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' onClick={onApply}>Save Step</button></footer></div></>
 }
 
 function SmartListConfig({ mode, onModeChange }: { mode: 'Trigger' | 'Filter'; onModeChange: (mode: 'Trigger' | 'Filter') => void }) {
   return <><div className='smartListModeToggle'><button type='button' className={mode === 'Trigger' ? 'active' : ''} onClick={() => onModeChange('Trigger')}>Trigger</button><button type='button' className={mode === 'Filter' ? 'active' : ''} onClick={() => onModeChange('Filter')}>Filter</button></div>{mode === 'Trigger' ? <><label className='propertyField'>Trigger Event<select><option>Fills Out Form</option><option>Clicks Link in Email</option><option>Visits Web Page</option><option>Data Value Changes</option></select></label><label className='propertyField'>Form<select><option>Enterprise Demo Request</option><option>Contact Sales Form</option><option>Any Form</option></select></label><div className='constraintBuilder'><header><strong>Constraints</strong><button type='button'>+ Add Constraint</button></header><div><select><option>Web Page</option></select><select><option>is</option></select><input defaultValue='/enterprise-demo' /></div></div></> : <><label className='propertyField'>Use Existing Smart List<select><option>New MQLs</option><option>Enterprise Prospects</option><option>High Intent Accounts</option></select></label><InlineQueryBuilder /></>}</>
+}
+
+interface VariableAssignment {
+  mode: 'static' | 'dynamic'
+  staticValue: string
+  smartListField: string
+}
+
+function defaultSmartListField(variable: ContentTemplateVariable) {
+  const key = `${variable.key} ${variable.label}`.toLowerCase()
+  if (key.includes('first')) return 'Person.FirstName'
+  if (key.includes('last')) return 'Person.LastName'
+  if (key.includes('email')) return 'Person.Email'
+  if (key.includes('industry')) return 'Account.Industry'
+  if (key.includes('company') || key.includes('account')) return 'Account.Name'
+  if (key.includes('score')) return 'Person.Score'
+  if (key.includes('owner')) return 'Owner.FullName'
+  return 'Person.FirstName'
+}
+
+function assignmentsForTemplate(template: ContentTemplateDefinition) {
+  return Object.fromEntries(template.variables.map((variable) => [variable.key, {
+    mode: variable.defaultMode,
+    staticValue: variable.defaultValue,
+    smartListField: defaultSmartListField(variable),
+  }])) as Record<string, VariableAssignment>
+}
+
+function ContentNodeConfiguration({ contentType, programTokens, showTriggerTokens }: { contentType: PersonalizableContentType; programTokens: ProgramToken[]; showTriggerTokens: boolean }) {
+  const availableTemplates = contentTemplateDefinitions.filter((template) => template.type === contentType)
+  const preferredTemplate = availableTemplates.find((template) => template.id === 'email-webinar-reminder') ?? availableTemplates[0]
+  const [selectedTemplate, setSelectedTemplate] = useState<ContentTemplateDefinition>(preferredTemplate)
+  const [assignments, setAssignments] = useState<Record<string, VariableAssignment>>(() => assignmentsForTemplate(preferredTemplate))
+  const [templateQuery, setTemplateQuery] = useState('')
+  const [showLibrary, setShowLibrary] = useState(false)
+
+  function selectTemplate(template: ContentTemplateDefinition) {
+    setSelectedTemplate(template)
+    setAssignments(assignmentsForTemplate(template))
+    setShowLibrary(false)
+  }
+
+  function updateAssignment(key: string, updates: Partial<VariableAssignment>) {
+    setAssignments((current) => ({ ...current, [key]: { ...current[key], ...updates } }))
+  }
+
+  const dynamicVariables = selectedTemplate.variables.filter((variable) => assignments[variable.key]?.mode === 'dynamic')
+  const staticVariables = selectedTemplate.variables.filter((variable) => assignments[variable.key]?.mode === 'static')
+  const resolvedVariables = Object.fromEntries(selectedTemplate.variables.map((variable) => {
+    const assignment = assignments[variable.key]
+    const dynamicSample = smartListColumns.find((column) => column.value === assignment?.smartListField)?.sample
+    return [variable.key, assignment?.mode === 'dynamic' ? dynamicSample ?? variable.sampleValue : assignment?.staticValue]
+  }))
+  const personalizedPreview = buildContentPreview(selectedTemplate, resolvedVariables)
+
+  return <div className='contentNodeConfiguration'>
+    <section className='contentConfigSection templateSelectionSection'>
+      <header><span>1</span><div><strong>Select {contentType}</strong><small>Choose from existing Content templates</small></div><button type='button' onClick={() => setShowLibrary((value) => !value)}>{showLibrary ? 'Close' : 'Change'}</button></header>
+      <div className='chosenContentTemplate'><span className={`contentTemplateThumb type-${contentType.toLowerCase().replace(' ', '-')}`}><i /><b /><i /></span><div><strong>{selectedTemplate.name}</strong><small>{selectedTemplate.status} · Modified {selectedTemplate.modified}</small><em>{selectedTemplate.variables.length} variables available</em></div><i className='selectionCheck'>✓</i></div>
+      {showLibrary && <div className='contentTemplateLibrary'><label><WireframeIcon name='search' className='iconSmall' /><input value={templateQuery} onChange={(event) => setTemplateQuery(event.target.value)} placeholder={`Search ${contentType.toLowerCase()} templates...`} /></label><div>{availableTemplates.filter((template) => template.name.toLowerCase().includes(templateQuery.toLowerCase())).map((template) => <button type='button' key={template.id} className={selectedTemplate.id === template.id ? 'selected' : ''} onClick={() => selectTemplate(template)}><span className='miniContentPreview'><i /><b /><i /></span><span><strong>{template.name}</strong><small>{template.status} · {template.variables.length} variables</small></span><em>{selectedTemplate.id === template.id ? 'Selected' : 'Choose'}</em></button>)}</div></div>}
+    </section>
+
+    <section className='smartListDataSource'><span>☷</span><div><strong>Personalization source</strong><p>Smart List: <b>New MQLs</b></p><small>12,842 qualified people · All available person and account columns can be mapped</small></div><em>Connected</em></section>
+
+    <section className='contentConfigSection variableMappingSection'>
+      <header><span>2</span><div><strong>Assign Template Variables</strong><small>{dynamicVariables.length} dynamic · {staticVariables.length} static</small></div><i>{selectedTemplate.variables.length}/{selectedTemplate.variables.length}</i></header>
+      <div className='mappingGroup dynamicMappingGroup'><header><div><span>⚡</span><div><strong>Dynamic Personalization</strong><small>Different value for every Smart List person</small></div></div><em>{dynamicVariables.length}</em></header>{dynamicVariables.map((variable) => <VariableMappingRow key={variable.key} variable={variable} assignment={assignments[variable.key]} mode='dynamic' onChange={(updates) => updateAssignment(variable.key, updates)} />)}{dynamicVariables.length === 0 && <p>No dynamic variables assigned.</p>}</div>
+      <div className='mappingGroup staticMappingGroup'><header><div><span>◆</span><div><strong>Static Values</strong><small>Same value for every recipient</small></div></div><em>{staticVariables.length}</em></header>{staticVariables.map((variable) => <VariableMappingRow key={variable.key} variable={variable} assignment={assignments[variable.key]} mode='static' onChange={(updates) => updateAssignment(variable.key, updates)} />)}{staticVariables.length === 0 && <p>No static variables assigned.</p>}</div>
+    </section>
+
+    <section className='mappingPreviewCard'><header><span>3</span><div><strong>Personalized Sample</strong><small>Previewed as John from Northlane Systems</small></div></header><div><h4>{personalizedPreview.title}</h4><p>{personalizedPreview.body}</p><div>{Object.entries(resolvedVariables).slice(0, 5).map(([key, value]) => <span key={key}><b>{key}</b>{value || 'Not mapped'}</span>)}</div></div></section>
+
+    {contentType === 'Email' ? <details className='advancedEmailSettings'><summary>Message content and token overrides <span>Optional</span></summary><SendEmailConfig programTokens={programTokens} showTriggerTokens={showTriggerTokens} showTemplateHeader={false} /></details> : <ContentDeliverySettings contentType={contentType} />}
+  </div>
+}
+
+function buildContentPreview(template: ContentTemplateDefinition, values: Record<string, string>) {
+  const value = (key: string, fallback: string) => values[key] || fallback
+  if (template.id === 'email-webinar-reminder') return { title: `Reminder: ${value('eventTitle', 'your event')} is coming up`, body: `Dear ${value('firstName', 'recipient')}, join ${value('speakerName', 'our speaker')} at ${value('eventTitle', 'the event')} on ${value('eventDate', 'the event date')}.` }
+  if (template.id === 'email-welcome') return { title: `Welcome to Marketo Next, ${value('firstName', 'there')}`, body: `Hi ${value('firstName', 'there')}, here is ${value('onboardingTitle', 'your onboarding plan')} for ${value('company', 'your company')}.` }
+  if (template.id === 'email-product-launch') return { title: `${value('releaseName', 'A new release')} for ${value('company', 'your company')}`, body: `Hi ${value('firstName', 'there')}, see what the latest release means for your team.` }
+  if (template.id === 'page-enterprise-demo') return { title: `${value('headline', 'See what is possible')} for ${value('company', 'your company')}`, body: `A personalized ${value('industry', 'industry')} demo experience prepared for ${value('firstName', 'you')}.` }
+  if (template.id === 'page-webinar') return { title: `Reserve your seat for ${value('eventTitle', 'our event')}`, body: `Hi ${value('firstName', 'there')}, join ${value('speakerName', 'our speaker')} on ${value('eventDate', 'the event date')}.` }
+  if (template.type === 'Form') return { title: template.previewTitle, body: `${template.previewBody} Example: ${value('firstNameDefault', 'John')} · ${value('emailDefault', 'john@example.com')} · ${value('companyDefault', 'Example Co.')}` }
+  return { title: template.previewTitle, body: template.previewBody }
+}
+
+function VariableMappingRow({ variable, assignment, mode, onChange }: { variable: ContentTemplateVariable; assignment: VariableAssignment; mode: 'static' | 'dynamic'; onChange: (updates: Partial<VariableAssignment>) => void }) {
+  return <div className='variableMappingRow'><div className='variableIdentity'><strong>{variable.label}</strong><code>{`{{${variable.key}}}`}</code><small>{variable.description}</small></div><div className='mappingModeToggle'><button type='button' className={mode === 'dynamic' ? 'active' : ''} onClick={() => onChange({ mode: 'dynamic' })}>Dynamic</button><button type='button' className={mode === 'static' ? 'active' : ''} onClick={() => onChange({ mode: 'static' })}>Static</button></div>{mode === 'dynamic' ? <label className='smartListFieldSelect'><span>Map from Smart List column</span><select value={assignment.smartListField} onChange={(event) => onChange({ smartListField: event.target.value })}>{['Person', 'Account', 'Owner'].map((group) => <optgroup key={group} label={group}>{smartListColumns.filter((column) => column.group === group).map((column) => <option key={column.value} value={column.value}>{column.label}</option>)}</optgroup>)}</select><small>Sample: {smartListColumns.find((column) => column.value === assignment.smartListField)?.sample}</small></label> : <label className='staticValueInput'><span>Value for every recipient</span><input value={assignment.staticValue} onChange={(event) => onChange({ staticValue: event.target.value })} placeholder='Enter a value' /><small>{assignment.staticValue ? 'Static value ready' : 'A value is required'}</small></label>}</div>
+}
+
+function ContentDeliverySettings({ contentType }: { contentType: Exclude<PersonalizableContentType, 'Email'> }) {
+  return <section className='contentDeliverySettings'><h4>{contentType} Settings</h4>{contentType === 'Landing Page' ? <><label className='propertyField'>Destination URL<input defaultValue='https://go.marketonext.com/enterprise-demo' /></label><label className='toggleProperty'><span><strong>Personalize for known visitors</strong><small>Resolve dynamic variables from the Smart List profile</small></span><input type='checkbox' className='toggleSwitch' defaultChecked /></label></> : <><label className='propertyField'>Form Action<select><option>Prefill and display form</option><option>Send personalized form link</option></select></label><label className='toggleProperty'><span><strong>Prefill known fields</strong><small>Use mapped Smart List columns as defaults</small></span><input type='checkbox' className='toggleSwitch' defaultChecked /></label></>}</section>
 }
 
 type TokenField = 'subject' | 'preheader' | 'body'
@@ -237,7 +372,7 @@ const triggerTokens: PickerToken[] = [
   { reference: 'Trigger.ScoreChange', label: 'Score Change', value: '+50', source: 'trigger' },
 ]
 
-function SendEmailConfig({ programTokens, showTriggerTokens }: { programTokens: ProgramToken[]; showTriggerTokens: boolean }) {
+function SendEmailConfig({ programTokens, showTriggerTokens, showTemplateHeader = true }: { programTokens: ProgramToken[]; showTriggerTokens: boolean; showTemplateHeader?: boolean }) {
   const [subject, setSubject] = useState('Reminder: {{my.EventTitle}} is coming up')
   const [preheader, setPreheader] = useState('Join {{my.SpeakerName}} on {{my.EventDate}}')
   const [body, setBody] = useState('Dear {{Person.FirstName}}, join {{my.SpeakerName}} at {{my.EventTitle}} on {{my.EventDate}}.')
@@ -260,8 +395,7 @@ function SendEmailConfig({ programTokens, showTriggerTokens }: { programTokens: 
   const resolvedBody = resolveTokens(body, programTokens)
 
   return <>
-    <label className='propertyField'>Email<div className='configSearchSelect'><WireframeIcon name='search' className='iconTiny' /><input defaultValue='Webinar Reminder Email' /></div></label>
-    <div className='selectedEmailPreview'><div className='emailPreviewThumb'><i /><b /><i /><i /></div><div><strong>Webinar Reminder Email</strong><small>Approved · Contains 4 tokens</small><button type='button'>Open in Content ↗</button></div></div>
+    {showTemplateHeader && <><label className='propertyField'>Email<div className='configSearchSelect'><WireframeIcon name='search' className='iconTiny' /><input defaultValue='Webinar Reminder Email' /></div></label><div className='selectedEmailPreview'><div className='emailPreviewThumb'><i /><b /><i /><i /></div><div><strong>Webinar Reminder Email</strong><small>Approved · Contains 4 tokens</small><button type='button'>Open in Content ↗</button></div></div></>}
     <TokenInput label='Subject' field='subject' inputRef={subjectRef} value={subject} onChange={setSubject} onOpenPicker={setPickerField} programTokens={programTokens} />
     <TokenInput label='Preheader' field='preheader' inputRef={preheaderRef} value={preheader} onChange={setPreheader} onOpenPicker={setPickerField} programTokens={programTokens} />
     <TokenTextArea label='Body' field='body' inputRef={bodyRef} value={body} onChange={setBody} onOpenPicker={setPickerField} programTokens={programTokens} />

@@ -1,4 +1,4 @@
-import type { ContentAsset, ContentTabKey } from '../types/content'
+import type { ContentAsset, ContentTabKey, ContentTemplateDefinition } from '../types/content'
 
 export const contentTabs: Array<{ key: ContentTabKey; label: string }> = [
   { key: 'all-assets', label: 'All Assets' },
@@ -29,4 +29,112 @@ export const folderTree = [
   { name: 'Events', count: 11, children: ['Webinars', 'Field Events'] },
   { name: 'Shared', count: 7, children: ['Brand', 'Social Proof'] },
   { name: 'Archive', count: 5 },
+]
+
+export const contentTemplateDefinitions: ContentTemplateDefinition[] = [
+  {
+    id: 'email-webinar-reminder',
+    name: 'Webinar Reminder Email',
+    type: 'Email',
+    status: 'Approved',
+    modified: 'Today, 9:42 AM',
+    previewTitle: 'Reminder: Marketing Automation Summit is coming up',
+    previewBody: 'Dear John, join Sarah Jones at Marketing Automation Summit on August 15.',
+    variables: [
+      { key: 'firstName', label: 'Recipient First Name', description: 'Personal greeting for each recipient', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'companyName', label: 'Recipient Company', description: 'Company from the qualified person record', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'Northlane Systems' },
+      { key: 'eventTitle', label: 'Event Title', description: 'Shared title used for every recipient', defaultMode: 'static', defaultValue: 'Marketing Automation Summit', sampleValue: 'Marketing Automation Summit' },
+      { key: 'eventDate', label: 'Event Date', description: 'Shared event date', defaultMode: 'static', defaultValue: 'August 15, 2026', sampleValue: 'August 15, 2026' },
+      { key: 'speakerName', label: 'Speaker Name', description: 'Featured speaker displayed in the email', defaultMode: 'static', defaultValue: 'Sarah Jones', sampleValue: 'Sarah Jones' },
+    ],
+  },
+  {
+    id: 'email-welcome',
+    name: 'Enterprise Welcome Email',
+    type: 'Email',
+    status: 'Approved',
+    modified: 'Yesterday, 3:16 PM',
+    previewTitle: 'Welcome to Marketo Next, John',
+    previewBody: 'Hi John, here is your personalized onboarding plan for Northlane Systems.',
+    variables: [
+      { key: 'firstName', label: 'First Name', description: 'Recipient first name', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'company', label: 'Company', description: 'Recipient company', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'Northlane Systems' },
+      { key: 'onboardingTitle', label: 'Onboarding Title', description: 'Shared onboarding campaign title', defaultMode: 'static', defaultValue: 'Your Marketo Next onboarding plan', sampleValue: 'Your Marketo Next onboarding plan' },
+      { key: 'ctaLabel', label: 'CTA Label', description: 'Button label', defaultMode: 'static', defaultValue: 'Start onboarding', sampleValue: 'Start onboarding' },
+    ],
+  },
+  {
+    id: 'email-product-launch',
+    name: 'Q3 Product Launch',
+    type: 'Email',
+    status: 'Approved',
+    modified: 'Jul 25, 2026',
+    previewTitle: 'A new release for Northlane Systems',
+    previewBody: 'Hi John, see what the latest release means for your team.',
+    variables: [
+      { key: 'firstName', label: 'First Name', description: 'Recipient first name', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'company', label: 'Company', description: 'Recipient company', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'Northlane Systems' },
+      { key: 'releaseName', label: 'Release Name', description: 'Product release title', defaultMode: 'static', defaultValue: 'Summer 2026 Release', sampleValue: 'Summer 2026 Release' },
+    ],
+  },
+  {
+    id: 'page-enterprise-demo',
+    name: 'Enterprise Demo Request',
+    type: 'Landing Page',
+    status: 'Published',
+    modified: 'Yesterday, 4:18 PM',
+    previewTitle: 'See how Northlane Systems can grow faster',
+    previewBody: 'A personalized demo experience prepared for John and the revenue team.',
+    variables: [
+      { key: 'firstName', label: 'Visitor First Name', description: 'Known visitor first name', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'company', label: 'Account Name', description: 'Known account name', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'Northlane Systems' },
+      { key: 'industry', label: 'Account Industry', description: 'Industry-specific page copy', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'SaaS Infrastructure' },
+      { key: 'headline', label: 'Campaign Headline', description: 'Shared landing-page headline', defaultMode: 'static', defaultValue: 'Build pipeline that moves', sampleValue: 'Build pipeline that moves' },
+    ],
+  },
+  {
+    id: 'page-webinar',
+    name: 'Webinar Registration Page',
+    type: 'Landing Page',
+    status: 'Published',
+    modified: 'Jul 24, 2026',
+    previewTitle: 'Reserve your seat for Marketing Automation Summit',
+    previewBody: 'Join Sarah Jones on August 15, 2026.',
+    variables: [
+      { key: 'eventTitle', label: 'Event Title', description: 'Shared event title', defaultMode: 'static', defaultValue: 'Marketing Automation Summit', sampleValue: 'Marketing Automation Summit' },
+      { key: 'eventDate', label: 'Event Date', description: 'Shared event date', defaultMode: 'static', defaultValue: 'August 15, 2026', sampleValue: 'August 15, 2026' },
+      { key: 'speakerName', label: 'Speaker Name', description: 'Shared presenter name', defaultMode: 'static', defaultValue: 'Sarah Jones', sampleValue: 'Sarah Jones' },
+      { key: 'firstName', label: 'Visitor First Name', description: 'Known visitor first name', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+    ],
+  },
+  {
+    id: 'form-contact-sales',
+    name: 'Contact Sales Form',
+    type: 'Form',
+    status: 'Published',
+    modified: 'Jul 25, 2026',
+    previewTitle: 'Talk to our team',
+    previewBody: 'Form fields are prefilled from the selected Smart List when data is available.',
+    variables: [
+      { key: 'firstNameDefault', label: 'First Name Default', description: 'Prefill from person profile', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'emailDefault', label: 'Email Default', description: 'Prefill from person profile', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'john@northlane.com' },
+      { key: 'companyDefault', label: 'Company Default', description: 'Prefill from account profile', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'Northlane Systems' },
+      { key: 'submitLabel', label: 'Submit Button Label', description: 'Shared form button text', defaultMode: 'static', defaultValue: 'Request a demo', sampleValue: 'Request a demo' },
+    ],
+  },
+  {
+    id: 'form-event-registration',
+    name: 'Event Registration Form',
+    type: 'Form',
+    status: 'Approved',
+    modified: 'Jul 22, 2026',
+    previewTitle: 'Register for Marketing Automation Summit',
+    previewBody: 'Known profile values are prefilled for every invited person.',
+    variables: [
+      { key: 'firstNameDefault', label: 'First Name Default', description: 'Prefill from person profile', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'John' },
+      { key: 'emailDefault', label: 'Email Default', description: 'Prefill from person profile', defaultMode: 'dynamic', defaultValue: '', sampleValue: 'john@northlane.com' },
+      { key: 'eventTitle', label: 'Event Title', description: 'Shared event title', defaultMode: 'static', defaultValue: 'Marketing Automation Summit', sampleValue: 'Marketing Automation Summit' },
+      { key: 'consentText', label: 'Consent Text', description: 'Shared consent statement', defaultMode: 'static', defaultValue: 'I agree to receive event updates.', sampleValue: 'I agree to receive event updates.' },
+    ],
+  },
 ]

@@ -2,7 +2,7 @@ export type ExecutionType = 'Smart Campaign' | 'Engagement Program' | 'Event Pro
 export type ExecutionStatus = 'Active' | 'Paused' | 'Draft'
 export type ProgramTabKey = 'all-programs' | 'smart-campaigns' | 'engagement-programs' | 'event-programs'
 export type PaletteTab = 'Triggers' | 'Filters' | 'Actions' | 'Flow Control'
-export type NodeKind = 'smart-list' | 'email' | 'wait' | 'choice' | 'change-data' | 'alert' | 'smart-filter' | 'action' | 'end'
+export type NodeKind = 'smart-list' | 'email' | 'form' | 'landing-page' | 'wait' | 'choice' | 'change-data' | 'alert' | 'smart-filter' | 'action' | 'end'
 
 export interface ExecutionRecord {
   id: string
