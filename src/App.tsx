@@ -29,7 +29,7 @@ const sectionNameByMainTab: Record<MainNavKey, string> = {
 }
 
 function App() {
-  const [activeMainTab, setActiveMainTab] = useState<MainNavKey>('execution')
+  const [activeMainTab, setActiveMainTab] = useState<MainNavKey>('crm')
   const [activeCrmTab, setActiveCrmTab] = useState<CrmSubTabKey>('people')
   const [activeContentTab, setActiveContentTab] = useState<ContentTabKey>('all-assets')
   const [contentBuilderOpen, setContentBuilderOpen] = useState(false)

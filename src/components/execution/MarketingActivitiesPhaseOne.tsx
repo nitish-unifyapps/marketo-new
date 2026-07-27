@@ -307,7 +307,7 @@ export function MarketingActivitiesPhaseOne() {
   }
 
   return <section className='marketingPhaseOne' onClick={() => { setContextMenu(null); setCreateMenuOpen(false) }}>
-    <div className='marketingNavAction' onClick={(event) => event.stopPropagation()}><button type='button' className='marketingNavMoreButton' aria-label='Marketing Activities options' onClick={() => setCreateMenuOpen((value) => !value)}>•••</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div>
+    <div className='marketingNavAction' onClick={(event) => event.stopPropagation()}><button type='button' className='marketingNavMoreButton' aria-label='Marketing Activities options' onClick={() => setCreateMenuOpen((value) => !value)}>⋮</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div>
     <aside className='activityTreePane'>
       <label className='activityTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs…' />{query && <button type='button' onClick={() => setQuery('')}>×</button>}</label>
       <div className={`activityRootDrop ${draggedId ? 'dragging' : ''} ${dropTargetId === 'root' ? 'dropTarget' : ''}`} onDragOver={(event) => { event.preventDefault(); setDropTargetId('root') }} onDragLeave={() => setDropTargetId(null)} onDrop={(event) => { event.preventDefault(); moveNode('root') }}><span>Drop here to move to root</span></div>
