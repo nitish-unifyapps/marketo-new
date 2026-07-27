@@ -832,24 +832,34 @@ input[type='range'] { accent-color: var(--accent); }
 
 /* Marketing Activities tree nested in the primary sidebar */
 .marketingPhaseOne { display: block; }
-.activityTreePane { position: fixed; z-index: 21; top: 238px; bottom: 78px; left: 0; width: 240px; height: auto; border-top: 1px solid var(--border); border-right: 1px solid var(--border); background: white; }
+.activityTreePane { position: fixed; z-index: 21; top: 238px; bottom: 78px; left: 0; width: 240px; height: auto; border: 0; background: var(--sidebar); }
+.sidebarNavItem:nth-child(3) { gap: 10px; padding-right: 37px; font-size: 12px; }
+.sidebarNavItem:nth-child(3) > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.marketingNavAction { position: fixed; z-index: 26; top: 200px; left: 194px; width: 34px; height: 30px; }
+.marketingNavMoreButton { display: grid; place-items: center; width: 32px; height: 30px; padding: 0; border: 0; border-radius: 6px; color: var(--accent); background: transparent; font-size: 14px; letter-spacing: 1px; }
+.marketingNavMoreButton:hover, .marketingNavMoreButton:focus-visible { color: var(--accent); background: rgb(217 119 87 / 12%); }
+.marketingNavAction .activityCreateDropdown { top: 36px; left: -177px; width: 218px; }
 .activityTreeTopbar { min-height: 42px; padding: 0 10px 0 13px; }
 .activityTreeRoot > strong { color: var(--muted); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
 .activityAddButton { width: 21px; height: 21px; font-size: 13px; }
 .activityTreeTools button { width: 24px; height: 24px; }
-.activityTreeSearch { min-height: 35px; margin: 7px 9px 5px; padding: 0 8px; }
+.activityTreeSearch { min-height: 36px; margin: 8px 10px 7px; padding: 0 9px; border: 0; border-radius: 7px; background: rgb(255 255 255 / 78%); box-shadow: none; }
 .activityTreeSearch input { font-size: 10px; }
 .activityTreeScroll { padding: 2px 6px 8px; }
-.activityTreeRow { min-height: 32px; gap: 4px; padding-right: 5px; padding-left: calc(3px + var(--tree-level) * 16px); font-size: 10px; }
+.activityTreeRow { grid-template-columns: 14px 18px minmax(0, 1fr); min-height: 33px; gap: 7px; padding-right: 7px; padding-left: calc(4px + var(--tree-level) * 16px); border: 0; border-radius: 6px; font-size: 10px; }
+.activityTreeRow:hover { background: rgb(255 255 255 / 68%); }
+.activityTreeRow.selected { border: 0; color: var(--accent); background: var(--accent-soft); }
 .activityTreeRow.type-asset, .activityTreeRow.type-assets-folder, .activityTreeRow.type-asset-category, .activityTreeRow.type-members-folder { min-height: 30px; font-size: 9px; }
 .activityTreeIcon { width: 16px; height: 16px; }
-.treeConnector { left: calc(1px + (var(--tree-level) - 1) * 16px); width: 12px; }
+.treeConnector { display: none; }
+.programStatusDot, .programStatusSpacer, .activityTreeRow > small { display: none; }
 .activityTreeFooter { min-height: 29px; padding: 0 9px; font-size: 7px; }
 .activityPhasePlaceholder { min-height: calc(100vh - 72px); }
 .defaultMemberBulkBar, .phase3BulkBar { left: 265px; }
 
 @media (max-width: 760px) {
   .activityTreePane { display: none; }
+  .marketingNavAction { display: none; }
   .defaultMemberBulkBar, .phase3BulkBar { left: 82px; }
 }
 

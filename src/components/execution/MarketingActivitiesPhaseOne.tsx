@@ -136,10 +136,6 @@ function containsNode(node: ActivityNode, id: string): boolean {
   return node.id === id || Boolean(node.children?.some((child) => containsNode(child, id)))
 }
 
-function collectExpandableIds(nodes: ActivityNode[]): string[] {
-  return nodes.flatMap((node) => [expandableTypes.includes(node.type) ? node.id : '', ...(node.children ? collectExpandableIds(node.children) : [])]).filter(Boolean)
-}
-
 function filterTree(nodes: ActivityNode[], query: string): ActivityNode[] {
   if (!query.trim()) return nodes
   const normalized = query.toLowerCase()
@@ -162,7 +158,7 @@ function programChildren(id: string, type: ActivityNodeType): ActivityNode[] | u
 export function MarketingActivitiesPhaseOne() {
   const nextId = useRef(1)
   const [tree, setTree] = useState<ActivityNode[]>(initialTree)
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['folder-lifecycle', 'folder-demand', 'folder-events', 'program-q3-launch', 'program-q3-launch-assets']))
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
@@ -311,15 +307,11 @@ export function MarketingActivitiesPhaseOne() {
   }
 
   return <section className='marketingPhaseOne' onClick={() => { setContextMenu(null); setCreateMenuOpen(false) }}>
+    <div className='marketingNavAction' onClick={(event) => event.stopPropagation()}><button type='button' className='marketingNavMoreButton' aria-label='Marketing Activities options' onClick={() => setCreateMenuOpen((value) => !value)}>•••</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div>
     <aside className='activityTreePane'>
-      <div className='activityTreeTopbar'>
-        <div className='activityTreeRoot'><strong>Program Tree</strong><div className='activityCreateWrap'><button type='button' className='activityAddButton' aria-label='Create in Marketing Activities' onClick={(event) => { event.stopPropagation(); setCreateMenuOpen((value) => !value) }}>＋</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div></div>
-        <div className='activityTreeTools'><button type='button' title='Collapse all' onClick={() => setExpanded(new Set())}>⇈</button><button type='button' title='Expand all' onClick={() => setExpanded(new Set(collectExpandableIds(tree)))}>⇊</button></div>
-      </div>
       <label className='activityTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs…' />{query && <button type='button' onClick={() => setQuery('')}>×</button>}</label>
       <div className={`activityRootDrop ${draggedId ? 'dragging' : ''} ${dropTargetId === 'root' ? 'dropTarget' : ''}`} onDragOver={(event) => { event.preventDefault(); setDropTargetId('root') }} onDragLeave={() => setDropTargetId(null)} onDrop={(event) => { event.preventDefault(); moveNode('root') }}><span>Drop here to move to root</span></div>
       <div className='activityTreeScroll'>{visibleTree.map((node) => <TreeNode key={node.id} node={node} level={0} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={toggleNode} onSelect={setSelectedId} onOpen={openProgramEditor} onContextMenu={handleContextMenu} onDragStart={handleDragStart} onDragEnd={() => { setDraggedId(null); setDropTargetId(null) }} onDragOverFolder={setDropTargetId} onDrop={moveNode} />)}</div>
-      <footer className='activityTreeFooter'><span>{countPrograms(tree)} programs</span><span>Right-click for actions</span></footer>
     </aside>
 
     {openProgram && programTypes.includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Double-click any program to open its editor.</p></div></main>}
@@ -341,10 +333,8 @@ function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onTo
     <button type='button' draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id) }} onDoubleClick={(event) => { event.stopPropagation(); onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
       {level > 0 && <i className='treeConnector' />}
       <span className={`treeChevron ${isExpandable ? '' : 'hidden'}`}>{isOpen ? '⌄' : '›'}</span>
-      {node.status ? <i className={`programStatusDot ${node.status}`} title={node.status} /> : <i className='programStatusSpacer' />}
       <TreeItemIcon type={node.type} open={isOpen} assetType={node.assetType} />
       <span className='activityTreeName'>{node.name}</span>
-      {node.children && node.children.length > 0 && node.type === 'folder' && <small>{countPrograms(node.children)}</small>}
     </button>
     {isOpen && node.children?.map((child) => <TreeNode key={child.id} node={child} level={level + 1} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={onToggle} onSelect={onSelect} onOpen={onOpen} onContextMenu={onContextMenu} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOverFolder={onDragOverFolder} onDrop={onDrop} />)}
   </div>
@@ -419,6 +409,3 @@ function flattenPrograms(nodes: ActivityNode[]): ActivityNode[] {
   return nodes.flatMap((node) => [...(programTypes.includes(node.type) ? [node] : []), ...(node.children ? flattenPrograms(node.children) : [])])
 }
 
-function countPrograms(nodes: ActivityNode[]): number {
-  return nodes.reduce((count, node) => count + (programTypes.includes(node.type) ? 1 : 0) + (node.children ? countPrograms(node.children) : 0), 0)
-}
