@@ -313,7 +313,7 @@ export function MarketingActivitiesPhaseOne() {
   return <section className='marketingPhaseOne' onClick={() => { setContextMenu(null); setCreateMenuOpen(false) }}>
     <aside className='activityTreePane'>
       <div className='activityTreeTopbar'>
-        <div className='activityTreeRoot'><strong>Marketing Activities</strong><div className='activityCreateWrap'><button type='button' className='activityAddButton' aria-label='Create in Marketing Activities' onClick={(event) => { event.stopPropagation(); setCreateMenuOpen((value) => !value) }}>＋</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div></div>
+        <div className='activityTreeRoot'><strong>Program Tree</strong><div className='activityCreateWrap'><button type='button' className='activityAddButton' aria-label='Create in Marketing Activities' onClick={(event) => { event.stopPropagation(); setCreateMenuOpen((value) => !value) }}>＋</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div></div>
         <div className='activityTreeTools'><button type='button' title='Collapse all' onClick={() => setExpanded(new Set())}>⇈</button><button type='button' title='Expand all' onClick={() => setExpanded(new Set(collectExpandableIds(tree)))}>⇊</button></div>
       </div>
       <label className='activityTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs…' />{query && <button type='button' onClick={() => setQuery('')}>×</button>}</label>
