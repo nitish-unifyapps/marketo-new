@@ -25,6 +25,7 @@ export interface ActivityNode {
   status?: ProgramStatus
   children?: ActivityNode[]
   assetType?: 'email' | 'landing-page' | 'form'
+  campaignMode?: 'trigger' | 'batch' | 'executable'
 }
 
 interface ContextMenuState {
@@ -33,14 +34,14 @@ interface ContextMenuState {
   y: number
 }
 
-const createOptions: Array<{ kind: CreateKind; label: string; icon: string }> = [
-  { kind: 'folder', label: 'New Folder', icon: '▱' },
-  { kind: 'smart-campaign', label: 'New Smart Campaign', icon: '⚙' },
-  { kind: 'email-program', label: 'New Email Program', icon: '✉' },
-  { kind: 'event-program', label: 'New Event Program', icon: '□' },
-  { kind: 'engagement-program', label: 'New Engagement Program', icon: '◉' },
-  { kind: 'default-program', label: 'New Default Program', icon: '✣' },
-  { kind: 'import', label: 'Import Program', icon: '⇧' },
+const createOptions: Array<{ kind: CreateKind; label: string }> = [
+  { kind: 'folder', label: 'New Folder' },
+  { kind: 'smart-campaign', label: 'New Smart Campaign' },
+  { kind: 'email-program', label: 'New Email Program' },
+  { kind: 'event-program', label: 'New Event Program' },
+  { kind: 'engagement-program', label: 'New Engagement Program' },
+  { kind: 'default-program', label: 'New Default Program' },
+  { kind: 'import', label: 'Import Program' },
 ]
 
 function assetsFor(programId: string, samples: Partial<Record<'email' | 'landing-page' | 'form', string[]>> = {}): ActivityNode[] {
@@ -58,31 +59,26 @@ function assetsFor(programId: string, samples: Partial<Record<'email' | 'landing
 
 const initialTree: ActivityNode[] = [
   {
-    id: 'folder-lifecycle', name: 'Lifecycle Marketing', type: 'folder', children: [
-      { id: 'program-demo-nurture', name: 'Enterprise Demo Nurture', type: 'engagement-program', status: 'active', children: assetsFor('program-demo-nurture', { email: ['Welcome Email', 'Enterprise Case Study'], form: ['Demo Qualification Form'] }) },
-      { id: 'campaign-mql-followup', name: 'New MQL Follow-up', type: 'smart-campaign', status: 'active' },
-      { id: 'folder-reengagement', name: 'Re-engagement', type: 'folder', children: [
-        { id: 'program-dormant-sql', name: 'Dormant SQL Re-engagement', type: 'engagement-program', status: 'draft', children: assetsFor('program-dormant-sql') },
-      ] },
+    id: 'folder-lifecycle', name: 'Lifecycle Programs', type: 'folder', children: [
+      { id: 'program-demo-nurture', name: 'Enterprise Demo Nurture', type: 'engagement-program', status: 'active', children: assetsFor('program-demo-nurture', { email: ['Welcome Email', 'Enterprise Case Study'] }) },
+      { id: 'campaign-mql-followup', name: 'New MQL Follow-up', type: 'smart-campaign', campaignMode: 'trigger', status: 'active' },
     ],
   },
   {
     id: 'folder-demand', name: 'Demand Generation', type: 'folder', children: [
-      { id: 'program-q3-launch', name: 'Q3 Product Launch', type: 'email-program', status: 'active', children: assetsFor('program-q3-launch', { email: ['Product Launch Announcement', 'Launch Follow-up'], 'landing-page': ['Product Launch Page'], form: ['Early Access Form'] }) },
-      { id: 'program-abm', name: 'Enterprise ABM Program', type: 'default-program', status: 'error', children: [...assetsFor('program-abm', { email: ['Executive Outreach'] }), { id: 'program-abm-members', name: 'Members', type: 'members-folder' }] },
-      { id: 'campaign-score', name: 'High Intent Score Update', type: 'smart-campaign', status: 'paused' },
+      { id: 'program-q3-launch', name: 'Q3 Product Launch', type: 'email-program', status: 'active', children: assetsFor('program-q3-launch', { email: ['Launch Announcement', 'Launch Follow-up'], 'landing-page': ['Product Launch Page'], form: ['Early Access Form'] }) },
+      { id: 'program-abm', name: 'Enterprise ABM Program', type: 'default-program', status: 'draft', children: [...assetsFor('program-abm', { email: ['Executive Outreach'] }), { id: 'program-abm-members', name: 'Members', type: 'members-folder' }] },
     ],
   },
   {
     id: 'folder-events', name: 'Events', type: 'folder', children: [
-      { id: 'program-webinar', name: 'Revenue Leaders Webinar', type: 'event-program', status: 'paused', children: assetsFor('program-webinar', { email: ['Registration Confirmation', '24 Hour Reminder'], 'landing-page': ['Webinar Registration'], form: ['Webinar Registration Form'] }) },
-      { id: 'program-summit', name: 'Customer Summit 2026', type: 'event-program', status: 'draft', children: assetsFor('program-summit') },
+      { id: 'program-webinar', name: 'Revenue Leaders Webinar', type: 'event-program', status: 'paused', children: assetsFor('program-webinar', { email: ['Registration Confirmation', 'Event Reminder'], 'landing-page': ['Webinar Registration'], form: ['Registration Form'] }) },
     ],
   },
   {
-    id: 'folder-operational', name: 'Operational', type: 'folder', children: [
-      { id: 'campaign-normalize', name: 'Normalize Country Data', type: 'smart-campaign', status: 'active' },
-      { id: 'campaign-owner', name: 'Assign Lead Owner', type: 'smart-campaign', status: 'draft' },
+    id: 'folder-operational', name: 'Operational Campaigns', type: 'folder', children: [
+      { id: 'campaign-score', name: 'High Intent Score Update', type: 'smart-campaign', campaignMode: 'trigger', status: 'active' },
+      { id: 'campaign-normalize', name: 'Normalize Country Data', type: 'smart-campaign', campaignMode: 'batch', status: 'draft' },
     ],
   },
 ]
@@ -206,7 +202,7 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
     const requestedKind = kindOverride ?? createState.kind
     const id = `new-${requestedKind}-${nextId.current++}`
     const type: ActivityNodeType = requestedKind === 'import' ? 'default-program' : requestedKind
-    const node: ActivityNode = { id, name, type, status: type === 'folder' ? undefined : 'draft', children: type === 'folder' ? [] : programChildren(id, type) }
+    const node: ActivityNode = { id, name, type, campaignMode: type === 'smart-campaign' ? 'trigger' : undefined, status: type === 'folder' ? undefined : 'draft', children: type === 'folder' ? [] : programChildren(id, type) }
     setTree((current) => addToTree(current, destinationId, node))
     setExpanded((current) => new Set([...current, destinationId, id]))
     setSelectedId(id)
@@ -332,28 +328,37 @@ function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onTo
     <button type='button' draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id); if (programTypes.includes(node.type)) onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
       {level > 0 && <i className='treeConnector' />}
       <span className={`treeChevron ${isExpandable ? '' : 'hidden'}`}>{isOpen ? '⌄' : '›'}</span>
-      <TreeItemIcon type={node.type} open={isOpen} assetType={node.assetType} />
+      <TreeItemIcon type={node.type} open={isOpen} assetType={node.assetType} campaignMode={node.campaignMode} />
       <span className='activityTreeName'>{node.name}</span>
     </button>
     {isOpen && node.children?.map((child) => <TreeNode key={child.id} node={child} level={level + 1} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={onToggle} onSelect={onSelect} onOpen={onOpen} onContextMenu={onContextMenu} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOverFolder={onDragOverFolder} onDrop={onDrop} />)}
   </div>
 }
 
-function TreeItemIcon({ type, open, assetType }: { type: ActivityNodeType; open: boolean; assetType?: ActivityNode['assetType'] }) {
+function TreeItemIcon({ type, open, assetType, campaignMode }: { type: ActivityNodeType; open: boolean; assetType?: ActivityNode['assetType']; campaignMode?: ActivityNode['campaignMode'] }) {
   const common = { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-  if (type === 'folder' || type === 'assets-folder' || type === 'asset-category' || type === 'members-folder') return <svg {...common} className={`activityTreeIcon folderIcon ${open ? 'open' : ''}`}><path d={open ? 'M3 8h7l2-2h8l1 3H5L3 19z' : 'M3 6h7l2 2h9v11H3z'} /></svg>
-  if (type === 'smart-campaign') return <svg {...common} className='activityTreeIcon'><circle cx='12' cy='12' r='3' /><path d='M19 12a7 7 0 0 0-.2-1.5l2-1.5-2-3.4-2.4 1A7 7 0 0 0 14 5.2L13.6 3h-4L9 5.2A7 7 0 0 0 6.7 6.6l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 4 12c0 .5.1 1 .2 1.5l-2 1.5 2 3.4 2.4-1A7 7 0 0 0 9 18.8l.5 2.2h4l.5-2.2a7 7 0 0 0 2.4-1.4l2.4 1 2-3.4-2-1.5c.1-.5.2-1 .2-1.5Z' /></svg>
-  if (type === 'email-program' || (type === 'asset' && assetType === 'email')) return <svg {...common} className='activityTreeIcon'><rect x='3' y='5' width='18' height='14' rx='2' /><path d='m4 7 8 6 8-6' /></svg>
+  if (type === 'folder' || type === 'assets-folder' || type === 'asset-category') return <svg {...common} className={`activityTreeIcon folderIcon ${open ? 'open' : ''}`}><path d={open ? 'M3 9h7l2-2h8l1.2 3H5L3 20h16l2.2-10' : 'M3 6h7l2 2h9v11H3z'} /></svg>
+  if (type === 'members-folder') return <svg {...common} className='activityTreeIcon'><circle cx='9' cy='9' r='3' /><circle cx='17' cy='10' r='2.3' /><path d='M3.5 19a5.5 5.5 0 0 1 11 0M14 16a4 4 0 0 1 6.5 3' /></svg>
+  if (type === 'smart-campaign' && campaignMode === 'batch') return <svg {...common} className='activityTreeIcon'><rect x='3' y='4' width='18' height='16' rx='2' /><path d='M7 9h10M7 13h7M7 17h4M17 15v5M14.5 17.5 17 20l2.5-2.5' /></svg>
+  if (type === 'smart-campaign') return <svg {...common} className='activityTreeIcon'><path d='m13 2-8 12h7l-1 8 8-12h-7z' /></svg>
+  if (type === 'email-program') return <svg {...common} className='activityTreeIcon'><rect x='3' y='4' width='18' height='16' rx='2' /><path d='m4 7 8 6 8-6M7 2v4M17 2v4' /></svg>
+  if (type === 'asset' && assetType === 'email') return <svg {...common} className='activityTreeIcon'><path d='M5 3h11l3 3v15H5zM16 3v4h3' /><path d='m7.5 11 4.5 3 4.5-3M7.5 10h9v7h-9z' /></svg>
   if (type === 'event-program') return <svg {...common} className='activityTreeIcon'><rect x='3' y='5' width='18' height='16' rx='2' /><path d='M8 3v4M16 3v4M3 10h18' /></svg>
-  if (type === 'engagement-program') return <svg {...common} className='activityTreeIcon'><path d='M12 3C9 7 6 10 6 14a6 6 0 0 0 12 0c0-4-3-7-6-11Z' /><circle cx='12' cy='14' r='2' /></svg>
-  if (type === 'default-program') return <svg {...common} className='activityTreeIcon'><rect x='3' y='6' width='18' height='14' rx='2' /><path d='M9 6V4h6v2M12 10v6M9 13h6' /></svg>
-  if (type === 'asset' && assetType === 'landing-page') return <svg {...common} className='activityTreeIcon'><rect x='4' y='3' width='16' height='18' rx='2' /><path d='M7 7h10M7 11h7M7 15h9' /></svg>
-  if (type === 'asset' && assetType === 'form') return <svg {...common} className='activityTreeIcon'><rect x='4' y='3' width='16' height='18' rx='2' /><path d='M8 8h8M8 12h8M8 16h5' /></svg>
+  if (type === 'engagement-program') return <svg {...common} className='activityTreeIcon'><path d='M12 21v-9M12 14c-5 0-7-3-7-7 5 0 7 2 7 7ZM12 16c5 0 7-3 7-7-5 0-7 2-7 7Z' /></svg>
+  if (type === 'default-program') return <svg {...common} className='activityTreeIcon'><rect x='3' y='7' width='18' height='13' rx='2' /><path d='M8 7V4h8v3M3 12h18M10 15h4' /></svg>
+  if (type === 'asset' && assetType === 'landing-page') return <svg {...common} className='activityTreeIcon'><path d='M5 3h11l3 3v15H5zM16 3v4h3' /><path d='M8 11h8M8 15h5M8 18h8' /></svg>
+  if (type === 'asset' && assetType === 'form') return <svg {...common} className='activityTreeIcon'><rect x='5' y='4' width='14' height='17' rx='2' /><path d='M9 4V2h6v2M8 9h8M8 13h8M8 17h5' /></svg>
   return <svg {...common} className='activityTreeIcon'><path d='M5 3h10l4 4v14H5zM15 3v5h4' /></svg>
 }
 
 function CreateDropdown({ onSelect }: { onSelect: (kind: CreateKind) => void }) {
-  return <div className='activityCreateDropdown' onClick={(event) => event.stopPropagation()}>{createOptions.map((option, index) => <button type='button' key={option.kind} className={index === 1 || index === 6 ? 'groupStart' : ''} onClick={() => onSelect(option.kind)}><span>{option.icon}</span>{option.label}</button>)}</div>
+  return <div className='activityCreateDropdown' onClick={(event) => event.stopPropagation()}>{createOptions.map((option, index) => <button type='button' key={option.kind} className={index === 1 || index === 6 ? 'groupStart' : ''} onClick={() => onSelect(option.kind)}><CreateKindIcon kind={option.kind} />{option.label}</button>)}</div>
+}
+
+function CreateKindIcon({ kind }: { kind: CreateKind }) {
+  const nodeType: Partial<Record<CreateKind, ActivityNodeType>> = { folder: 'folder', 'smart-campaign': 'smart-campaign', 'email-program': 'email-program', 'event-program': 'event-program', 'engagement-program': 'engagement-program', 'default-program': 'default-program' }
+  if (nodeType[kind]) return <TreeItemIcon type={nodeType[kind]!} open={false} campaignMode={kind === 'smart-campaign' ? 'trigger' : undefined} />
+  return <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='1.7' strokeLinecap='round' strokeLinejoin='round' className='activityTreeIcon'><path d='M5 3h10l4 4v14H5zM15 3v5h4M12 17V9M8.5 12.5 12 9l3.5 3.5' /></svg>
 }
 
 function ActivityContextMenu({ node, position, clipboardAvailable, onCreate, onOpen, onClone, onStatus, onRename, onDelete, onCopy, onPaste, onCreateAsset, onClose }: { node?: ActivityNode; position: ContextMenuState; clipboardAvailable: boolean; onCreate: (kind: CreateKind) => void; onOpen: () => void; onClone: (node: ActivityNode) => void; onStatus: (id: string, status: ProgramStatus) => void; onRename: (node: ActivityNode) => void; onDelete: (node: ActivityNode) => void; onCopy: (node: ActivityNode) => void; onPaste: (id: string) => void; onCreateAsset: (program: ActivityNode, type: 'email' | 'landing-page' | 'form') => void; onClose: () => void }) {
@@ -363,8 +368,8 @@ function ActivityContextMenu({ node, position, clipboardAvailable, onCreate, onO
   const isProgram = programTypes.includes(node.type)
   const isAsset = node.type === 'asset'
   return <div className='activityContextMenu' style={{ left: position.x, top: position.y }} onClick={(event) => event.stopPropagation()}>
-    <header><TreeItemIcon type={node.type} open assetType={node.assetType} /><strong>{node.name}</strong><button type='button' onClick={onClose}>×</button></header>
-    {isFolder && <>{createOptions.map((option) => <button type='button' key={option.kind} onClick={() => onCreate(option.kind)}><span>{option.icon}</span>{option.label}</button>)}<i /><button type='button' disabled={!clipboardAvailable} onClick={() => onPaste(node.id)}><span>▣</span>Paste</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
+    <header><TreeItemIcon type={node.type} open assetType={node.assetType} campaignMode={node.campaignMode} /><strong>{node.name}</strong><button type='button' onClick={onClose}>×</button></header>
+    {isFolder && <>{createOptions.map((option) => <button type='button' key={option.kind} onClick={() => onCreate(option.kind)}><CreateKindIcon kind={option.kind} />{option.label}</button>)}<i /><button type='button' disabled={!clipboardAvailable} onClick={() => onPaste(node.id)}><span>▣</span>Paste</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
     {isProgram && <><button type='button' onClick={onOpen}><span>↗</span>Open</button><button type='button' onClick={onOpen}><span>✎</span>Edit</button><button type='button' onClick={() => onClone(node)}><span>▣</span>Clone</button><button type='button' onClick={() => onStatus(node.id, node.status === 'active' ? 'paused' : 'active')}><span>●</span>{node.status === 'active' ? 'Deactivate' : 'Activate'}</button><button type='button' onClick={() => onStatus(node.id, 'paused')}><span>▱</span>Archive</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' onClick={() => onCopy(node)}><span>□</span>Copy</button>{!isSmart && <><i /><div className='contextSubheading'>Create Local Asset</div><button type='button' onClick={() => onCreateAsset(node, 'email')}><span>✉</span>Email</button><button type='button' onClick={() => onCreateAsset(node, 'landing-page')}><span>▤</span>Landing Page</button><button type='button' onClick={() => onCreateAsset(node, 'form')}><span>☷</span>Form</button></>}<i /><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
     {isAsset && <><button type='button'><span>✎</span>Edit</button><button type='button'><span>◉</span>Preview</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button'><span>↗</span>Move to Global Content</button><button type='button' onClick={() => onCopy(node)}><span>□</span>Copy to Clipboard</button><i /><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
   </div>
