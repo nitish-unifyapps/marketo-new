@@ -218,6 +218,18 @@ export function MarketingActivitiesPhaseOne() {
     void description
   }
 
+  function importProgram(selection: { name: string; type: ActivityNodeType; sourceId?: string }, destinationId: string) {
+    const id = `imported-program-${nextId.current++}`
+    const source = selection.sourceId ? findNode(tree, selection.sourceId) : undefined
+    const node: ActivityNode = source
+      ? { ...cloneNode(source, `import-${nextId.current++}`), id, name: selection.name, status: 'draft' }
+      : { id, name: selection.name, type: selection.type, status: 'draft', children: programChildren(id, selection.type) }
+    setTree((current) => addToTree(current, destinationId, node))
+    setExpanded((current) => new Set([...current, destinationId, id]))
+    setSelectedId(id)
+    setCreateState(null)
+  }
+
   function deleteConfirmed() {
     if (!deleteNode) return
     setTree((current) => removeFromTree(current, deleteNode.id).nodes)
@@ -242,7 +254,7 @@ export function MarketingActivitiesPhaseOne() {
     if (!node) return
     setSelectedId(nodeId)
     setContextMenu(null)
-    setOpenProgramId(['smart-campaign', 'email-program', 'default-program'].includes(node.type) ? nodeId : null)
+    setOpenProgramId(programTypes.includes(node.type) ? nodeId : null)
   }
 
   function cloneProgram(node: ActivityNode) {
@@ -310,10 +322,10 @@ export function MarketingActivitiesPhaseOne() {
       <footer className='activityTreeFooter'><span>{countPrograms(tree)} programs</span><span>Right-click for actions</span></footer>
     </aside>
 
-    {openProgram && ['smart-campaign', 'email-program', 'default-program'].includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Double-click a Smart Campaign, Email Program, or Default Program to open the editor.</p></div></main>}
+    {openProgram && programTypes.includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Double-click any program to open its editor.</p></div></main>}
 
     {contextMenu && <ActivityContextMenu node={findNode(tree, contextMenu.nodeId)} position={contextMenu} clipboardAvailable={Boolean(clipboard)} onCreate={(kind) => openCreate(kind, contextMenu.nodeId)} onOpen={() => openProgramEditor(contextMenu.nodeId)} onClone={cloneProgram} onStatus={updateStatus} onRename={(node) => { setRenameNode(node); setContextMenu(null) }} onDelete={(node) => { setDeleteNode(node); setContextMenu(null) }} onCopy={(node) => { setClipboard(node); setContextMenu(null) }} onPaste={pasteInto} onCreateAsset={createLocalAsset} onClose={() => setContextMenu(null)} />}
-    {createState && <CreateProgramModal state={createState} folderOptions={folderOptions} onClose={() => setCreateState(null)} onCreate={createItem} />}
+    {createState && (createState.kind === 'import' ? <ImportProgramModal destinationId={createState.destinationId} folderOptions={folderOptions} programs={flattenPrograms(tree)} onClose={() => setCreateState(null)} onImport={importProgram} /> : <CreateProgramModal state={createState} folderOptions={folderOptions} onClose={() => setCreateState(null)} onCreate={createItem} />)}
     {renameNode && <RenameModal node={renameNode} onClose={() => setRenameNode(null)} onRename={renameConfirmed} />}
     <Modal title='Delete Item' open={Boolean(deleteNode)} onClose={() => setDeleteNode(null)}><div className='activityDeleteConfirm'><span>!</span><h3>Delete “{deleteNode?.name}”?</h3><p>This removes the item and everything contained within it. This action cannot be undone.</p><footer><button type='button' className='button ghost' onClick={() => setDeleteNode(null)}>Cancel</button><button type='button' className='button dangerButton' onClick={deleteConfirmed}>Delete</button></footer></div></Modal>
   </section>
@@ -381,6 +393,30 @@ function CreateProgramModal({ state, folderOptions, onClose, onCreate }: { state
 function RenameModal({ node, onClose, onRename }: { node: ActivityNode; onClose: () => void; onRename: (name: string) => void }) {
   const [name, setName] = useState(node.name)
   return <Modal title='Rename Item' open onClose={onClose}><div className='activityRenameModal'><label>Name<input autoFocus value={name} onChange={(event) => setName(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') onRename(name) }} /></label><footer><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' onClick={() => onRename(name)}>Rename</button></footer></div></Modal>
+}
+
+function ImportProgramModal({ destinationId, folderOptions, programs, onClose, onImport }: { destinationId: string; folderOptions: Array<{ id: string; name: string; level: number }>; programs: ActivityNode[]; onClose: () => void; onImport: (selection: { name: string; type: ActivityNodeType; sourceId?: string }, destinationId: string) => void }) {
+  const templates: Array<{ id: string; name: string; description: string; type: ActivityNodeType; steps: string[] }> = [
+    { id: 'lead-nurture', name: 'Lead Nurture', description: 'Three-stream engagement program with transition rules and welcome content.', type: 'engagement-program', steps: ['Smart List', 'Welcome', 'Wait', 'Transition'] },
+    { id: 'webinar-followup', name: 'Webinar Follow-up', description: 'Registration, reminders, attendance decision, and follow-up assets.', type: 'event-program', steps: ['Register', 'Wait', 'Reminder', 'Decision'] },
+    { id: 'simple-batch', name: 'Simple Batch', description: 'Filtered audience, one email, and a program-status update.', type: 'smart-campaign', steps: ['Smart List', 'Send Email', 'Status'] },
+  ]
+  const [tab, setTab] = useState<'template' | 'existing'>('template')
+  const [selectedTemplate, setSelectedTemplate] = useState(templates[0].id)
+  const [selectedProgram, setSelectedProgram] = useState(programs[0]?.id ?? '')
+  const [destination, setDestination] = useState(destinationId)
+  const [query, setQuery] = useState('')
+  const chosenTemplate = templates.find((template) => template.id === selectedTemplate) ?? templates[0]
+  const chosenProgram = programs.find((program) => program.id === selectedProgram)
+  function handleImport() {
+    if (tab === 'template') onImport({ name: chosenTemplate.name, type: chosenTemplate.type }, destination)
+    else if (chosenProgram) onImport({ name: `Copy of ${chosenProgram.name}`, type: chosenProgram.type, sourceId: chosenProgram.id }, destination)
+  }
+  return <Modal title='Import Program' open onClose={onClose}><div className='importProgramModal'><div className='importProgramTabs'><button type='button' className={tab === 'template' ? 'active' : ''} onClick={() => setTab('template')}>From Template</button><button type='button' className={tab === 'existing' ? 'active' : ''} onClick={() => setTab('existing')}>From Existing</button></div><div className='importProgramBody'>{tab === 'template' ? <div className='importTemplateGrid'>{templates.map((template) => <button type='button' key={template.id} className={selectedTemplate === template.id ? 'selected' : ''} onClick={() => setSelectedTemplate(template.id)}><span className='importFlowThumb'>{template.steps.map((step, index) => <i key={step} style={{ left: `${12 + index * 24}%`, top: `${22 + (index % 2) * 34}%` }} />)}<b /></span><span><em>{template.type.replace('-', ' ')}</em><strong>{template.name}</strong><small>{template.description}</small><code>{template.steps.join(' → ')}</code></span><i>{selectedTemplate === template.id ? '✓' : ''}</i></button>)}</div> : <div className='importExistingList'><label><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search all existing programs…' /></label><div>{programs.filter((program) => program.name.toLowerCase().includes(query.toLowerCase())).map((program) => <button type='button' key={program.id} className={selectedProgram === program.id ? 'selected' : ''} onClick={() => setSelectedProgram(program.id)}><TreeItemIcon type={program.type} open /><span><strong>{program.name}</strong><small>{program.type.replace('-', ' ')} · {program.status ?? 'Draft'}</small></span><i>{selectedProgram === program.id ? '✓' : ''}</i></button>)}</div><p>The clone includes local assets, flow steps, Program Tokens, and configuration.</p></div>}<label className='importDestination'>Destination Folder<select value={destination} onChange={(event) => setDestination(event.target.value)}>{folderOptions.map((folder) => <option key={folder.id} value={folder.id}>{'— '.repeat(folder.level)}{folder.name}</option>)}</select></label></div><footer><span>{tab === 'template' ? `Template: ${chosenTemplate.name}` : chosenProgram ? `Clone: ${chosenProgram.name}` : 'Select a program'}</span><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' disabled={tab === 'existing' && !chosenProgram} onClick={handleImport}>Import Program</button></footer></div></Modal>
+}
+
+function flattenPrograms(nodes: ActivityNode[]): ActivityNode[] {
+  return nodes.flatMap((node) => [...(programTypes.includes(node.type) ? [node] : []), ...(node.children ? flattenPrograms(node.children) : [])])
 }
 
 function countPrograms(nodes: ActivityNode[]): number {
