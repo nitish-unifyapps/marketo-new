@@ -1,154 +1,32 @@
 import { useState } from 'react'
-import { initialConditionRows } from '../../data/crmData'
-import type { ConditionRow } from '../../types/crm'
 import { Modal } from '../common/Modal'
-import { WireframeIcon } from '../common/WireframeIcon'
 
 interface SmartListModalProps {
   open: boolean
   onClose: () => void
+  onCreate: (name: string, description: string) => void
 }
 
-export function SmartListModal({ open, onClose }: SmartListModalProps) {
-  const [conditions, setConditions] = useState<ConditionRow[]>(initialConditionRows)
-  const [listName, setListName] = useState('')
+export function SmartListModal({ open, onClose, onCreate }: SmartListModalProps) {
+  const [name, setName] = useState('')
   const [description, setDescription] = useState('')
-  const [previewCount, setPreviewCount] = useState<number | null>(null)
+  const [folder, setFolder] = useState('CRM / Segments')
 
-  function updateCondition(
-    id: string,
-    field: 'field' | 'operator' | 'value',
-    value: string,
-  ) {
-    setConditions((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, [field]: value } : item)),
-    )
+  function create() {
+    if (!name.trim()) return
+    onCreate(name.trim(), description.trim())
+    setName('')
+    setDescription('')
   }
 
-  function addGroup(type: 'AND' | 'OR') {
-    const id = `c-${Date.now()}`
-    setConditions((prev) => [
-      ...prev,
-      {
-        id,
-        field: 'Lifecycle Stage',
-        operator: 'is',
-        value: type === 'AND' ? 'MQL' : 'SQL',
-        groupType: type,
-      },
-    ])
-  }
-
-  return (
-    <Modal title='New Smart List' open={open} onClose={onClose}>
-      <div className='modalContent'>
-        <div className='modalIntro'>
-          <label className='modalField'>
-            Smart List Name
-            <input
-              type='text'
-              value={listName}
-              onChange={(event) => setListName(event.target.value)}
-              placeholder='e.g. High Intent Accounts'
-              autoFocus
-            />
-          </label>
-          <label className='modalField'>
-            Description
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder='Describe this audience segment...'
-            />
-          </label>
-        </div>
-
-        <div className='queryBuilder'>
-          <h4>Query Builder</h4>
-
-          <div className='conditionList'>
-            {conditions.map((condition) => (
-              <div key={condition.id} className='conditionRow' draggable>
-                <WireframeIcon name='drag' className='iconTiny muted' />
-                <span className='groupTag'>{condition.groupType}</span>
-
-                <select
-                  value={condition.field}
-                  onChange={(event) =>
-                    updateCondition(condition.id, 'field', event.target.value)
-                  }
-                >
-                  <option>Lifecycle Stage</option>
-                  <option>Score</option>
-                  <option>Industry</option>
-                  <option>Last Activity</option>
-                </select>
-
-                <select
-                  value={condition.operator}
-                  onChange={(event) =>
-                    updateCondition(condition.id, 'operator', event.target.value)
-                  }
-                >
-                  <option>is</option>
-                  <option>is not</option>
-                  <option>greater than</option>
-                  <option>contains</option>
-                </select>
-
-                <input
-                  type='text'
-                  value={condition.value}
-                  onChange={(event) =>
-                    updateCondition(condition.id, 'value', event.target.value)
-                  }
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className='groupActions'>
-            <button
-              type='button'
-              className='button outline accent'
-              onClick={() => addGroup('AND')}
-            >
-              Add AND Group
-            </button>
-            <button
-              type='button'
-              className='button outline accent'
-              onClick={() => addGroup('OR')}
-            >
-              Add OR Group
-            </button>
-            <button
-              type='button'
-              className='button outline accent'
-              onClick={() => setPreviewCount(284 + conditions.length * 17)}
-            >
-              Preview member count
-            </button>
-            {previewCount !== null && (
-              <span className='previewCount'>{previewCount} matching people</span>
-            )}
-          </div>
-        </div>
-
-        <footer className='modalFooter'>
-          <button type='button' className='button ghost' onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            type='button'
-            className='button solid'
-            onClick={onClose}
-            disabled={!listName.trim()}
-          >
-            Save
-          </button>
-        </footer>
-      </div>
-    </Modal>
-  )
+  return <Modal title='Create Smart List' open={open} onClose={onClose}>
+    <div className='createSmartListModal'>
+      <div className='createSmartListIntro'><span>☷</span><div><h3>New Smart List</h3><p>Name the segment first. Smart List rules and member preview are configured on the next page.</p></div></div>
+      <label>Smart List Name <strong>*</strong><input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder='e.g. High Intent Enterprise MQLs' /></label>
+      <label>Destination Folder<select value={folder} onChange={(event) => setFolder(event.target.value)}><option>CRM / Segments</option><option>CRM / Lifecycle Segments</option><option>CRM / Campaign Audiences</option><option>CRM / Shared Segments</option></select></label>
+      <label>Description <span>Optional</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder='Describe who this Smart List is intended to identify' /></label>
+      <div className='smartListCreationNote'><span>i</span><p>The Smart List will be saved as a draft until at least one rule is configured.</p></div>
+      <footer><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' disabled={!name.trim()} onClick={create}>Create & Edit Smart List</button></footer>
+    </div>
+  </Modal>
 }

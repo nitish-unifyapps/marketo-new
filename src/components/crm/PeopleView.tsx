@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { BulkActionBar } from '../common/BulkActionBar'
-import { PeopleFilters } from './PeopleFilters'
+import { PeopleFilters, type LeadColumnKey, type LeadFilterRule, type LeadFilterState } from './PeopleFilters'
 import type { PersonRecord } from '../../types/crm'
 
 interface PeopleViewProps {
@@ -12,6 +12,19 @@ interface PeopleViewProps {
   onCreateSmartListFromView: () => void
 }
 
+function matchesRule(person: PersonRecord, rule: LeadFilterRule) {
+  const source = rule.field === 'Lifecycle Stage' ? person.lifecycleStage : rule.field === 'Score' ? person.score : rule.field === 'Company' ? person.company : rule.field === 'Owner' ? person.owner : rule.field === 'Job Title' ? person.title : person.location
+  const sourceText = String(source).toLowerCase()
+  const valueText = rule.value.toLowerCase()
+  if (!rule.value) return true
+  if (rule.operator === 'is') return sourceText === valueText
+  if (rule.operator === 'is not') return sourceText !== valueText
+  if (rule.operator === 'contains') return sourceText.includes(valueText)
+  if (rule.operator === 'greater than') return Number(source) > Number(rule.value)
+  if (rule.operator === 'less than') return Number(source) < Number(rule.value)
+  return true
+}
+
 export function PeopleView({
   rows,
   selectedIds,
@@ -20,11 +33,8 @@ export function PeopleView({
   onOpenPerson,
   onCreateSmartListFromView,
 }: PeopleViewProps) {
-  const [filters, setFilters] = useState({
-    query: '',
-    lifecycleStage: 'All',
-    minimumScore: 0,
-  })
+  const [filters, setFilters] = useState<LeadFilterState>({ query: '', rules: [], logic: 'AND' })
+  const [visibleColumns, setVisibleColumns] = useState<LeadColumnKey[]>(['name', 'email', 'company', 'lifecycleStage', 'score', 'lastActivity'])
 
   const filteredRows = useMemo(() => {
     const query = filters.query.trim().toLowerCase()
@@ -35,11 +45,8 @@ export function PeopleView({
         [person.name, person.email, person.company].some((value) =>
           value.toLowerCase().includes(query),
         )
-      const matchesStage =
-        filters.lifecycleStage === 'All' ||
-        person.lifecycleStage === filters.lifecycleStage
-
-      return matchesQuery && matchesStage && person.score >= filters.minimumScore
+      const matchesRules = filters.rules.length === 0 || (filters.logic === 'AND' ? filters.rules.every((rule) => matchesRule(person, rule)) : filters.rules.some((rule) => matchesRule(person, rule)))
+      return matchesQuery && matchesRules
     })
   }, [filters, rows])
 
@@ -48,6 +55,9 @@ export function PeopleView({
   return (
     <section className='viewWrap'>
       <PeopleFilters
+        totalCount={filteredRows.length}
+        visibleColumns={visibleColumns}
+        onColumnsChange={setVisibleColumns}
         onCreateSmartListFromView={onCreateSmartListFromView}
         onFilterChange={setFilters}
       />
@@ -64,12 +74,7 @@ export function PeopleView({
                   aria-label='Select all people'
                 />
               </th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Company</th>
-              <th>Lifecycle Stage</th>
-              <th>Score</th>
-              <th>Last Activity</th>
+              {visibleColumns.map((column) => <th key={column}>{column === 'name' ? 'Name' : column === 'email' ? 'Email' : column === 'company' ? 'Company' : column === 'lifecycleStage' ? 'Lifecycle Stage' : column === 'score' ? 'Score' : column === 'lastActivity' ? 'Last Activity' : column === 'owner' ? 'Owner' : column === 'title' ? 'Job Title' : 'Location'}</th>)}
             </tr>
           </thead>
           <tbody>
@@ -86,29 +91,14 @@ export function PeopleView({
                       aria-label={`Select ${person.name}`}
                     />
                   </td>
-                  <td>
-                    <button
-                      type='button'
-                      className='tableLink'
-                      onClick={() => onOpenPerson(person.id)}
-                    >
-                      {person.name}
-                    </button>
-                  </td>
-                  <td>{person.email}</td>
-                  <td>{person.company}</td>
-                  <td>
-                    <span className='badge neutral'>{person.lifecycleStage}</span>
-                  </td>
-                  <td>{person.score}</td>
-                  <td>{person.lastActivity}</td>
+                  {visibleColumns.map((column) => <td key={column}>{column === 'name' ? <button type='button' className='tableLink' onClick={() => onOpenPerson(person.id)}>{person.name}</button> : column === 'email' ? person.email : column === 'company' ? person.company : column === 'lifecycleStage' ? <span className='badge neutral'>{person.lifecycleStage}</span> : column === 'score' ? person.score : column === 'lastActivity' ? person.lastActivity : column === 'owner' ? person.owner : column === 'title' ? person.title : person.location}</td>)}
                 </tr>
               )
             })}
             {filteredRows.length === 0 && (
               <tr>
-                <td className='emptyRow' colSpan={7}>
-                  No people match the selected filters.
+                <td className='emptyRow' colSpan={visibleColumns.length + 1}>
+                  No leads match the selected filters.
                 </td>
               </tr>
             )}

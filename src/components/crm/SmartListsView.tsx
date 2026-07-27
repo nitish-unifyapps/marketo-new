@@ -10,7 +10,7 @@ export function SmartListsView({ lists, onOpenCreateSmartList }: SmartListsViewP
   return (
     <section className='viewWrap'>
       <header className='cardHeader'>
-        <h2>Smart Lists</h2>
+        <h2>Segments</h2>
         <button type='button' className='button solid' onClick={onOpenCreateSmartList}>
           <WireframeIcon name='plus' className='iconSmall' />
           New Smart List

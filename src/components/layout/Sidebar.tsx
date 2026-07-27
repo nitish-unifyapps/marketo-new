@@ -1,5 +1,5 @@
 import { mainNavigation } from '../../data/crmData'
-import type { MainNavKey } from '../../types/crm'
+import type { CrmSubTabKey, MainNavKey } from '../../types/crm'
 import { WireframeIcon } from '../common/WireframeIcon'
 
 interface SidebarProps {
@@ -7,9 +7,17 @@ interface SidebarProps {
   onTabChange: (tab: MainNavKey) => void
   searchValue: string
   onSearchChange: (value: string) => void
+  activeCrmTab: CrmSubTabKey
+  onCrmTabChange: (tab: CrmSubTabKey) => void
 }
 
-export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange }: SidebarProps) {
+const crmSubNavigation: Array<{ key: CrmSubTabKey; label: string; icon: string }> = [
+  { key: 'people', label: 'Leads', icon: '♙' },
+  { key: 'accounts', label: 'Accounts', icon: '▣' },
+  { key: 'smart-lists', label: 'Segments', icon: '☷' },
+]
+
+export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange, activeCrmTab, onCrmTabChange }: SidebarProps) {
   return (
     <aside className='sidebar'>
       <div className='sidebarLogo'>Marketo Next</div>
@@ -24,16 +32,18 @@ export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange }:
         {mainNavigation.map((item) => {
           const isActive = item.key === activeTab
           return (
-            <button
-              key={item.key}
-              type='button'
-              className={`sidebarNavItem ${isActive ? 'active' : ''}`}
-              onClick={() => onTabChange(item.key)}
-              aria-expanded={item.key === 'execution' ? isActive : undefined}
-            >
-              <WireframeIcon name={item.key} className='sidebarIcon' />
-              <span>{item.label}</span>
-            </button>
+            <div key={item.key} className={`sidebarNavGroup group-${item.key} ${isActive ? 'active' : ''}`}>
+              <button
+                type='button'
+                className={`sidebarNavItem ${isActive ? 'active' : ''}`}
+                onClick={() => onTabChange(item.key)}
+                aria-expanded={item.key === 'execution' || item.key === 'crm' ? isActive : undefined}
+              >
+                <WireframeIcon name={item.key} className='sidebarIcon' />
+                <span>{item.label}</span>
+              </button>
+              {item.key === 'crm' && isActive && <div className='crmSidebarSubnav'>{crmSubNavigation.map((tab) => <button type='button' key={tab.key} className={activeCrmTab === tab.key ? 'active' : ''} onClick={() => onCrmTabChange(tab.key)}><span>{tab.icon}</span>{tab.label}</button>)}</div>}
+            </div>
           )
         })}
       </nav>

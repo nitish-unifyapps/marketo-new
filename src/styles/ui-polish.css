@@ -127,6 +127,68 @@ textarea {
   font-size: 13px;
 }
 
+.sidebarNavGroup {
+  width: 100%;
+}
+
+.group-crm.active > .sidebarNavItem {
+  border-radius: 7px 7px 0 0;
+}
+
+.crmSidebarSubnav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0 0 5px;
+  padding: 6px 8px 8px 35px;
+  border-radius: 0 0 8px 8px;
+  background: rgb(255 243 239 / 58%);
+}
+
+.crmSidebarSubnav button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  gap: 7px;
+  min-height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.crmSidebarSubnav button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -15px;
+  width: 1px;
+  background: #dfd6d2;
+}
+
+.crmSidebarSubnav button:hover {
+  color: var(--text);
+  background: rgb(255 255 255 / 68%);
+}
+
+.crmSidebarSubnav button.active {
+  color: var(--accent);
+  background: white;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 7%);
+}
+
+.crmSidebarSubnav button > span {
+  color: currentColor;
+  text-align: center;
+  font-size: 13px;
+}
+
 .sidebarPersistentSearch input,
 .activityTreeSearch input {
   font-size: 12px;

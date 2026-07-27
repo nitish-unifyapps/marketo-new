@@ -9,9 +9,9 @@ import { AnalyticsSubNav } from './components/analytics/AnalyticsSubNav'
 import { PeopleView } from './components/crm/PeopleView'
 import { PersonDetailPanel } from './components/crm/PersonDetailPanel'
 import { SmartListModal } from './components/crm/SmartListModal'
+import { SmartListEditorPage } from './components/crm/SmartListEditorPage'
 import { SmartListsView } from './components/crm/SmartListsView'
 import { Sidebar } from './components/layout/Sidebar'
-import { SubNavTabs } from './components/layout/SubNavTabs'
 import { TopBar, type CreateOption } from './components/layout/TopBar'
 import { accountRows, peopleRows, smartLists } from './data/crmData'
 import type { CrmSubTabKey, MainNavKey } from './types/crm'
@@ -36,6 +36,8 @@ function App() {
   const [activeAnalyticsTab, setActiveAnalyticsTab] = useState<AnalyticsTabKey>('dashboards')
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [smartListModalOpen, setSmartListModalOpen] = useState(false)
+  const [crmSmartLists, setCrmSmartLists] = useState(smartLists)
+  const [smartListDraft, setSmartListDraft] = useState<{ name: string; description: string } | null>(null)
   const [marketingSearchQuery, setMarketingSearchQuery] = useState('')
 
   const [selectedPeopleIds, setSelectedPeopleIds] = useState<string[]>([])
@@ -69,6 +71,7 @@ function App() {
     setOpenAccountId(null)
     setSelectedPeopleIds([])
     setSelectedAccountIds([])
+    if (tab !== 'smart-lists') setSmartListDraft(null)
   }
 
   function handleCreateSelect(option: CreateOption) {
@@ -188,9 +191,13 @@ function App() {
       )
     }
 
+    if (smartListDraft) {
+      return <SmartListEditorPage initialName={smartListDraft.name} description={smartListDraft.description} rows={peopleRows} onCancel={() => setSmartListDraft(null)} onSave={(name, description, memberCount) => { setCrmSmartLists((current) => [...current, { id: `sl-created-${current.length + 1}`, name, description: description || 'Dynamic CRM segment', memberCount, lastModified: 'Just now' }]); setSmartListDraft(null) }} />
+    }
+
     return (
       <SmartListsView
-        lists={smartLists}
+        lists={crmSmartLists}
         onOpenCreateSmartList={() => setSmartListModalOpen(true)}
       />
     )
@@ -198,7 +205,7 @@ function App() {
 
   return (
     <div className='appShell'>
-      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} />
+      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} activeCrmTab={activeCrmTab} onCrmTabChange={handleCrmTabChange} />
 
       <div className='mainPane'>
         <TopBar
@@ -217,10 +224,6 @@ function App() {
           hideCreate={activeMainTab === 'execution'}
         />
 
-        {activeMainTab === 'crm' && (
-          <SubNavTabs activeTab={activeCrmTab} onChange={handleCrmTabChange} />
-        )}
-
         {activeMainTab === 'content' && !contentBuilderOpen && (
           <ContentSubNav activeTab={activeContentTab} onChange={setActiveContentTab} />
         )}
@@ -230,7 +233,7 @@ function App() {
         )}
 
         <main
-          className={`contentArea ${contentBuilderOpen ? 'builderContentArea' : ''} ${activeMainTab === 'execution' ? 'phaseOneContentArea' : ''}`}
+          className={`contentArea ${contentBuilderOpen ? 'builderContentArea' : ''} ${activeMainTab === 'execution' ? 'phaseOneContentArea' : ''} ${activeMainTab === 'crm' ? 'crmContentArea' : ''}`}
         >
           {renderMainContent()}
         </main>
@@ -247,7 +250,7 @@ function App() {
         />
       )}
 
-      <SmartListModal open={smartListModalOpen} onClose={() => setSmartListModalOpen(false)} />
+      <SmartListModal open={smartListModalOpen} onClose={() => setSmartListModalOpen(false)} onCreate={(name, description) => { setSmartListModalOpen(false); setActiveMainTab('crm'); setActiveCrmTab('smart-lists'); setSmartListDraft({ name, description }) }} />
     </div>
   )
 }
