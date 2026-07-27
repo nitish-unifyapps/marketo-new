@@ -1,8 +1,9 @@
 import { useMemo, useRef, useState, type CSSProperties, type DragEvent, type MouseEvent } from 'react'
 import { Modal } from '../common/Modal'
 import { WireframeIcon } from '../common/WireframeIcon'
+import { ProgramEditor } from './phase2/ProgramEditor'
 
-type ActivityNodeType =
+export type ActivityNodeType =
   | 'folder'
   | 'smart-campaign'
   | 'email-program'
@@ -14,10 +15,10 @@ type ActivityNodeType =
   | 'members-folder'
   | 'asset'
 
-type ProgramStatus = 'active' | 'draft' | 'paused' | 'error'
+export type ProgramStatus = 'active' | 'draft' | 'paused' | 'error'
 type CreateKind = 'folder' | 'smart-campaign' | 'email-program' | 'event-program' | 'engagement-program' | 'default-program' | 'import'
 
-interface ActivityNode {
+export interface ActivityNode {
   id: string
   name: string
   type: ActivityNodeType
@@ -163,6 +164,7 @@ export function MarketingActivitiesPhaseOne() {
   const [tree, setTree] = useState<ActivityNode[]>(initialTree)
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['folder-lifecycle', 'folder-demand', 'folder-events', 'program-q3-launch', 'program-q3-launch-assets']))
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [createState, setCreateState] = useState<{ kind: CreateKind; destinationId: string } | null>(null)
@@ -174,6 +176,7 @@ export function MarketingActivitiesPhaseOne() {
   const [dropTargetId, setDropTargetId] = useState<string | null>(null)
 
   const visibleTree = useMemo(() => filterTree(tree, query), [query, tree])
+  const openProgram = openProgramId ? findNode(tree, openProgramId) : undefined
   const folderOptions = useMemo(() => {
     const rows: Array<{ id: string; name: string; level: number }> = [{ id: 'root', name: 'Marketing Activities', level: 0 }]
     function visit(nodes: ActivityNode[], level: number) {
@@ -219,6 +222,7 @@ export function MarketingActivitiesPhaseOne() {
     if (!deleteNode) return
     setTree((current) => removeFromTree(current, deleteNode.id).nodes)
     if (selectedId === deleteNode.id) setSelectedId(null)
+    if (openProgramId === deleteNode.id) setOpenProgramId(null)
     setDeleteNode(null)
   }
 
@@ -231,6 +235,14 @@ export function MarketingActivitiesPhaseOne() {
   function updateStatus(nodeId: string, status: ProgramStatus) {
     setTree((current) => mapTree(current, nodeId, (node) => ({ ...node, status })))
     setContextMenu(null)
+  }
+
+  function openProgramEditor(nodeId: string) {
+    const node = findNode(tree, nodeId)
+    if (!node) return
+    setSelectedId(nodeId)
+    setContextMenu(null)
+    setOpenProgramId(['smart-campaign', 'email-program', 'default-program'].includes(node.type) ? nodeId : null)
   }
 
   function cloneProgram(node: ActivityNode) {
@@ -294,27 +306,27 @@ export function MarketingActivitiesPhaseOne() {
       </div>
       <label className='activityTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs…' />{query && <button type='button' onClick={() => setQuery('')}>×</button>}</label>
       <div className={`activityRootDrop ${draggedId ? 'dragging' : ''} ${dropTargetId === 'root' ? 'dropTarget' : ''}`} onDragOver={(event) => { event.preventDefault(); setDropTargetId('root') }} onDragLeave={() => setDropTargetId(null)} onDrop={(event) => { event.preventDefault(); moveNode('root') }}><span>Drop here to move to root</span></div>
-      <div className='activityTreeScroll'>{visibleTree.map((node) => <TreeNode key={node.id} node={node} level={0} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={toggleNode} onSelect={setSelectedId} onContextMenu={handleContextMenu} onDragStart={handleDragStart} onDragEnd={() => { setDraggedId(null); setDropTargetId(null) }} onDragOverFolder={setDropTargetId} onDrop={moveNode} />)}</div>
+      <div className='activityTreeScroll'>{visibleTree.map((node) => <TreeNode key={node.id} node={node} level={0} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={toggleNode} onSelect={setSelectedId} onOpen={openProgramEditor} onContextMenu={handleContextMenu} onDragStart={handleDragStart} onDragEnd={() => { setDraggedId(null); setDropTargetId(null) }} onDragOverFolder={setDropTargetId} onDrop={moveNode} />)}</div>
       <footer className='activityTreeFooter'><span>{countPrograms(tree)} programs</span><span>Right-click for actions</span></footer>
     </aside>
 
-    <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Program details and the editor will be introduced in Phase 2.</p></div></main>
+    {openProgram && ['smart-campaign', 'email-program', 'default-program'].includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Double-click a Smart Campaign, Email Program, or Default Program to open the editor.</p></div></main>}
 
-    {contextMenu && <ActivityContextMenu node={findNode(tree, contextMenu.nodeId)} position={contextMenu} clipboardAvailable={Boolean(clipboard)} onCreate={(kind) => openCreate(kind, contextMenu.nodeId)} onOpen={() => { setSelectedId(contextMenu.nodeId); setContextMenu(null) }} onClone={cloneProgram} onStatus={updateStatus} onRename={(node) => { setRenameNode(node); setContextMenu(null) }} onDelete={(node) => { setDeleteNode(node); setContextMenu(null) }} onCopy={(node) => { setClipboard(node); setContextMenu(null) }} onPaste={pasteInto} onCreateAsset={createLocalAsset} onClose={() => setContextMenu(null)} />}
+    {contextMenu && <ActivityContextMenu node={findNode(tree, contextMenu.nodeId)} position={contextMenu} clipboardAvailable={Boolean(clipboard)} onCreate={(kind) => openCreate(kind, contextMenu.nodeId)} onOpen={() => openProgramEditor(contextMenu.nodeId)} onClone={cloneProgram} onStatus={updateStatus} onRename={(node) => { setRenameNode(node); setContextMenu(null) }} onDelete={(node) => { setDeleteNode(node); setContextMenu(null) }} onCopy={(node) => { setClipboard(node); setContextMenu(null) }} onPaste={pasteInto} onCreateAsset={createLocalAsset} onClose={() => setContextMenu(null)} />}
     {createState && <CreateProgramModal state={createState} folderOptions={folderOptions} onClose={() => setCreateState(null)} onCreate={createItem} />}
     {renameNode && <RenameModal node={renameNode} onClose={() => setRenameNode(null)} onRename={renameConfirmed} />}
     <Modal title='Delete Item' open={Boolean(deleteNode)} onClose={() => setDeleteNode(null)}><div className='activityDeleteConfirm'><span>!</span><h3>Delete “{deleteNode?.name}”?</h3><p>This removes the item and everything contained within it. This action cannot be undone.</p><footer><button type='button' className='button ghost' onClick={() => setDeleteNode(null)}>Cancel</button><button type='button' className='button dangerButton' onClick={deleteConfirmed}>Delete</button></footer></div></Modal>
   </section>
 }
 
-function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onToggle, onSelect, onContextMenu, onDragStart, onDragEnd, onDragOverFolder, onDrop }: { node: ActivityNode; level: number; expanded: Set<string>; selectedId: string | null; query: string; dropTargetId: string | null; onToggle: (id: string) => void; onSelect: (id: string) => void; onContextMenu: (event: MouseEvent, id: string) => void; onDragStart: (event: DragEvent, id: string) => void; onDragEnd: () => void; onDragOverFolder: (id: string | null) => void; onDrop: (id: string) => void }) {
+function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onToggle, onSelect, onOpen, onContextMenu, onDragStart, onDragEnd, onDragOverFolder, onDrop }: { node: ActivityNode; level: number; expanded: Set<string>; selectedId: string | null; query: string; dropTargetId: string | null; onToggle: (id: string) => void; onSelect: (id: string) => void; onOpen: (id: string) => void; onContextMenu: (event: MouseEvent, id: string) => void; onDragStart: (event: DragEvent, id: string) => void; onDragEnd: () => void; onDragOverFolder: (id: string | null) => void; onDrop: (id: string) => void }) {
   const isExpandable = expandableTypes.includes(node.type) && Boolean(node.children)
   const isOpen = query ? true : expanded.has(node.id)
   const isFolderDrop = node.type === 'folder'
   const matches = Boolean(query && node.name.toLowerCase().includes(query.toLowerCase()))
   const style = { '--tree-level': level } as CSSProperties
   return <div className='activityTreeNode' style={style}>
-    <button type='button' draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
+    <button type='button' draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id) }} onDoubleClick={(event) => { event.stopPropagation(); onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
       {level > 0 && <i className='treeConnector' />}
       <span className={`treeChevron ${isExpandable ? '' : 'hidden'}`}>{isOpen ? '⌄' : '›'}</span>
       {node.status ? <i className={`programStatusDot ${node.status}`} title={node.status} /> : <i className='programStatusSpacer' />}
@@ -322,7 +334,7 @@ function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onTo
       <span className='activityTreeName'>{node.name}</span>
       {node.children && node.children.length > 0 && node.type === 'folder' && <small>{countPrograms(node.children)}</small>}
     </button>
-    {isOpen && node.children?.map((child) => <TreeNode key={child.id} node={child} level={level + 1} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={onToggle} onSelect={onSelect} onContextMenu={onContextMenu} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOverFolder={onDragOverFolder} onDrop={onDrop} />)}
+    {isOpen && node.children?.map((child) => <TreeNode key={child.id} node={child} level={level + 1} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={onToggle} onSelect={onSelect} onOpen={onOpen} onContextMenu={onContextMenu} onDragStart={onDragStart} onDragEnd={onDragEnd} onDragOverFolder={onDragOverFolder} onDrop={onDrop} />)}
   </div>
 }
 
