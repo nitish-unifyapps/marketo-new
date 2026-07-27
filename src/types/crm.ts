@@ -1,4 +1,4 @@
-export type MainNavKey = 'crm' | 'content' | 'execution' | 'campaigns' | 'journeys' | 'analytics'
+export type MainNavKey = 'crm' | 'content' | 'execution' | 'analytics' | 'integrations' | 'calendar' | 'admin'
 
 export type CrmSubTabKey = 'people' | 'accounts' | 'smart-lists'
 

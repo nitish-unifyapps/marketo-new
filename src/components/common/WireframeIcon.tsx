@@ -5,6 +5,9 @@ type IconName =
   | 'campaigns'
   | 'journeys'
   | 'analytics'
+  | 'integrations'
+  | 'calendar'
+  | 'admin'
   | 'search'
   | 'chevron-down'
   | 'profile'
@@ -85,6 +88,28 @@ export function WireframeIcon({ name, className }: WireframeIconProps) {
       return (
         <svg {...shared}>
           <path d='M4 20V6M10 20V10M16 20V13M22 20V4' />
+        </svg>
+      )
+    case 'integrations':
+      return (
+        <svg {...shared}>
+          <path d='M8 8 5.5 5.5M16 16l2.5 2.5M15 5l4 4-4 4M9 19l-4-4 4-4' />
+          <path d='M13 7h2a4 4 0 0 1 4 4v2M11 17H9a4 4 0 0 1-4-4v-2' />
+        </svg>
+      )
+    case 'calendar':
+      return (
+        <svg {...shared}>
+          <rect x='3' y='5' width='18' height='16' rx='2.5' />
+          <path d='M8 3v4M16 3v4M3 10h18M8 14h2M14 14h2M8 17h2' />
+        </svg>
+      )
+    case 'admin':
+      return (
+        <svg {...shared}>
+          <path d='M12 3 5 6v5c0 4.6 2.8 8.2 7 10 4.2-1.8 7-5.4 7-10V6z' />
+          <circle cx='12' cy='10' r='2.2' />
+          <path d='M8.5 16a4 4 0 0 1 7 0' />
         </svg>
       )
     case 'search':

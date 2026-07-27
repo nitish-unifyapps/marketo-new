@@ -11,6 +11,9 @@ export const mainNavigation: Array<{ key: MainNavKey; label: string }> = [
   { key: 'content', label: 'Content' },
   { key: 'execution', label: 'Marketing Activities' },
   { key: 'analytics', label: 'Analytics' },
+  { key: 'integrations', label: 'Integrations' },
+  { key: 'calendar', label: 'Calendar' },
+  { key: 'admin', label: 'Admin' },
 ]
 
 export const peopleRows: PersonRecord[] = [

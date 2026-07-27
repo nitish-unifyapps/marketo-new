@@ -3,10 +3,9 @@ import { AccountsView } from './components/crm/AccountsView'
 import { AccountDetailPanel } from './components/crm/AccountDetailPanel'
 import { ContentModule } from './components/content/ContentModule'
 import { ContentSubNav } from './components/content/ContentSubNav'
-import { ExecutionModule } from './components/execution/ExecutionModule'
+import { MarketingActivitiesPhaseOne } from './components/execution/MarketingActivitiesPhaseOne'
 import { AnalyticsModule } from './components/analytics/AnalyticsModule'
 import { AnalyticsSubNav } from './components/analytics/AnalyticsSubNav'
-import { MarketingActivitiesSubNav } from './components/execution/MarketingActivitiesSubNav'
 import { PeopleView } from './components/crm/PeopleView'
 import { PersonDetailPanel } from './components/crm/PersonDetailPanel'
 import { SmartListModal } from './components/crm/SmartListModal'
@@ -18,26 +17,23 @@ import { accountRows, peopleRows, smartLists } from './data/crmData'
 import type { CrmSubTabKey, MainNavKey } from './types/crm'
 import type { ContentTabKey } from './types/content'
 import type { AnalyticsTabKey } from './types/analytics'
-import type { ProgramTabKey } from './types/execution'
 
 const sectionNameByMainTab: Record<MainNavKey, string> = {
   crm: 'CRM',
   content: 'Content',
   execution: 'Marketing Activities',
-  campaigns: 'Campaigns',
-  journeys: 'Journeys',
   analytics: 'Analytics',
+  integrations: 'Integrations',
+  calendar: 'Calendar',
+  admin: 'Admin',
 }
 
 function App() {
-  const [activeMainTab, setActiveMainTab] = useState<MainNavKey>('crm')
+  const [activeMainTab, setActiveMainTab] = useState<MainNavKey>('execution')
   const [activeCrmTab, setActiveCrmTab] = useState<CrmSubTabKey>('people')
   const [activeContentTab, setActiveContentTab] = useState<ContentTabKey>('all-assets')
   const [contentBuilderOpen, setContentBuilderOpen] = useState(false)
-  const [executionDesignerOpen, setExecutionDesignerOpen] = useState(false)
   const [activeAnalyticsTab, setActiveAnalyticsTab] = useState<AnalyticsTabKey>('dashboards')
-  const [activeProgramTab, setActiveProgramTab] = useState<ProgramTabKey>('all-programs')
-  const [programCreateOpen, setProgramCreateOpen] = useState(false)
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [smartListModalOpen, setSmartListModalOpen] = useState(false)
 
@@ -59,8 +55,6 @@ function App() {
   function handleMainTabChange(tab: MainNavKey) {
     setActiveMainTab(tab)
     setContentBuilderOpen(false)
-    setExecutionDesignerOpen(false)
-    setProgramCreateOpen(false)
     setCreateMenuOpen(false)
     setOpenPersonId(null)
     setOpenAccountId(null)
@@ -137,15 +131,7 @@ function App() {
     }
 
     if (activeMainTab === 'execution') {
-      return (
-        <ExecutionModule
-          key={activeProgramTab}
-          activeTab={activeProgramTab}
-          onDesignerStateChange={setExecutionDesignerOpen}
-          createOpen={programCreateOpen}
-          onCreateOpenChange={setProgramCreateOpen}
-        />
-      )
+      return <MarketingActivitiesPhaseOne />
     }
 
     if (activeMainTab === 'content') {
@@ -223,19 +209,11 @@ function App() {
           createOptions={
             activeMainTab === 'content'
               ? ['Email', 'Landing Page', 'Form', 'Snippet', 'Template', 'Upload File']
-              : activeMainTab === 'execution'
-                ? ['Smart Campaign', 'Engagement Program', 'Event Program']
-                : activeMainTab === 'analytics'
+              : activeMainTab === 'analytics'
                   ? ['Dashboard', 'Report', 'Attribution Model']
               : undefined
           }
-          createLabel={activeMainTab === 'execution' ? 'New Program' : undefined}
-          onPrimaryCreate={
-            activeMainTab === 'execution' && !executionDesignerOpen
-              ? () => setProgramCreateOpen(true)
-              : undefined
-          }
-          hideCreate={activeMainTab === 'execution' && executionDesignerOpen}
+          hideCreate={activeMainTab === 'execution'}
         />
 
         {activeMainTab === 'crm' && (
@@ -250,15 +228,8 @@ function App() {
           <AnalyticsSubNav activeTab={activeAnalyticsTab} onChange={setActiveAnalyticsTab} />
         )}
 
-        {activeMainTab === 'execution' && !executionDesignerOpen && (
-          <MarketingActivitiesSubNav
-            activeTab={activeProgramTab}
-            onChange={setActiveProgramTab}
-          />
-        )}
-
         <main
-          className={`contentArea ${contentBuilderOpen || executionDesignerOpen ? 'builderContentArea' : ''}`}
+          className={`contentArea ${contentBuilderOpen ? 'builderContentArea' : ''} ${activeMainTab === 'execution' ? 'phaseOneContentArea' : ''}`}
         >
           {renderMainContent()}
         </main>
