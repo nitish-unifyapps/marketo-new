@@ -1,0 +1,1025 @@
+/* Final UI consistency layer
+   Imported after index.css so legacy wireframe dimensions remain functional
+   while typography, spacing, cards, controls, and responsive widths are normalized. */
+
+:root {
+  --ui-font-xs: 10px;
+  --ui-font-sm: 11px;
+  --ui-font-md: 12px;
+  --ui-font-base: 13px;
+  --ui-font-lg: 16px;
+  --ui-font-xl: 20px;
+  --ui-space-1: 4px;
+  --ui-space-2: 8px;
+  --ui-space-3: 12px;
+  --ui-space-4: 16px;
+  --ui-space-5: 20px;
+  --ui-radius-sm: 6px;
+  --ui-radius-md: 9px;
+  --ui-radius-lg: 12px;
+  --ui-border: #e4e7eb;
+  --ui-canvas: #f8fafb;
+  --ui-muted: #667085;
+  --ui-faint: #98a2b3;
+  --ui-shadow: 0 4px 14px rgb(16 24 40 / 6%);
+  --ui-shadow-hover: 0 12px 28px rgb(16 24 40 / 11%);
+
+  --border: var(--ui-border);
+  --canvas: var(--ui-canvas);
+  --muted: var(--ui-muted);
+  --faint: var(--ui-faint);
+  --shadow-sm: 0 1px 3px rgb(16 24 40 / 6%);
+  --shadow-md: var(--ui-shadow-hover);
+}
+
+body {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #202733;
+}
+
+button,
+input,
+select,
+textarea {
+  letter-spacing: 0;
+}
+
+/* Shared controls */
+.button {
+  min-height: 40px;
+  padding-inline: 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.iconButton {
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 7px;
+}
+
+.searchInputWrap {
+  min-height: 42px;
+  border-radius: 9px;
+}
+
+.searchInput {
+  font-size: 13px;
+}
+
+.menuDropdown,
+.activityCreateDropdown,
+.activityContextMenu,
+.widgetMenu,
+.addStepDropdown {
+  border-radius: 10px;
+  box-shadow: var(--ui-shadow-hover);
+}
+
+.menuItem,
+.activityCreateDropdown button,
+.activityContextMenu > button {
+  font-size: 12px;
+}
+
+.badge,
+.assetStatus,
+.executionStatus,
+.reportStatus,
+.miniStatus {
+  min-height: 24px;
+  padding: 5px 9px;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.filterChip,
+.assetTags span,
+.emailSettingsVariableChips button,
+.inlineTokenPills > span {
+  min-height: 26px;
+  padding: 5px 8px;
+  font-size: 10px;
+}
+
+.modalBody {
+  border-radius: 12px;
+}
+
+.modalHeader {
+  min-height: 66px;
+  padding-inline: 22px;
+}
+
+.modalHeader h3 {
+  font-size: 17px;
+}
+
+/* App shell */
+.sectionTitle {
+  font-size: 20px;
+}
+
+.sidebarNavItem {
+  min-height: 46px;
+  font-size: 13px;
+}
+
+.sidebarPersistentSearch input,
+.activityTreeSearch input {
+  font-size: 12px;
+}
+
+.activityTreeRow {
+  min-height: 36px;
+  font-size: 12px;
+}
+
+.activityTreeRow.type-asset,
+.activityTreeRow.type-assets-folder,
+.activityTreeRow.type-asset-category,
+.activityTreeRow.type-members-folder {
+  min-height: 34px;
+  font-size: 11px;
+}
+
+.activityTreeName {
+  line-height: 1.35;
+}
+
+.activityCreateDropdown button {
+  min-height: 38px;
+}
+
+/* CRM */
+.filterPanel {
+  padding: 18px;
+  border-radius: 11px;
+}
+
+.inlineControl {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.inlineControl select,
+.scoreControl strong {
+  font-size: 12px;
+}
+
+.helperText {
+  font-size: 11px;
+}
+
+.tableWrap {
+  border-radius: 11px;
+}
+
+.crmTable {
+  font-size: 13px;
+}
+
+.crmTable th {
+  height: 48px;
+  font-size: 10px;
+}
+
+.crmTable td {
+  height: 62px;
+}
+
+.tableLink,
+.textLink {
+  font-size: 12px;
+}
+
+.panelHeader h3,
+.modalHeader h3 {
+  font-size: 17px;
+}
+
+.panelTab {
+  min-height: 52px;
+  font-size: 11px;
+}
+
+.fieldRow,
+.toggleRow {
+  font-size: 12px;
+}
+
+.fieldRow input {
+  min-height: 41px;
+  font-size: 12px;
+}
+
+.timelineItem strong,
+.accountPanel h4 {
+  font-size: 12px;
+}
+
+.timelineItem p,
+.accountSnapshot p {
+  font-size: 10px;
+}
+
+/* Content library */
+.contentLibraryHeader h2,
+.cardHeader h2 {
+  font-size: 20px;
+}
+
+.contentLibraryHeader p {
+  font-size: 11px;
+}
+
+.assetFilterBar select,
+.sortButton {
+  min-height: 41px;
+  font-size: 11px;
+}
+
+.assetGrid {
+  grid-template-columns: repeat(auto-fill, minmax(245px, 1fr));
+  gap: 16px;
+}
+
+.assetCard {
+  border-radius: 10px;
+}
+
+.assetThumbnail {
+  min-height: 138px;
+}
+
+.assetCardBody {
+  padding: 15px;
+}
+
+.assetName {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.assetMeta {
+  margin-block: 11px 14px;
+  font-size: 10px;
+}
+
+.assetTags span,
+.assetStatus {
+  font-size: 10px;
+}
+
+.fileDropzone strong {
+  font-size: 13px;
+}
+
+.fileDropzone small {
+  font-size: 10px;
+}
+
+.smartListCard {
+  min-height: 205px;
+  padding: 24px;
+  border-radius: 11px;
+}
+
+.smartListCard h3 {
+  font-size: 15px;
+}
+
+.smartListCard > p {
+  font-size: 12px;
+}
+
+.smartListCard small {
+  font-size: 10px;
+}
+
+/* Folder details */
+.folderDetailHeader {
+  min-height: 112px;
+  padding: 18px 26px;
+}
+
+.folderDetailHeader nav button {
+  font-size: 11px;
+}
+
+.folderDetailTitle h2 {
+  font-size: 22px;
+}
+
+.folderDetailTitle p {
+  font-size: 12px;
+}
+
+.folderStats {
+  padding: 14px 26px;
+}
+
+.folderStats span,
+.folderStats p {
+  font-size: 10px;
+}
+
+.folderStats strong {
+  font-size: 17px;
+}
+
+.folderDetailToolbar {
+  margin: 18px 26px 14px;
+  padding: 11px;
+  border-radius: 10px;
+}
+
+.folderDetailToolbar > label,
+.folderDetailToolbar > select {
+  min-height: 41px;
+  font-size: 11px;
+}
+
+.folderContents.grid {
+  grid-template-columns: repeat(auto-fill, minmax(255px, 320px));
+  justify-content: start;
+  gap: 15px;
+  padding-inline: 26px;
+}
+
+.folderContents.grid .folderObjectCard {
+  min-height: 142px;
+  padding: 16px;
+}
+
+.folderObjectCard {
+  border-radius: 10px;
+}
+
+.folderObjectInfo em,
+.folderObjectMeta i,
+.folderObjectMeta small {
+  font-size: 9px;
+}
+
+.folderContents.grid .folderObjectInfo {
+  padding-right: 26px;
+}
+
+.folderObjectInfo em {
+  line-height: 1.35;
+  white-space: normal;
+}
+
+.folderObjectInfo strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.35;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.folderObjectInfo small {
+  font-size: 10px;
+}
+
+.folderImportMenu strong {
+  font-size: 12px;
+}
+
+.folderImportMenu small {
+  font-size: 9px;
+}
+
+.folderImportFields > label,
+.importDestination {
+  font-size: 11px;
+}
+
+.folderImportFields input,
+.folderImportFields select,
+.folderImportFields textarea,
+.importDestination select {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.importStructurePreview header strong,
+.importStructurePreview div > span {
+  font-size: 10px;
+}
+
+/* Shared program editor */
+.programEditorHeader {
+  min-height: 76px;
+  padding-inline: 24px;
+}
+
+.programTitleGroup > input {
+  font-size: 20px;
+}
+
+.programTypeTag,
+.editorProgramStatus {
+  font-size: 11px;
+}
+
+.programEditorTabs {
+  min-height: 54px;
+}
+
+.programEditorTabs button {
+  min-width: 104px;
+  font-size: 13px;
+}
+
+.smartListEditorHeader,
+.flowEditorHeader,
+.phase2Schedule > header,
+.eventSetupTab > header,
+.eventAssetsTab > header,
+.eventMembersTab > header,
+.eventScheduleTab > header,
+.engagementStreamsTab > header,
+.engagementContentTab > header,
+.engagementMembersTab > header,
+.engagementSettingsTab > header,
+.marketoEmailControlPanel > header,
+.emailProgramSetupTab > header,
+.emailProgramTokensTab > header,
+.emailProgramMembersTab > header {
+  min-height: 76px;
+  padding: 15px 24px;
+}
+
+.smartListEditorHeader h3,
+.flowEditorHeader h3,
+.phase2Schedule h3,
+.phase2Results h3,
+.emailProgramTab h3,
+.eventSetupTab h3,
+.eventAssetsTab h3,
+.eventMembersTab h3,
+.eventScheduleTab h3,
+.engagementStreamsTab h3,
+.engagementContentTab h3,
+.engagementMembersTab h3,
+.engagementSettingsTab h3,
+.marketoEmailControlPanel h3,
+.emailProgramSetupTab h3,
+.emailProgramTokensTab h3,
+.emailProgramMembersTab h3 {
+  font-size: 18px;
+}
+
+.smartListEditorHeader p,
+.flowEditorHeader p,
+.phase2Schedule header p,
+.phase2Results header p,
+.emailProgramTab header p,
+.eventSetupTab header p,
+.eventAssetsTab header p,
+.eventMembersTab header p,
+.eventScheduleTab header p,
+.engagementStreamsTab header p,
+.engagementContentTab header p,
+.engagementMembersTab header p,
+.engagementSettingsTab header p,
+.marketoEmailControlPanel header p,
+.emailProgramSetupTab header p,
+.emailProgramTokensTab header p,
+.emailProgramMembersTab header p {
+  font-size: 11px;
+}
+
+/* Smart List editor */
+.smartListPalette > header strong {
+  font-size: 14px;
+}
+
+.smartListPalette > header small,
+.phase2PaletteSearch input,
+.filterPaletteItem {
+  font-size: 10px;
+}
+
+.smartListPalette section > button:first-child strong {
+  font-size: 11px;
+}
+
+.triggerDefinitionCard header strong,
+.filterLogicCard header strong {
+  font-size: 13px;
+}
+
+.triggerDefinitionCard header small,
+.filterLogicCard header small,
+.triggerDefinitionCard label {
+  font-size: 10px;
+}
+
+.triggerDefinitionCard select,
+.conditionRowV2 select,
+.conditionRowV2 input {
+  min-height: 39px;
+  font-size: 11px;
+}
+
+.conditionJoin,
+.conditionIndex,
+.logicToggle button {
+  font-size: 9px;
+}
+
+.filterLogicCard footer button,
+.smartListDropHint p,
+.smartListCanvasFooter > p {
+  font-size: 10px;
+}
+
+/* Flow editor */
+.classicFlowList {
+  width: min(780px, 100%);
+}
+
+.classicFlowStep {
+  min-height: 84px;
+  padding: 12px 15px;
+  border-radius: 10px;
+}
+
+.classicFlowStep strong {
+  font-size: 13px;
+}
+
+.classicFlowStep p {
+  font-size: 10px;
+}
+
+.classicFlowStep > em,
+.addStepDropdown button small {
+  font-size: 9px;
+}
+
+.addStepDropdown button strong {
+  font-size: 11px;
+}
+
+.stepConfigurationPanel > header,
+.emailProgramStepPanel > header {
+  min-height: 72px;
+}
+
+.stepConfigurationPanel header strong,
+.emailProgramStepPanel header strong {
+  font-size: 14px;
+}
+
+.stepConfigurationPanel header small,
+.emailProgramStepPanel header small,
+.phase2Field,
+.emailProgramStepPanel label {
+  font-size: 10px;
+}
+
+.phase2Field input,
+.phase2Field select,
+.phase2Field textarea,
+.emailProgramStepPanel input,
+.emailProgramStepPanel select {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+/* Schedule + results */
+.schedulePrimaryCard header strong,
+.qualificationRulesCard header strong {
+  font-size: 13px;
+}
+
+.schedulePrimaryCard header small,
+.qualificationRulesCard header small,
+.batchScheduleFields label,
+.qualificationRadios small,
+.emailScheduleNote p {
+  font-size: 10px;
+}
+
+.batchScheduleFields input,
+.batchScheduleFields select {
+  min-height: 42px;
+  font-size: 11px;
+}
+
+.qualificationRadios strong,
+.triggerScheduleMessage strong,
+.emailScheduleNote strong {
+  font-size: 12px;
+}
+
+.triggerScheduleMessage p {
+  font-size: 10px;
+}
+
+.phase2Results {
+  padding: 24px;
+}
+
+.phase2KpiGrid {
+  gap: 12px;
+}
+
+.phase2KpiGrid article {
+  min-height: 90px;
+  padding: 15px;
+}
+
+.phase2KpiGrid small,
+.phase2KpiGrid em {
+  font-size: 9px;
+}
+
+.phase2KpiGrid strong {
+  font-size: 18px;
+}
+
+.phase2ResultsChart header strong,
+.campaignMembersCard header strong {
+  font-size: 13px;
+}
+
+.phase2ResultsChart header small,
+.membersTableHead,
+.memberResultRow {
+  font-size: 10px;
+}
+
+.memberResultRow {
+  min-height: 58px;
+}
+
+/* Email program */
+.emailControlGrid {
+  gap: 16px;
+}
+
+.emailControlCard {
+  border-radius: 10px;
+}
+
+.emailControlCard > header {
+  min-height: 70px;
+  padding: 12px 15px;
+}
+
+.emailControlCard header strong {
+  font-size: 14px;
+}
+
+.emailControlCard header small,
+.emailControlCard header em,
+.emailControlCard > footer button:not(.button),
+.emailControlCard > footer label {
+  font-size: 10px;
+}
+
+.audienceNumbers span {
+  font-size: 10px;
+}
+
+.audienceNumbers strong {
+  font-size: 22px;
+}
+
+.controlSelectedEmail strong,
+.scheduleControlSummary strong {
+  font-size: 14px;
+}
+
+.controlSelectedEmail small,
+.controlSelectedEmail button,
+.scheduleControlSummary span,
+.scheduleControlSummary small,
+.approvalChecklist p {
+  font-size: 10px;
+}
+
+.emailProgramActivityStrip span {
+  font-size: 9px;
+}
+
+.emailProgramActivityStrip strong {
+  font-size: 12px;
+}
+
+/* Event / Engagement / Default */
+.eventSetupGrid,
+.engagementSettingsGrid,
+.defaultOverview {
+  gap: 18px;
+}
+
+.eventSetupForm,
+.autoTokenPreview,
+.defaultOverviewFields,
+.defaultTokenCard,
+.engagementSettingsGrid > section {
+  border-radius: 10px;
+}
+
+.eventSetupForm header strong,
+.autoTokenPreview header strong,
+.defaultOverviewFields h3,
+.defaultTokenCard h3,
+.engagementSettingsGrid header strong {
+  font-size: 13px;
+}
+
+.eventSetupForm header small,
+.autoTokenPreview header small,
+.defaultOverviewFields header p,
+.defaultTokenCard header p,
+.engagementSettingsGrid header small {
+  font-size: 10px;
+}
+
+.eventSetupForm > label,
+.eventDateGrid label,
+.eventCapacityRow > label,
+.defaultOverviewFields > label,
+.engagementSettingsGrid section > label {
+  font-size: 11px;
+}
+
+.eventSetupForm input,
+.eventSetupForm select,
+.defaultOverviewFields input,
+.defaultOverviewFields textarea,
+.engagementSettingsGrid input,
+.engagementSettingsGrid select,
+.engagementSettingsGrid textarea {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.eventAssetFolders strong,
+.eventAssetSubgrid header strong,
+.eventScheduleSummary header strong,
+.defaultAssetGrid h4,
+.engagementEmailGrid h4 {
+  font-size: 13px;
+}
+
+.eventAssetFolders small,
+.eventAssetSubgrid header small,
+.eventAssetSubgrid p,
+.defaultAssetGrid p,
+.engagementEmailGrid p {
+  font-size: 10px;
+}
+
+.eventAssetSubgrid > div,
+.defaultAssetGrid,
+.engagementEmailGrid {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.phase3MembersTable > div,
+.defaultMembersTable > div {
+  min-height: 58px;
+  font-size: 10px;
+}
+
+.phase3MembersTable > div:first-child,
+.defaultMembersTable > div:first-child {
+  min-height: 40px;
+  font-size: 9px;
+}
+
+.phase3MembersTable em,
+.defaultMembersTable em {
+  font-size: 9px;
+}
+
+.engagementStream > header input {
+  font-size: 13px;
+}
+
+.streamCadence,
+.streamEmailList small,
+.engagementStream > footer {
+  font-size: 9px;
+}
+
+.streamEmailList strong {
+  font-size: 11px;
+}
+
+/* Email Studio */
+.emailStudioActionBar .builderIdentity strong {
+  font-size: 15px;
+}
+
+.emailStudioActionBar .builderIdentity small,
+.emailDraftHealth > span,
+.emailDraftHealth strong {
+  font-size: 10px;
+}
+
+.emailLibraryTabs button,
+.emailSettingsTabs button,
+.studioModeTabs button {
+  font-size: 10px;
+}
+
+.emailLibraryContent header strong,
+.emailVariableLibrary header strong {
+  font-size: 13px;
+}
+
+.emailLibraryContent header small,
+.emailVariableLibrary header small {
+  font-size: 9px;
+}
+
+.emailBlockCatalog > button {
+  min-height: 94px;
+  padding: 12px 7px;
+}
+
+.emailBlockCatalog button strong {
+  font-size: 11px;
+}
+
+.emailBlockCatalog button small,
+.layoutCatalog small,
+.emailStructureList button small {
+  font-size: 9px;
+}
+
+.emailCanvasBlock > p {
+  font-size: 15px;
+}
+
+.emailCanvasBlock h1 {
+  font-size: 32px;
+}
+
+.emailColumns strong {
+  font-size: 13px;
+}
+
+.emailColumns p {
+  font-size: 10px;
+}
+
+.emailSelectedBlock strong,
+.emailPropertySection > header strong {
+  font-size: 13px;
+}
+
+.emailSelectedBlock small,
+.emailPropertySection > header span,
+.emailControlSplit label {
+  font-size: 9px;
+}
+
+.emailControlLabel,
+.emailColorControl {
+  font-size: 11px;
+}
+
+.emailControlLabel input,
+.emailControlLabel textarea,
+.emailControlLabel select,
+.emailControlSplit input,
+.emailControlSplit select {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+/* Analytics */
+.analyticsPageHeader h2 {
+  font-size: 21px;
+}
+
+.analyticsPageHeader p {
+  font-size: 11px;
+}
+
+.analyticsWidget {
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.analyticsWidget > header h3 {
+  font-size: 14px;
+}
+
+.chartLegend,
+.horizontalBarRow > span,
+.revenueTotal span,
+.areaChartSummary span {
+  font-size: 10px;
+}
+
+.emailKpi > span,
+.emailKpi div span,
+.emailKpi small {
+  font-size: 9px;
+}
+
+.emailKpi > strong,
+.emailKpi div strong {
+  font-size: 17px;
+}
+
+.reportFilterBar select,
+.reportFilterBar > button {
+  min-height: 40px;
+  font-size: 10px;
+}
+
+.reportTableHead,
+.reportRow,
+.attributionTableHead,
+.channelMappingRow,
+.attributionResultRow {
+  font-size: 10px;
+}
+
+.reportRow,
+.channelMappingRow,
+.attributionResultRow {
+  min-height: 58px;
+}
+
+.reportRow b {
+  font-size: 11px;
+}
+
+.attributionSummary span,
+.attributionSummary small {
+  font-size: 9px;
+}
+
+.attributionSummary strong {
+  font-size: 19px;
+}
+
+/* Width and overflow safeguards */
+.mainPane,
+.contentArea,
+.programEditorBody,
+.folderDetailView,
+.emailStudioStage,
+.builderStage,
+.executionResults,
+.analyticsWidget,
+.assetCard,
+.folderObjectCard {
+  min-width: 0;
+}
+
+.assetName,
+.folderObjectInfo strong,
+.classicFlowStep p,
+.streamEmailList strong,
+.reportRow span,
+.memberResultRow span,
+.phase3MembersTable span {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1180px) {
+  .folderContents.grid,
+  .assetGrid,
+  .eventAssetSubgrid > div,
+  .defaultAssetGrid,
+  .engagementEmailGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+
+  .phase2KpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  body { font-size: 13px; }
+  .button { min-height: 38px; font-size: 11px; }
+  .contentArea { padding-inline: 14px; }
+  .folderContents.grid,
+  .assetGrid,
+  .eventAssetSubgrid > div,
+  .defaultAssetGrid,
+  .engagementEmailGrid,
+  .phase2KpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
