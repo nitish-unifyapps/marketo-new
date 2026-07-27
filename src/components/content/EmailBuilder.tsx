@@ -3,6 +3,7 @@ import { Modal } from '../common/Modal'
 
 interface EmailBuilderProps {
   onBack: () => void
+  emailName?: string
 }
 
 type EmailBlockType =
@@ -134,7 +135,7 @@ function createBlock(type: EmailBlockType, sequence: number): EmailBlock {
   return { id: `block-${sequence}`, type, label: catalog?.label ?? type, content: '', ...defaults[type] }
 }
 
-export function EmailBuilder({ onBack }: EmailBuilderProps) {
+export function EmailBuilder({ onBack, emailName = 'Q3 Product Launch' }: EmailBuilderProps) {
   const [blocks, setBlocks] = useState<EmailBlock[]>(initialBlocks)
   const [selectedId, setSelectedId] = useState('hero-cta')
   const [device, setDevice] = useState<'desktop' | 'mobile'>('desktop')
@@ -212,7 +213,7 @@ export function EmailBuilder({ onBack }: EmailBuilderProps) {
 
   return <section className='emailStudio'>
     <header className='emailStudioActionBar'>
-      <div className='builderIdentity'><button type='button' className='backButton' onClick={onBack} aria-label='Back to assets'>←</button><div><strong>Q3 Product Launch</strong><small>Email Draft · {saved ? 'All changes saved' : 'Unsaved changes'}</small></div></div>
+      <div className='builderIdentity'><button type='button' className='backButton' onClick={onBack} aria-label='Back to program'>←</button><div><strong>{emailName}</strong><small>Email Draft · {saved ? 'All changes saved' : 'Unsaved changes'}</small></div></div>
       <div className='emailDraftHealth'><span>Draft completeness</span><i><b style={{ width: '84%' }} /></i><strong>84%</strong></div>
       <div className='builderActions'><button type='button' className='historyButton' title='Version history'>◴</button><button type='button' className='button outline accent' onClick={() => setSaved(true)}>Save Draft</button><button type='button' className='button outline accent'>Preview</button><button type='button' className='button outline accent'>Test Send</button><button type='button' className='button solid'>Submit for Approval</button></div>
     </header>
