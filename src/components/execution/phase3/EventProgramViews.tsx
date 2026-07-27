@@ -40,7 +40,7 @@ const defaultEventSteps: EventStep[] = [
   { id: 8, icon: '×', label: 'Change Status', summary: 'No Show · Send Replay', branch: 'no' },
 ]
 
-export function EventSetupTab() {
+export function EventSetupTab({ channel }: { channel: string }) {
   const [waitlist, setWaitlist] = useState(true)
   const [saved, setSaved] = useState(true)
   const [eventName, setEventName] = useState('Revenue Leaders Webinar')
@@ -55,6 +55,7 @@ export function EventSetupTab() {
     { name: 'EventEndTime', value: endDate.split('T')[1] },
     { name: 'EventCapacity', value: capacity },
     { name: 'EventVenue', value: venue },
+    { name: 'EventChannel', value: channel },
   ]
   const changed = () => setSaved(false)
 
@@ -74,11 +75,12 @@ function EventScheduleSummary() {
   return <section className='eventScheduleSummary'><header><div><span>⑂</span><div><strong>Program Schedule</strong><small>Read-only summary · Managed in the Schedule tab</small></div></div><button type='button'>Open Schedule →</button></header><div>{summary.map((step, index) => <div key={step}><span>{index + 1}</span><strong>{step}</strong>{index < summary.length - 1 && <i>→</i>}</div>)}</div></section>
 }
 
-export function EventMembersTab() {
+export function EventMembersTab({ channel }: { channel: string }) {
   const [members, setMembers] = useState(eventMembers)
   const [selected, setSelected] = useState<number[]>([])
   const [statusFilter, setStatusFilter] = useState('All statuses')
   const filtered = statusFilter === 'All statuses' ? members : members.filter((member) => member.status === statusFilter)
+  void channel
   function changeStatus(status: string) { setMembers((current) => current.map((member) => selected.includes(member.id) ? { ...member, status } : member)) }
   return <div className='eventMembersTab'><header><div><h3>Event Members</h3><p>Manage registration and attendance lifecycle statuses.</p></div><div><button type='button' className='button outline accent'>＋ Add Members</button><button type='button' className='button outline accent'>⚙ Manage Statuses</button></div></header><div className='phase3MemberFilters'><label><span>⌕</span><input placeholder='Search event members…' /></label><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}><option>All statuses</option><option>Invited</option><option>Registered</option><option>Attended</option><option>No Show</option><option>Cancelled</option></select><button type='button' className='button outline accent'>↓ Export</button></div><div className='phase3MembersTable eventTable'><div><span><input type='checkbox' checked={selected.length === filtered.length && filtered.length > 0} onChange={(event) => setSelected(event.target.checked ? filtered.map((member) => member.id) : [])} /></span><span>Name</span><span>Email</span><span>Status</span><span>Registration Date</span><span /></div>{filtered.map((member) => <div key={member.id}><span><input type='checkbox' checked={selected.includes(member.id)} onChange={() => setSelected((current) => current.includes(member.id) ? current.filter((id) => id !== member.id) : [...current, member.id])} /></span><span><i>{member.name.split(' ').map((part) => part[0]).join('')}</i><strong>{member.name}</strong></span><span>{member.email}</span><span><em className={`event-status-${member.status.toLowerCase().replace(' ', '-')}`}>{member.status}</em></span><span>{member.registered}</span><button type='button'>•••</button></div>)}</div>{selected.length > 0 && <div className='phase3BulkBar'><strong>{selected.length} selected</strong><label>Change Status<select defaultValue='' onChange={(event) => changeStatus(event.target.value)}><option value='' disabled>Select status</option><option>Invited</option><option>Registered</option><option>Attended</option><option>No Show</option><option>Cancelled</option></select></label><button type='button'>✉ Send Email</button><button type='button'>↓ Export</button><button type='button' onClick={() => setSelected([])}>×</button></div>}</div>
 }

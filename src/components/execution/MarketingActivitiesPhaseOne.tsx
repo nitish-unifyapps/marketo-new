@@ -3,6 +3,9 @@ import { Modal } from '../common/Modal'
 import { WireframeIcon } from '../common/WireframeIcon'
 import { ProgramEditor } from './phase2/ProgramEditor'
 import { EmailBuilder } from '../content/EmailBuilder'
+import { FormBuilder } from '../content/FormBuilder'
+import { VisualBuilder } from '../content/VisualBuilder'
+import { FolderDetailView, type FolderImportResult } from './phase3/FolderDetailView'
 
 export type ActivityNodeType =
   | 'folder'
@@ -113,6 +116,15 @@ function findProgramAncestorId(nodes: ActivityNode[], id: string, programId?: st
   }
 }
 
+function findNodePath(nodes: ActivityNode[], id: string, path: ActivityNode[] = []): ActivityNode[] | undefined {
+  for (const node of nodes) {
+    const nextPath = [...path, node]
+    if (node.id === id) return nextPath
+    const found = node.children ? findNodePath(node.children, id, nextPath) : undefined
+    if (found) return found
+  }
+}
+
 function mapTree(nodes: ActivityNode[], id: string, transform: (node: ActivityNode) => ActivityNode): ActivityNode[] {
   return nodes.map((node) => node.id === id ? transform(node) : { ...node, children: node.children ? mapTree(node.children, id, transform) : undefined })
 }
@@ -169,6 +181,7 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [openAssetId, setOpenAssetId] = useState<string | null>(null)
+  const [openFolderId, setOpenFolderId] = useState<string | null>(null)
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [createState, setCreateState] = useState<{ kind: CreateKind; destinationId: string } | null>(null)
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
@@ -181,6 +194,8 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
   const visibleTree = useMemo(() => filterTree(tree, query), [query, tree])
   const openProgram = openProgramId ? findNode(tree, openProgramId) : undefined
   const openAsset = openAssetId ? findNode(tree, openAssetId) : undefined
+  const openFolder = openFolderId ? findNode(tree, openFolderId) : undefined
+  const openFolderPath = openFolderId ? findNodePath(tree, openFolderId) ?? [] : []
   const folderOptions = useMemo(() => {
     const rows: Array<{ id: string; name: string; level: number }> = [{ id: 'root', name: 'Marketing Activities', level: 0 }]
     function visit(nodes: ActivityNode[], level: number) {
@@ -241,6 +256,7 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
     if (selectedId === deleteNode.id) setSelectedId(null)
     if (openProgramId === deleteNode.id) setOpenProgramId(null)
     if (openAssetId === deleteNode.id) setOpenAssetId(null)
+    if (openFolderId === deleteNode.id) setOpenFolderId(null)
     setDeleteNode(null)
   }
 
@@ -263,11 +279,19 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
     if (programTypes.includes(node.type)) {
       setOpenProgramId(nodeId)
       setOpenAssetId(null)
+      setOpenFolderId(null)
       return
     }
-    if (node.type === 'asset' && node.assetType === 'email') {
+    if (node.type === 'asset') {
       setOpenProgramId(findProgramAncestorId(tree, nodeId) ?? null)
       setOpenAssetId(nodeId)
+      setOpenFolderId(null)
+      return
+    }
+    if (['folder', 'assets-folder', 'asset-category', 'members-folder'].includes(node.type)) {
+      setOpenFolderId(nodeId)
+      setOpenProgramId(null)
+      setOpenAssetId(null)
     }
   }
 
@@ -294,6 +318,54 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
     setTree((current) => addToTree(current, categoryId, asset))
     setExpanded((current) => new Set([...current, program.id, `${program.id}-assets`, categoryId]))
     setContextMenu(null)
+  }
+
+  function handleFolderImport(result: FolderImportResult) {
+    if (['email', 'form', 'landing-page'].includes(result.kind)) {
+      const program = findNode(tree, result.destinationId)
+      if (!program || !programTypes.includes(program.type) || program.type === 'smart-campaign') return
+      const assetType = result.kind as 'email' | 'form' | 'landing-page'
+      const categoryId = `${program.id}-${assetType === 'email' ? 'emails' : assetType === 'landing-page' ? 'pages' : 'forms'}`
+      const asset: ActivityNode = { id: `imported-${assetType}-${nextId.current++}`, name: result.name, type: 'asset', assetType }
+      setTree((current) => addToTree(current, categoryId, asset))
+      setExpanded((current) => new Set([...current, program.id, `${program.id}-assets`, categoryId]))
+      setOpenFolderId(categoryId)
+      setSelectedId(asset.id)
+      return
+    }
+
+    const path = findNodePath(tree, result.destinationId) ?? []
+    const destinationFolder = [...path].reverse().find((node) => node.type === 'folder')
+    const destinationId = destinationFolder?.id ?? 'root'
+    const id = `imported-${result.kind}-${nextId.current++}`
+    if (result.kind === 'smart-campaign') {
+      const campaign: ActivityNode = { id, name: result.name, type: 'smart-campaign', campaignMode: result.campaignMode ?? 'trigger', status: 'draft' }
+      setTree((current) => addToTree(current, destinationId, campaign))
+      setExpanded((current) => new Set([...current, destinationId]))
+      setSelectedId(id)
+      setOpenProgramId(id)
+      setOpenFolderId(null)
+      return
+    }
+
+    const programType = result.programType ?? 'default-program'
+    const samples = result.mode === 'template'
+      ? programType === 'email-program'
+        ? { email: [`${result.template ?? 'Email'} Draft`] }
+        : programType === 'event-program'
+          ? { email: ['Registration Confirmation', 'Event Reminder'], 'landing-page': ['Registration Page'], form: ['Registration Form'] }
+          : programType === 'engagement-program'
+            ? { email: ['Welcome Email', 'Nurture Touch 2'] }
+            : {}
+      : {}
+    const assets = assetsFor(id, samples)
+    const children = programType === 'default-program' ? [...assets, { id: `${id}-members`, name: 'Members', type: 'members-folder' as const }] : assets
+    const program: ActivityNode = { id, name: result.name, type: programType, status: 'draft', children }
+    setTree((current) => addToTree(current, destinationId, program))
+    setExpanded((current) => new Set([...current, destinationId, id]))
+    setSelectedId(id)
+    setOpenProgramId(id)
+    setOpenFolderId(null)
   }
 
   function moveNode(targetId: string) {
@@ -331,7 +403,7 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
       <div className='activityTreeScroll'>{visibleTree.map((node) => <TreeNode key={node.id} node={node} level={0} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={toggleNode} onSelect={setSelectedId} onOpen={openProgramEditor} onContextMenu={handleContextMenu} onDragStart={handleDragStart} onDragEnd={() => { setDraggedId(null); setDropTargetId(null) }} onDragOverFolder={setDropTargetId} onDrop={moveNode} />)}</div>
     </aside>
 
-    {openAsset?.type === 'asset' && openAsset.assetType === 'email' ? <EmailBuilder key={openAsset.id} emailName={openAsset.name} onBack={() => setOpenAssetId(null)} /> : openProgram && programTypes.includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a program from the tree to view details.</h2><p>Click any program or email asset to open its editor.</p></div></main>}
+    {openAsset?.type === 'asset' ? openAsset.assetType === 'email' ? <EmailBuilder key={openAsset.id} emailName={openAsset.name} onBack={() => setOpenAssetId(null)} /> : openAsset.assetType === 'form' ? <FormBuilder key={openAsset.id} onBack={() => setOpenAssetId(null)} /> : <VisualBuilder key={openAsset.id} kind='landing-page' onBack={() => setOpenAssetId(null)} /> : openProgram && programTypes.includes(openProgram.type) ? <ProgramEditor key={openProgram.id} node={openProgram} onRename={(name) => setTree((current) => mapTree(current, openProgram.id, (node) => ({ ...node, name })))} onStatusChange={(status) => updateStatus(openProgram.id, status)} /> : openFolder && ['folder', 'assets-folder', 'asset-category', 'members-folder'].includes(openFolder.type) ? <FolderDetailView key={openFolder.id} folder={openFolder} breadcrumbs={openFolderPath} programs={flattenPrograms(tree)} onOpenNode={openProgramEditor} onNewFolder={() => openCreate('folder', openFolder.id)} onImport={handleFolderImport} /> : <main className='activityPhasePlaceholder'><div><span>✣</span><h2>Select a folder, program, campaign, or asset.</h2><p>Click any tree item to open its detail view.</p></div></main>}
 
     {contextMenu && <ActivityContextMenu node={findNode(tree, contextMenu.nodeId)} position={contextMenu} clipboardAvailable={Boolean(clipboard)} onCreate={(kind) => openCreate(kind, contextMenu.nodeId)} onOpen={() => openProgramEditor(contextMenu.nodeId)} onClone={cloneProgram} onStatus={updateStatus} onRename={(node) => { setRenameNode(node); setContextMenu(null) }} onDelete={(node) => { setDeleteNode(node); setContextMenu(null) }} onCopy={(node) => { setClipboard(node); setContextMenu(null) }} onPaste={pasteInto} onCreateAsset={createLocalAsset} onClose={() => setContextMenu(null)} />}
     {createState && (createState.kind === 'import' ? <ImportProgramModal destinationId={createState.destinationId} folderOptions={folderOptions} programs={flattenPrograms(tree)} onClose={() => setCreateState(null)} onImport={importProgram} /> : <CreateProgramModal state={createState} folderOptions={folderOptions} onClose={() => setCreateState(null)} onCreate={createItem} />)}
@@ -358,7 +430,7 @@ function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onTo
   const matches = Boolean(query && node.name.toLowerCase().includes(query.toLowerCase()))
   const style = { '--tree-level': level } as CSSProperties
   return <div className='activityTreeNode' style={style}>
-    <button type='button' title={`${node.name} · ${treeObjectLabel(node)}`} draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id); if (programTypes.includes(node.type) || node.type === 'asset') onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
+    <button type='button' title={`${node.name} · ${treeObjectLabel(node)}`} draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id); onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
       {level > 0 && <i className='treeConnector' />}
       <span className={`treeChevron ${isExpandable ? '' : 'hidden'}`}>{isOpen ? '⌄' : '›'}</span>
       <TreeItemIcon type={node.type} open={isOpen} assetType={node.assetType} campaignMode={node.campaignMode} />
@@ -404,7 +476,7 @@ function ActivityContextMenu({ node, position, clipboardAvailable, onCreate, onO
   return <div className='activityContextMenu' style={{ left: position.x, top: position.y }} onClick={(event) => event.stopPropagation()}>
     <header><TreeItemIcon type={node.type} open assetType={node.assetType} campaignMode={node.campaignMode} /><strong>{node.name}</strong><button type='button' onClick={onClose}>×</button></header>
     {isFolder && <>{createOptions.map((option) => <button type='button' key={option.kind} onClick={() => onCreate(option.kind)}><CreateKindIcon kind={option.kind} />{option.label}</button>)}<i /><button type='button' disabled={!clipboardAvailable} onClick={() => onPaste(node.id)}><span>▣</span>Paste</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
-    {isProgram && <><button type='button' onClick={onOpen}><span>↗</span>Open</button><button type='button' onClick={onOpen}><span>✎</span>Edit</button><button type='button' onClick={() => onClone(node)}><span>▣</span>Clone</button><button type='button' onClick={() => onStatus(node.id, node.status === 'active' ? 'paused' : 'active')}><span>●</span>{node.status === 'active' ? 'Deactivate' : 'Activate'}</button><button type='button' onClick={() => onStatus(node.id, 'paused')}><span>▱</span>Archive</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' onClick={() => onCopy(node)}><span>□</span>Copy</button>{!isSmart && <><i /><div className='contextSubheading'>Create Local Asset</div><button type='button' onClick={() => onCreateAsset(node, 'email')}><span>✉</span>Email</button><button type='button' onClick={() => onCreateAsset(node, 'landing-page')}><span>▤</span>Landing Page</button><button type='button' onClick={() => onCreateAsset(node, 'form')}><span>☷</span>Form</button></>}<i /><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
+    {isProgram && <><button type='button' onClick={onOpen}><span>↗</span>Open</button><button type='button' onClick={onOpen}><span>✎</span>Edit</button><button type='button' onClick={() => onClone(node)}><span>▣</span>Clone</button><button type='button' onClick={() => onStatus(node.id, node.status === 'active' ? 'paused' : 'active')}><span>●</span>{node.status === 'active' ? 'Deactivate' : 'Activate'}</button><button type='button' onClick={() => onStatus(node.id, 'paused')}><span>▱</span>Archive</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button' onClick={() => onCopy(node)}><span>□</span>Copy</button>{!isSmart && <><i /><button type='button' onClick={() => onCreate('smart-campaign')}><CreateKindIcon kind='smart-campaign' />New Smart Campaign</button><div className='contextSubheading'>Create Local Asset</div><button type='button' onClick={() => onCreateAsset(node, 'email')}><span>✉</span>Email</button><button type='button' onClick={() => onCreateAsset(node, 'landing-page')}><span>▤</span>Landing Page</button><button type='button' onClick={() => onCreateAsset(node, 'form')}><span>☷</span>Form</button></>}<i /><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
     {isAsset && <><button type='button' onClick={onOpen}><span>✎</span>Edit</button><button type='button' onClick={onOpen}><span>◉</span>Preview</button><button type='button' onClick={() => onRename(node)}><span>✎</span>Rename</button><button type='button'><span>↗</span>Move to Global Content</button><button type='button' onClick={() => onCopy(node)}><span>□</span>Copy to Clipboard</button><i /><button type='button' className='danger' onClick={() => onDelete(node)}><span>×</span>Delete</button></>}
   </div>
 }
