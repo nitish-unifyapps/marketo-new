@@ -1,0 +1,933 @@
+/* Right-side detail and editor polish
+   This layer intentionally excludes the primary sidebar. */
+
+:root {
+  --detail-bg: #f6f8fa;
+  --detail-surface: #ffffff;
+  --detail-border: #e5e8ec;
+  --detail-radius: 12px;
+  --detail-header-height: 84px;
+  --detail-shadow: 0 2px 8px rgb(16 24 40 / 5%);
+  --detail-shadow-hover: 0 10px 26px rgb(16 24 40 / 10%);
+}
+
+/* Right-side shell */
+.mainPane,
+.contentArea,
+.programEditorBody,
+.folderDetailView,
+.emailStudio,
+.visualBuilder,
+.standaloneFormBuilder {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.contentArea {
+  background: var(--detail-bg);
+}
+
+.contentArea:not(.builderContentArea):not(.phaseOneContentArea) {
+  padding: 28px;
+}
+
+.builderContentArea,
+.phaseOneContentArea {
+  padding: 0;
+}
+
+.viewWrap {
+  max-width: 1440px;
+}
+
+/* One detail header system */
+.folderDetailHeader,
+.programEditorHeader,
+.smartListEditorHeader,
+.flowEditorHeader,
+.phase2Schedule > header,
+.marketoEmailControlPanel > header,
+.emailProgramSetupTab > header,
+.emailProgramTokensTab > header,
+.emailProgramMembersTab > header,
+.eventSetupTab > header,
+.eventAssetsTab > header,
+.eventMembersTab > header,
+.eventScheduleTab > header,
+.engagementStreamsTab > header,
+.engagementContentTab > header,
+.engagementMembersTab > header,
+.engagementSettingsTab > header,
+.analyticsPageHeader,
+.contentLibraryHeader,
+.defaultAssetsView > header,
+.defaultMembersView > header {
+  min-height: var(--detail-header-height);
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--detail-border);
+  background: var(--detail-surface);
+}
+
+.folderDetailHeader h2,
+.programTitleGroup > input,
+.analyticsPageHeader h2,
+.contentLibraryHeader h2 {
+  color: #1d2633;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -.35px;
+}
+
+.smartListEditorHeader h3,
+.flowEditorHeader h3,
+.phase2Schedule h3,
+.marketoEmailControlPanel h3,
+.emailProgramSetupTab h3,
+.emailProgramTokensTab h3,
+.emailProgramMembersTab h3,
+.eventSetupTab h3,
+.eventAssetsTab h3,
+.eventMembersTab h3,
+.eventScheduleTab h3,
+.engagementStreamsTab h3,
+.engagementContentTab h3,
+.engagementMembersTab h3,
+.engagementSettingsTab h3,
+.defaultAssetsView h3,
+.defaultMembersView h3 {
+  color: #1d2633;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: -.15px;
+}
+
+.smartListEditorHeader p,
+.flowEditorHeader p,
+.phase2Schedule header p,
+.marketoEmailControlPanel header p,
+.emailProgramSetupTab header p,
+.emailProgramTokensTab header p,
+.emailProgramMembersTab header p,
+.eventSetupTab header p,
+.eventAssetsTab header p,
+.eventMembersTab header p,
+.eventScheduleTab header p,
+.engagementStreamsTab header p,
+.engagementContentTab header p,
+.engagementMembersTab header p,
+.engagementSettingsTab header p,
+.defaultAssetsView header p,
+.defaultMembersView header p,
+.analyticsPageHeader p,
+.contentLibraryHeader p {
+  margin-top: 4px;
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* Tabs */
+.programEditorTabs,
+.subNav,
+.settingsTabs,
+.emailSettingsTabs,
+.emailLibraryTabs {
+  min-height: 54px;
+  border-bottom: 1px solid var(--detail-border);
+  background: white;
+}
+
+.programEditorTabs {
+  padding-inline: 22px;
+}
+
+.programEditorTabs button,
+.subNavTab {
+  min-height: 54px;
+  padding-inline: 18px;
+  font-size: 13px;
+}
+
+.programEditorTabs button::after,
+.subNavTab::after {
+  height: 3px;
+}
+
+/* General right-side surfaces */
+.folderObjectCard,
+.assetCard,
+.smartListCard,
+.emailControlCard,
+.triggerDefinitionCard,
+.filterLogicCard,
+.classicFlowStep,
+.schedulePrimaryCard,
+.qualificationRulesCard,
+.phase2ResultsChart,
+.campaignMembersCard,
+.eventSetupForm,
+.autoTokenPreview,
+.eventAssetSubgrid,
+.eventScheduleSummary,
+.engagementStream,
+.defaultOverviewFields,
+.defaultTokenCard,
+.defaultAssetGrid article,
+.analyticsWidget,
+.reportTable,
+.attributionModelCard,
+.attributionDataCard,
+.emailPropertySection,
+.contentConfigSection,
+.mappingPreviewCard {
+  border-color: var(--detail-border);
+  border-radius: var(--detail-radius);
+  background: var(--detail-surface);
+  box-shadow: var(--detail-shadow);
+}
+
+.folderObjectCard:hover,
+.assetCard:hover,
+.smartListCard:hover,
+.emailControlCard:hover,
+.classicFlowStep:hover,
+.defaultAssetGrid article:hover,
+.analyticsWidget:hover {
+  border-color: rgb(217 119 87 / 55%);
+  box-shadow: var(--detail-shadow-hover);
+}
+
+/* Form controls */
+.folderDetailView input,
+.folderDetailView select,
+.folderDetailView textarea,
+.phase2ProgramEditor input,
+.phase2ProgramEditor select,
+.phase2ProgramEditor textarea,
+.emailStudioSettings input,
+.emailStudioSettings select,
+.emailStudioSettings textarea,
+.builderSettings input,
+.builderSettings select,
+.builderSettings textarea,
+.reportsView input,
+.reportsView select,
+.attributionView input,
+.attributionView select {
+  font-family: inherit;
+}
+
+.folderDetailToolbar > label,
+.folderDetailToolbar > select,
+.phase3MemberFilters > label,
+.phase3MemberFilters > select,
+.defaultMembersToolbar > label,
+.defaultMembersToolbar > select,
+.reportFilterBar > label,
+.reportFilterBar > select,
+.assetFilterBar > select {
+  min-height: 42px;
+  border-color: var(--detail-border);
+  border-radius: 8px;
+  background: white;
+}
+
+.propertyField,
+.emailControlLabel,
+.phase2Field,
+.eventSetupForm > label,
+.engagementSettingsGrid section > label,
+.defaultOverviewFields > label,
+.folderImportFields > label {
+  gap: 7px;
+  color: #475467;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.propertyField input,
+.propertyField select,
+.propertyField textarea,
+.emailControlLabel input,
+.emailControlLabel select,
+.emailControlLabel textarea,
+.phase2Field input,
+.phase2Field select,
+.phase2Field textarea {
+  min-height: 42px;
+  border-color: var(--detail-border);
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.propertyField input:focus,
+.propertyField select:focus,
+.propertyField textarea:focus,
+.emailControlLabel input:focus,
+.emailControlLabel select:focus,
+.emailControlLabel textarea:focus,
+.phase2Field input:focus,
+.phase2Field select:focus,
+.phase2Field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgb(217 119 87 / 10%);
+}
+
+/* Folder detail */
+.folderDetailView {
+  background: var(--detail-bg);
+}
+
+.folderDetailHeader {
+  min-height: 108px;
+}
+
+.folderStats {
+  gap: 10px;
+  padding: 15px 28px;
+  border-bottom: 1px solid var(--detail-border);
+  background: white;
+}
+
+.folderStats > div {
+  min-height: 64px;
+  padding: 12px 14px;
+  border: 1px solid #edf0f3;
+  border-radius: 9px;
+  background: #f9fafb;
+}
+
+.folderStats span,
+.folderStats p {
+  font-size: 11px;
+}
+
+.folderStats strong {
+  font-size: 20px;
+}
+
+.folderDetailToolbar {
+  margin: 18px 28px 15px;
+  padding: 12px;
+  border-color: var(--detail-border);
+  border-radius: 11px;
+  box-shadow: var(--detail-shadow);
+}
+
+.folderContents.grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 330px));
+  gap: 16px;
+  padding-inline: 28px;
+}
+
+.folderContents.grid .folderObjectCard {
+  min-height: 150px;
+  padding: 17px;
+}
+
+.folderObjectVisual {
+  width: 50px;
+  height: 50px;
+}
+
+.folderObjectInfo strong {
+  font-size: 14px;
+}
+
+.folderObjectInfo small,
+.folderObjectMeta small,
+.folderObjectMeta i {
+  font-size: 10px;
+}
+
+.folderObjectInfo em {
+  color: #b85f42;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.folderEmptyState {
+  max-width: 520px;
+  margin: 50px auto;
+  padding: 48px;
+  border: 1px dashed #d6dae0;
+  border-radius: 12px;
+  background: white;
+}
+
+/* CRM */
+.contentArea > .viewWrap {
+  width: 100%;
+}
+
+.filterPanel {
+  border-color: var(--detail-border);
+  background: white;
+  box-shadow: var(--detail-shadow);
+}
+
+.crmTable th {
+  color: #667085;
+  background: #f7f9fb;
+}
+
+.crmTable td {
+  color: #2d3542;
+}
+
+.crmTable tbody tr:hover {
+  background: #fff7f4;
+}
+
+/* Content library */
+.contentLibraryHeader {
+  margin: -28px -32px 20px;
+}
+
+.assetFilterBar {
+  padding: 12px;
+  border-color: var(--detail-border);
+  border-radius: 11px;
+  background: white;
+  box-shadow: var(--detail-shadow);
+}
+
+.assetGrid {
+  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
+  gap: 16px;
+}
+
+.assetCard {
+  min-width: 0;
+  border-radius: 11px;
+}
+
+.assetCardBody {
+  padding: 16px;
+}
+
+.assetCardFooter {
+  gap: 10px;
+  padding-top: 2px;
+}
+
+/* Program editor shell */
+.phase2ProgramEditor {
+  background: var(--detail-bg);
+}
+
+.programEditorHeader {
+  flex: 0 0 auto;
+}
+
+.programEditorBody {
+  min-height: 0;
+  overflow: auto;
+  background: var(--detail-bg);
+}
+
+.programSettingsScrim,
+.memberDetailScrim {
+  backdrop-filter: blur(2px);
+}
+
+.phase2ProgramSettings,
+.stepConfigurationPanel,
+.emailProgramStepPanel,
+.engagementMemberDetail {
+  box-shadow: -14px 0 38px rgb(16 24 40 / 18%);
+}
+
+/* Smart List */
+.phase2SmartList {
+  min-height: 100%;
+}
+
+.smartListWorkspace {
+  min-height: 0;
+}
+
+.smartListPalette {
+  background: #f6f8fa;
+}
+
+.smartListCanvas {
+  background-color: var(--detail-bg);
+}
+
+.smartListCanvasInner {
+  width: min(860px, calc(100% - 48px));
+  margin-block: 28px;
+}
+
+.triggerDefinitionCard,
+.filterLogicCard {
+  margin-bottom: 16px;
+}
+
+.triggerDefinitionCard > header,
+.filterLogicCard > header,
+.schedulePrimaryCard > header,
+.qualificationRulesCard > header,
+.emailControlCard > header {
+  background: #fafbfc;
+}
+
+.conditionRowV2 {
+  min-height: 60px;
+}
+
+.filterLogicCard > footer {
+  padding: 12px 15px;
+}
+
+.smartListCanvasFooter {
+  min-height: 68px;
+  padding-inline: 24px;
+}
+
+/* Flow */
+.flowEditorHeader {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+}
+
+.classicFlowWorkspace {
+  padding: 30px;
+}
+
+.classicFlowList {
+  width: min(820px, 100%);
+}
+
+.classicFlowStep {
+  min-height: 86px;
+  padding: 14px 16px;
+}
+
+.stepTypeIcon {
+  width: 44px;
+  height: 44px;
+}
+
+.addStepDropdown {
+  width: min(500px, calc(100vw - 60px));
+  padding: 9px;
+}
+
+.stepConfigBody,
+.emailProgramStepPanel > div {
+  min-height: 0;
+  padding: 18px;
+}
+
+.stepConfigBody > footer,
+.emailProgramStepPanel > div > footer {
+  margin-inline: -18px;
+  margin-bottom: -18px;
+  padding: 14px 18px;
+}
+
+/* Schedule */
+.scheduleContentGrid {
+  gap: 18px;
+  max-width: 1080px;
+  margin-top: 28px;
+}
+
+.schedulePrimaryCard,
+.qualificationRulesCard {
+  min-height: 280px;
+}
+
+.batchScheduleFields,
+.reentrySettings {
+  padding: 18px;
+}
+
+.scheduleActivationFooter {
+  min-height: 80px;
+  padding-inline: 28px;
+}
+
+/* Results */
+.phase2Results {
+  max-width: 1440px;
+  margin: auto;
+  padding: 28px;
+}
+
+.phase2KpiGrid {
+  grid-template-columns: repeat(3, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.phase2KpiGrid article {
+  min-height: 96px;
+  padding: 16px;
+}
+
+.phase2ResultsChart,
+.campaignMembersCard {
+  border-radius: 12px;
+}
+
+.phase2ResultsChart > header,
+.campaignMembersCard > header {
+  padding: 15px 18px;
+}
+
+/* Email Program */
+.marketoEmailControlPanel,
+.emailProgramSetupTab,
+.emailProgramTokensTab,
+.emailProgramMembersTab {
+  background: var(--detail-bg);
+}
+
+.emailControlGrid {
+  grid-template-columns: repeat(2, minmax(330px, 1fr));
+  gap: 18px;
+  max-width: 1180px;
+  margin-block: 24px;
+}
+
+.emailControlCard {
+  min-height: 270px;
+}
+
+.emailControlCard > header {
+  padding-inline: 16px;
+}
+
+.emailControlCard > footer {
+  padding: 9px 14px;
+}
+
+.emailProgramActivityStrip {
+  max-width: 1140px;
+  border-radius: 10px;
+}
+
+.emailSetupGrid,
+.emailTokensTable,
+.tokenUsageHelp {
+  max-width: 1120px;
+}
+
+/* Event */
+.eventSetupGrid,
+.engagementSettingsGrid,
+.defaultOverview {
+  max-width: 1120px;
+  gap: 20px;
+  margin-top: 26px;
+}
+
+.eventSetupForm > header,
+.autoTokenPreview > header,
+.defaultOverviewFields > header,
+.defaultTokenCard > header,
+.engagementSettingsGrid section > header {
+  min-height: 62px;
+  padding: 14px 16px;
+}
+
+.eventAssetFolders {
+  gap: 14px;
+  padding: 22px 28px 16px;
+}
+
+.eventAssetFolders > button {
+  min-height: 84px;
+  padding: 14px;
+}
+
+.eventAssetSubgrid,
+.eventScheduleSummary {
+  margin-inline: 28px;
+}
+
+.eventAssetSubgrid > div {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  padding: 16px;
+}
+
+.eventStepList {
+  width: min(820px, calc(100% - 48px));
+  margin-top: 28px;
+}
+
+.eventAutomationStep {
+  min-height: 82px;
+  padding: 13px 15px;
+}
+
+/* Engagement */
+.streamsBoard {
+  gap: 40px;
+  padding: 24px 28px 38px;
+}
+
+.streamColumnWrap {
+  flex-basis: 310px;
+}
+
+.engagementStream {
+  min-height: 520px;
+}
+
+.engagementStream > header {
+  padding: 14px;
+}
+
+.streamEmailList {
+  padding: 12px;
+}
+
+.streamEmailList article {
+  min-height: 68px;
+  padding: 10px;
+}
+
+.engagementEmailGrid,
+.defaultAssetGrid {
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 24px 28px;
+}
+
+.phase3MemberFilters,
+.defaultMembersToolbar {
+  margin: 16px 28px 12px;
+  padding: 11px;
+  border-radius: 10px;
+  background: white;
+  box-shadow: var(--detail-shadow);
+}
+
+.phase3MembersTable,
+.defaultMembersTable {
+  margin-inline: 28px;
+  border-radius: 10px;
+}
+
+/* Default program */
+.defaultOverview {
+  padding-inline: 24px;
+}
+
+.defaultOverviewFields,
+.defaultTokenCard {
+  min-height: 320px;
+}
+
+.defaultTokenTable > div {
+  min-height: 50px;
+}
+
+/* Email Studio */
+.emailStudio {
+  background: var(--detail-bg);
+}
+
+.emailStudioActionBar {
+  min-height: 72px;
+  border-bottom-color: var(--detail-border);
+}
+
+.emailStudioLayout {
+  min-height: 0;
+}
+
+.emailStudioLibrary,
+.emailStudioSettings {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.emailStudioStage {
+  min-height: 0;
+}
+
+.emailStudioToolbar {
+  min-height: 52px;
+}
+
+.emailCanvasSurface {
+  padding: 34px;
+}
+
+.emailDocument {
+  width: min(700px, 100%);
+  border-radius: 2px;
+}
+
+.emailPropertySection {
+  padding: 16px;
+  box-shadow: none;
+}
+
+.emailSelectedBlock {
+  padding: 15px;
+}
+
+.emailBlockCatalog {
+  gap: 10px;
+}
+
+.emailBlockCatalog > button {
+  border-radius: 9px;
+}
+
+/* Analytics and reports */
+.analyticsDashboard,
+.attributionView,
+.reportsView {
+  max-width: 1440px;
+  margin: auto;
+}
+
+.analyticsWidgetGrid,
+.attributionChartGrid {
+  gap: 16px;
+}
+
+.analyticsWidget {
+  padding: 22px;
+}
+
+.reportFilterBar {
+  padding: 12px;
+  border-radius: 10px;
+  background: white;
+  box-shadow: var(--detail-shadow);
+}
+
+.reportTable,
+.attributionDataCard {
+  border-radius: 11px;
+}
+
+.reportRow,
+.channelMappingRow,
+.attributionResultRow {
+  min-height: 60px;
+}
+
+/* Empty states */
+.assetEmpty,
+.emailEmptyProperties,
+.scheduleEmptyState,
+.folderEmptyState {
+  color: #667085;
+}
+
+.assetEmpty,
+.folderEmptyState {
+  min-height: 220px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Scroll containment */
+.phase2ProgramEditor,
+.emailStudio,
+.visualBuilder,
+.standaloneFormBuilder {
+  min-height: 0;
+}
+
+.phase2ProgramSettings,
+.stepConfigurationPanel,
+.emailProgramStepPanel,
+.engagementMemberDetail {
+  overflow: hidden;
+}
+
+.phase2SettingsBody,
+.stepConfigBody,
+.emailProgramStepPanel > div,
+.memberDetailBody {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@media (min-width: 900px) and (max-width: 1180px) {
+  .emailControlGrid,
+  .scheduleContentGrid,
+  .eventSetupGrid,
+  .engagementSettingsGrid,
+  .defaultOverview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .phase2KpiGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899px) {
+  .folderDetailHeader,
+  .smartListEditorHeader,
+  .flowEditorHeader,
+  .phase2Schedule > header,
+  .marketoEmailControlPanel > header,
+  .eventSetupTab > header,
+  .engagementStreamsTab > header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .emailControlGrid,
+  .scheduleContentGrid,
+  .eventSetupGrid,
+  .engagementSettingsGrid,
+  .defaultOverview,
+  .phase2KpiGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .folderContents.grid,
+  .assetGrid,
+  .eventAssetSubgrid > div,
+  .engagementEmailGrid,
+  .defaultAssetGrid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .folderDetailHeader,
+  .programEditorHeader,
+  .smartListEditorHeader,
+  .flowEditorHeader,
+  .phase2Schedule > header,
+  .marketoEmailControlPanel > header,
+  .eventSetupTab > header,
+  .engagementStreamsTab > header {
+    padding: 16px;
+  }
+
+  .folderStats,
+  .folderDetailToolbar,
+  .folderContents.grid,
+  .phase2Results,
+  .eventAssetFolders,
+  .eventAssetSubgrid,
+  .eventScheduleSummary,
+  .engagementEmailGrid,
+  .defaultAssetGrid,
+  .phase3MemberFilters,
+  .phase3MembersTable {
+    margin-inline: 14px;
+    padding-inline: 0;
+  }
+
+  .folderStats {
+    grid-template-columns: 1fr;
+    padding-inline: 14px;
+  }
+}
