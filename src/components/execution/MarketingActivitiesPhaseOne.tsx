@@ -67,19 +67,20 @@ const initialTree: ActivityNode[] = [
   },
   {
     id: 'folder-demand', name: 'Demand Generation', type: 'folder', children: [
-      { id: 'program-q3-launch', name: 'Q3 Product Launch', type: 'email-program', status: 'active', children: assetsFor('program-q3-launch', { email: ['Launch Announcement', 'Launch Follow-up'], 'landing-page': ['Product Launch Page'], form: ['Early Access Form'] }) },
-      { id: 'program-abm', name: 'Enterprise ABM Program', type: 'default-program', status: 'draft', children: [...assetsFor('program-abm', { email: ['Executive Outreach'] }), { id: 'program-abm-members', name: 'Members', type: 'members-folder' }] },
+      { id: 'program-q3-launch', name: 'Q3 Product Launch — Email Program', type: 'email-program', status: 'active', children: assetsFor('program-q3-launch', { email: ['Launch Announcement', 'Launch Follow-up'], 'landing-page': ['Product Launch Page'], form: ['Early Access Form'] }) },
+      { id: 'program-abm', name: 'Enterprise ABM — Default Program', type: 'default-program', status: 'draft', children: [...assetsFor('program-abm', { email: ['Executive Outreach'] }), { id: 'program-abm-members', name: 'Members', type: 'members-folder' }] },
     ],
   },
   {
     id: 'folder-events', name: 'Events', type: 'folder', children: [
-      { id: 'program-webinar', name: 'Revenue Leaders Webinar', type: 'event-program', status: 'paused', children: assetsFor('program-webinar', { email: ['Registration Confirmation', 'Event Reminder'], 'landing-page': ['Webinar Registration'], form: ['Registration Form'] }) },
+      { id: 'program-webinar', name: 'Revenue Leaders — Event Program', type: 'event-program', status: 'paused', children: assetsFor('program-webinar', { email: ['Registration Confirmation', 'Event Reminder'], 'landing-page': ['Webinar Registration'], form: ['Registration Form'] }) },
     ],
   },
   {
     id: 'folder-operational', name: 'Operational Campaigns', type: 'folder', children: [
-      { id: 'campaign-score', name: 'High Intent Score Update', type: 'smart-campaign', campaignMode: 'trigger', status: 'active' },
-      { id: 'campaign-normalize', name: 'Normalize Country Data', type: 'smart-campaign', campaignMode: 'batch', status: 'draft' },
+      { id: 'campaign-score', name: 'High Intent Score — Trigger Campaign', type: 'smart-campaign', campaignMode: 'trigger', status: 'active' },
+      { id: 'campaign-normalize', name: 'Normalize Country — Batch Campaign', type: 'smart-campaign', campaignMode: 'batch', status: 'draft' },
+      { id: 'campaign-routing', name: 'Lead Routing — Executable Campaign', type: 'smart-campaign', campaignMode: 'executable', status: 'active' },
     ],
   },
 ]
@@ -164,7 +165,7 @@ function programChildren(id: string, type: ActivityNodeType): ActivityNode[] | u
 export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
   const nextId = useRef(1)
   const [tree, setTree] = useState<ActivityNode[]>(initialTree)
-  const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(['folder-lifecycle', 'folder-demand', 'folder-events', 'folder-operational']))
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
   const [openAssetId, setOpenAssetId] = useState<string | null>(null)
@@ -209,12 +210,12 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
     setCreateState({ kind, destinationId })
   }
 
-  function createItem(name: string, description: string, destinationId: string, kindOverride?: CreateKind) {
+  function createItem(name: string, description: string, destinationId: string, kindOverride?: CreateKind, campaignMode: ActivityNode['campaignMode'] = 'trigger') {
     if (!createState) return
     const requestedKind = kindOverride ?? createState.kind
     const id = `new-${requestedKind}-${nextId.current++}`
     const type: ActivityNodeType = requestedKind === 'import' ? 'default-program' : requestedKind
-    const node: ActivityNode = { id, name, type, campaignMode: type === 'smart-campaign' ? 'trigger' : undefined, status: type === 'folder' ? undefined : 'draft', children: type === 'folder' ? [] : programChildren(id, type) }
+    const node: ActivityNode = { id, name, type, campaignMode: type === 'smart-campaign' ? campaignMode : undefined, status: type === 'folder' ? undefined : 'draft', children: type === 'folder' ? [] : programChildren(id, type) }
     setTree((current) => addToTree(current, destinationId, node))
     setExpanded((current) => new Set([...current, destinationId, id]))
     setSelectedId(id)
@@ -339,6 +340,17 @@ export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
   </section>
 }
 
+function treeObjectLabel(node: ActivityNode) {
+  if (node.type === 'folder') return 'Marketing Folder'
+  if (node.type === 'engagement-program') return 'Engagement Program'
+  if (node.type === 'email-program') return 'Email Program'
+  if (node.type === 'event-program') return 'Event Program'
+  if (node.type === 'default-program') return 'Default Program'
+  if (node.type === 'smart-campaign') return `${node.campaignMode === 'batch' ? 'Batch' : node.campaignMode === 'executable' ? 'Executable' : 'Trigger'} Smart Campaign`
+  if (node.type === 'asset') return node.assetType === 'email' ? 'Local Email Asset' : node.assetType === 'form' ? 'Form Asset' : 'Landing Page Asset'
+  return node.name
+}
+
 function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onToggle, onSelect, onOpen, onContextMenu, onDragStart, onDragEnd, onDragOverFolder, onDrop }: { node: ActivityNode; level: number; expanded: Set<string>; selectedId: string | null; query: string; dropTargetId: string | null; onToggle: (id: string) => void; onSelect: (id: string) => void; onOpen: (id: string) => void; onContextMenu: (event: MouseEvent, id: string) => void; onDragStart: (event: DragEvent, id: string) => void; onDragEnd: () => void; onDragOverFolder: (id: string | null) => void; onDrop: (id: string) => void }) {
   const isExpandable = expandableTypes.includes(node.type) && Boolean(node.children)
   const isOpen = query ? true : expanded.has(node.id)
@@ -346,7 +358,7 @@ function TreeNode({ node, level, expanded, selectedId, query, dropTargetId, onTo
   const matches = Boolean(query && node.name.toLowerCase().includes(query.toLowerCase()))
   const style = { '--tree-level': level } as CSSProperties
   return <div className='activityTreeNode' style={style}>
-    <button type='button' draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id); if (programTypes.includes(node.type) || node.type === 'asset') onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
+    <button type='button' title={`${node.name} · ${treeObjectLabel(node)}`} draggable={node.type !== 'asset-category' && node.type !== 'assets-folder' && node.type !== 'members-folder'} className={`activityTreeRow type-${node.type} ${selectedId === node.id ? 'selected' : ''} ${matches ? 'searchMatch' : ''} ${dropTargetId === node.id ? 'dropTarget' : ''}`} onClick={() => { onSelect(node.id); if (isExpandable) onToggle(node.id); if (programTypes.includes(node.type) || node.type === 'asset') onOpen(node.id) }} onContextMenu={(event) => onContextMenu(event, node.id)} onDragStart={(event) => onDragStart(event, node.id)} onDragEnd={onDragEnd} onDragOver={(event) => { if (isFolderDrop) { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; onDragOverFolder(node.id) } }} onDragLeave={() => { if (dropTargetId === node.id) onDragOverFolder(null) }} onDrop={(event) => { if (isFolderDrop) { event.preventDefault(); event.stopPropagation(); onDrop(node.id) } }}>
       {level > 0 && <i className='treeConnector' />}
       <span className={`treeChevron ${isExpandable ? '' : 'hidden'}`}>{isOpen ? '⌄' : '›'}</span>
       <TreeItemIcon type={node.type} open={isOpen} assetType={node.assetType} campaignMode={node.campaignMode} />
@@ -360,6 +372,7 @@ function TreeItemIcon({ type, open, assetType, campaignMode }: { type: ActivityN
   const common = { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
   if (type === 'folder' || type === 'assets-folder' || type === 'asset-category') return <svg {...common} className={`activityTreeIcon folderIcon ${open ? 'open' : ''}`}><path d={open ? 'M3 9h7l2-2h8l1.2 3H5L3 20h16l2.2-10' : 'M3 6h7l2 2h9v11H3z'} /></svg>
   if (type === 'members-folder') return <svg {...common} className='activityTreeIcon'><circle cx='9' cy='9' r='3' /><circle cx='17' cy='10' r='2.3' /><path d='M3.5 19a5.5 5.5 0 0 1 11 0M14 16a4 4 0 0 1 6.5 3' /></svg>
+  if (type === 'smart-campaign' && campaignMode === 'executable') return <svg {...common} className='activityTreeIcon'><rect x='3' y='4' width='18' height='16' rx='2' /><path d='m10 8 6 4-6 4z' /></svg>
   if (type === 'smart-campaign' && campaignMode === 'batch') return <svg {...common} className='activityTreeIcon'><rect x='3' y='4' width='18' height='16' rx='2' /><path d='M7 9h10M7 13h7M7 17h4M17 15v5M14.5 17.5 17 20l2.5-2.5' /></svg>
   if (type === 'smart-campaign') return <svg {...common} className='activityTreeIcon'><path d='m13 2-8 12h7l-1 8 8-12h-7z' /></svg>
   if (type === 'email-program') return <svg {...common} className='activityTreeIcon'><rect x='3' y='4' width='18' height='16' rx='2' /><path d='m4 7 8 6 8-6M7 2v4M17 2v4' /></svg>
@@ -396,16 +409,17 @@ function ActivityContextMenu({ node, position, clipboardAvailable, onCreate, onO
   </div>
 }
 
-function CreateProgramModal({ state, folderOptions, onClose, onCreate }: { state: { kind: CreateKind; destinationId: string }; folderOptions: Array<{ id: string; name: string; level: number }>; onClose: () => void; onCreate: (name: string, description: string, destinationId: string, kind?: CreateKind) => void }) {
+function CreateProgramModal({ state, folderOptions, onClose, onCreate }: { state: { kind: CreateKind; destinationId: string }; folderOptions: Array<{ id: string; name: string; level: number }>; onClose: () => void; onCreate: (name: string, description: string, destinationId: string, kind?: CreateKind, campaignMode?: ActivityNode['campaignMode']) => void }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [destination, setDestination] = useState(state.destinationId)
   const [programKind, setProgramKind] = useState<CreateKind>(state.kind)
+  const [campaignMode, setCampaignMode] = useState<ActivityNode['campaignMode']>('trigger')
   const channelOptions: Record<string, string[]> = { 'smart-campaign': ['Operational', 'Data Management', 'Email Send'], 'email-program': ['Email Send', 'Newsletter'], 'event-program': ['Webinar', 'Interactive Webinar', 'Tradeshow', 'Live Event'], 'engagement-program': ['Nurture'], 'default-program': ['Default', 'Web Content', 'Operational'] }
   const [channel, setChannel] = useState(channelOptions[state.kind]?.[0] ?? 'Default')
   const option = createOptions.find((item) => item.kind === state.kind)
   const title = state.kind === 'import' ? 'Import Program' : option?.label ?? 'Create Program'
-  return <Modal title={title} open onClose={onClose}><div className='activityCreateModal'>{state.kind === 'import' && <button type='button' className='programImportDrop'><span>⇧</span><strong>Drop a program archive here</strong><small>or click to choose a .zip file</small></button>}<label>Program Name<input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder={state.kind === 'folder' ? 'Folder name' : 'Enter program name'} /></label><label>Destination Folder<select value={destination} onChange={(event) => setDestination(event.target.value)}>{folderOptions.map((folder) => <option key={folder.id} value={folder.id}>{'— '.repeat(folder.level)}{folder.name}</option>)}</select></label>{state.kind !== 'folder' && <div className='createProgramClassification'><label>Program Type<select value={programKind} onChange={(event) => { const kind = event.target.value as CreateKind; setProgramKind(kind); setChannel(channelOptions[kind]?.[0] ?? 'Default') }}><option value='default-program'>Default</option><option value='engagement-program'>Engagement</option><option value='email-program'>Email</option><option value='event-program'>Event</option><option value='smart-campaign'>Smart Campaign</option></select></label><label>Channel<select value={channel} onChange={(event) => setChannel(event.target.value)}>{(channelOptions[programKind] ?? ['Default']).map((option) => <option key={option}>{option}</option>)}</select></label></div>}{state.kind !== 'folder' && <label>Description <span>Optional</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder='Describe the purpose of this program' /></label>}{state.kind !== 'folder' && <div className='newProgramStatus'><span>Status</span><strong><i />Draft</strong><small>New programs remain inactive until configured and activated.</small></div>}<footer><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' disabled={!name.trim()} onClick={() => onCreate(name.trim(), description, destination, programKind)}>{state.kind === 'folder' ? 'Create Folder' : state.kind === 'import' ? 'Import Program' : 'Create Program'}</button></footer></div></Modal>
+  return <Modal title={title} open onClose={onClose}><div className='activityCreateModal'>{state.kind === 'import' && <button type='button' className='programImportDrop'><span>⇧</span><strong>Drop a program archive here</strong><small>or click to choose a .zip file</small></button>}<label>Program Name<input autoFocus value={name} onChange={(event) => setName(event.target.value)} placeholder={state.kind === 'folder' ? 'Folder name' : 'Enter program name'} /></label><label>Destination Folder<select value={destination} onChange={(event) => setDestination(event.target.value)}>{folderOptions.map((folder) => <option key={folder.id} value={folder.id}>{'— '.repeat(folder.level)}{folder.name}</option>)}</select></label>{state.kind !== 'folder' && <div className='createProgramClassification'><label>Program Type<select value={programKind} onChange={(event) => { const kind = event.target.value as CreateKind; setProgramKind(kind); setChannel(channelOptions[kind]?.[0] ?? 'Default') }}><option value='default-program'>Default</option><option value='engagement-program'>Engagement</option><option value='email-program'>Email</option><option value='event-program'>Event</option><option value='smart-campaign'>Smart Campaign</option></select></label><label>Channel<select value={channel} onChange={(event) => setChannel(event.target.value)}>{(channelOptions[programKind] ?? ['Default']).map((option) => <option key={option}>{option}</option>)}</select></label>{programKind === 'smart-campaign' && <label>Campaign Type<select value={campaignMode} onChange={(event) => setCampaignMode(event.target.value as ActivityNode['campaignMode'])}><option value='trigger'>Trigger</option><option value='batch'>Batch</option><option value='executable'>Executable</option></select></label>}</div>}{state.kind !== 'folder' && <label>Description <span>Optional</span><textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder='Describe the purpose of this program' /></label>}{state.kind !== 'folder' && <div className='newProgramStatus'><span>Status</span><strong><i />Draft</strong><small>New programs remain inactive until configured and activated.</small></div>}<footer><button type='button' className='button ghost' onClick={onClose}>Cancel</button><button type='button' className='button solid' disabled={!name.trim()} onClick={() => onCreate(name.trim(), description, destination, programKind, campaignMode)}>{state.kind === 'folder' ? 'Create Folder' : state.kind === 'import' ? 'Import Program' : 'Create Program'}</button></footer></div></Modal>
 }
 
 function RenameModal({ node, onClose, onRename }: { node: ActivityNode; onClose: () => void; onRename: (name: string) => void }) {
