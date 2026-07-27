@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import type { ActivityNode, ProgramStatus } from '../MarketingActivitiesPhaseOne'
 import { DefaultProgramAssets, DefaultProgramMembers, DefaultProgramOverview } from './DefaultProgramViews'
-import { EmailProgramEmailTab } from './EmailProgramEmailTab'
 import { FlowEditor } from './FlowEditor'
 import { ResultsView } from './ResultsView'
 import { ScheduleEditor } from './ScheduleEditor'
 import { SmartListEditor } from './SmartListEditor'
 import { EventAssetsTab, EventMembersTab, EventScheduleTab, EventSetupTab } from '../phase3/EventProgramViews'
 import { EngagementContentTab, EngagementMembersTab, EngagementSettingsTab, EngagementStreamsTab } from '../phase3/EngagementProgramViews'
+import { EmailProgramControlPanel, EmailProgramMembersTab, EmailProgramSetupTab, EmailProgramTokensTab } from '../phase3/EmailProgramMarketoViews'
 import { Modal } from '../../common/Modal'
 
 type SmartCampaignTab = 'smart-list' | 'flow' | 'schedule' | 'results'
-type EmailProgramTab = 'smart-list' | 'email' | 'schedule' | 'results'
+type EmailProgramTab = 'control-panel' | 'smart-list' | 'setup' | 'tokens' | 'members'
 type DefaultProgramTab = 'overview' | 'assets' | 'members'
 type EventProgramTab = 'setup' | 'assets' | 'members' | 'schedule'
 type EngagementProgramTab = 'streams' | 'content' | 'members' | 'settings'
@@ -42,7 +42,7 @@ export function ProgramEditor({ node, onRename, onStatusChange }: ProgramEditorP
   const tabs: Array<{ key: ProgramTab; label: string }> = node.type === 'smart-campaign'
     ? [{ key: 'smart-list', label: 'Smart List' }, { key: 'flow', label: 'Flow' }, { key: 'schedule', label: 'Schedule' }, { key: 'results', label: 'Results' }]
     : node.type === 'email-program'
-      ? [{ key: 'smart-list', label: 'Smart List' }, { key: 'email', label: 'Email' }, { key: 'schedule', label: 'Schedule' }, { key: 'results', label: 'Results' }]
+      ? [{ key: 'control-panel', label: 'Control Panel' }, { key: 'smart-list', label: 'Smart List' }, { key: 'setup', label: 'Setup' }, { key: 'tokens', label: 'My Tokens' }, { key: 'members', label: 'Members' }]
       : node.type === 'event-program'
         ? [{ key: 'setup', label: 'Setup' }, { key: 'assets', label: 'Assets' }, { key: 'members', label: 'Members' }, { key: 'schedule', label: 'Schedule' }]
         : node.type === 'engagement-program'
@@ -74,7 +74,7 @@ export function ProgramEditor({ node, onRename, onStatusChange }: ProgramEditorP
       <div className='programHeaderActions'><button type='button' className='programSettingsButton' title='Program Settings' onClick={() => setSettingsOpen(true)}>⚙</button><button type='button' className={`button ${status === 'active' ? 'deactivateButton' : 'solid'}`} onClick={toggleActive}>{status === 'active' ? 'Deactivate' : 'Activate'}</button></div>
     </header>
     <nav className='programEditorTabs' aria-label={`${typeLabels[node.type]} sections`}>{tabs.map((tab) => <button type='button' key={tab.key} className={activeTab === tab.key ? 'active' : ''} onClick={() => setActiveTab(tab.key)}>{tab.label}</button>)}</nav>
-    <main className='programEditorBody'>{node.type === 'smart-campaign' ? <SmartCampaignContent tab={activeTab as SmartCampaignTab} active={status === 'active'} tokens={tokens} onActivate={toggleActive} /> : node.type === 'email-program' ? <EmailProgramContent tab={activeTab as EmailProgramTab} active={status === 'active'} onActivate={toggleActive} /> : node.type === 'event-program' ? <EventProgramContent tab={activeTab as EventProgramTab} /> : node.type === 'engagement-program' ? <EngagementProgramContent tab={activeTab as EngagementProgramTab} name={name} onNameChange={(value) => { setName(value); onRename(value) }} /> : <DefaultProgramContent tab={activeTab as DefaultProgramTab} name={name} onNameChange={(value) => { setName(value); onRename(value) }} />}</main>
+    <main className='programEditorBody'>{node.type === 'smart-campaign' ? <SmartCampaignContent tab={activeTab as SmartCampaignTab} active={status === 'active'} tokens={tokens} onActivate={toggleActive} /> : node.type === 'email-program' ? <EmailProgramContent tab={activeTab as EmailProgramTab} name={name} tokens={tokens} onNameChange={(value) => { setName(value); onRename(value) }} onTokensChange={setTokens} /> : node.type === 'event-program' ? <EventProgramContent tab={activeTab as EventProgramTab} /> : node.type === 'engagement-program' ? <EngagementProgramContent tab={activeTab as EngagementProgramTab} name={name} onNameChange={(value) => { setName(value); onRename(value) }} /> : <DefaultProgramContent tab={activeTab as DefaultProgramTab} name={name} onNameChange={(value) => { setName(value); onRename(value) }} />}</main>
     {settingsOpen && <ProgramSettingsPanel node={node} name={name} tokens={tokens} onTokensChange={setTokens} onClose={() => setSettingsOpen(false)} />}
   </section>
 }
@@ -86,11 +86,12 @@ function SmartCampaignContent({ tab, active, tokens, onActivate }: { tab: SmartC
   return <ResultsView variant='smart-campaign' />
 }
 
-function EmailProgramContent({ tab, active, onActivate }: { tab: EmailProgramTab; active: boolean; onActivate: () => void }) {
+function EmailProgramContent({ tab, name, tokens, onNameChange, onTokensChange }: { tab: EmailProgramTab; name: string; tokens: SharedProgramToken[]; onNameChange: (name: string) => void; onTokensChange: (tokens: SharedProgramToken[]) => void }) {
+  if (tab === 'control-panel') return <EmailProgramControlPanel />
   if (tab === 'smart-list') return <SmartListEditor filterOnly />
-  if (tab === 'email') return <EmailProgramEmailTab />
-  if (tab === 'schedule') return <ScheduleEditor variant='email-program' active={active} onActivate={onActivate} />
-  return <ResultsView variant='email-program' />
+  if (tab === 'setup') return <EmailProgramSetupTab programName={name} onProgramNameChange={onNameChange} />
+  if (tab === 'tokens') return <EmailProgramTokensTab tokens={tokens} onTokensChange={onTokensChange} />
+  return <EmailProgramMembersTab />
 }
 
 function DefaultProgramContent({ tab, name, onNameChange }: { tab: DefaultProgramTab; name: string; onNameChange: (name: string) => void }) {
