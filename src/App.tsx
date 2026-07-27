@@ -36,6 +36,7 @@ function App() {
   const [activeAnalyticsTab, setActiveAnalyticsTab] = useState<AnalyticsTabKey>('dashboards')
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [smartListModalOpen, setSmartListModalOpen] = useState(false)
+  const [marketingSearchQuery, setMarketingSearchQuery] = useState('')
 
   const [selectedPeopleIds, setSelectedPeopleIds] = useState<string[]>([])
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([])
@@ -131,7 +132,7 @@ function App() {
     }
 
     if (activeMainTab === 'execution') {
-      return <MarketingActivitiesPhaseOne />
+      return <MarketingActivitiesPhaseOne query={marketingSearchQuery} />
     }
 
     if (activeMainTab === 'content') {
@@ -197,7 +198,7 @@ function App() {
 
   return (
     <div className='appShell'>
-      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} />
+      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} />
 
       <div className='mainPane'>
         <TopBar

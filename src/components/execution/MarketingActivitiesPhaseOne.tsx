@@ -155,13 +155,12 @@ function programChildren(id: string, type: ActivityNodeType): ActivityNode[] | u
   return type === 'default-program' ? [...assets, { id: `${id}-members`, name: 'Members', type: 'members-folder' }] : assets
 }
 
-export function MarketingActivitiesPhaseOne() {
+export function MarketingActivitiesPhaseOne({ query }: { query: string }) {
   const nextId = useRef(1)
   const [tree, setTree] = useState<ActivityNode[]>(initialTree)
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set())
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [openProgramId, setOpenProgramId] = useState<string | null>(null)
-  const [query, setQuery] = useState('')
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [createState, setCreateState] = useState<{ kind: CreateKind; destinationId: string } | null>(null)
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null)
@@ -309,7 +308,6 @@ export function MarketingActivitiesPhaseOne() {
   return <section className='marketingPhaseOne' onClick={() => { setContextMenu(null); setCreateMenuOpen(false) }}>
     <div className='marketingNavAction' onClick={(event) => event.stopPropagation()}><button type='button' className='marketingNavMoreButton' aria-label='Marketing Activities options' onClick={() => setCreateMenuOpen((value) => !value)}>⋮</button>{createMenuOpen && <CreateDropdown onSelect={(kind) => openCreate(kind)} />}</div>
     <aside className='activityTreePane'>
-      <label className='activityTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs…' />{query && <button type='button' onClick={() => setQuery('')}>×</button>}</label>
       <div className={`activityRootDrop ${draggedId ? 'dragging' : ''} ${dropTargetId === 'root' ? 'dropTarget' : ''}`} onDragOver={(event) => { event.preventDefault(); setDropTargetId('root') }} onDragLeave={() => setDropTargetId(null)} onDrop={(event) => { event.preventDefault(); moveNode('root') }}><span>Drop here to move to root</span></div>
       <div className='activityTreeScroll'>{visibleTree.map((node) => <TreeNode key={node.id} node={node} level={0} expanded={expanded} selectedId={selectedId} query={query} dropTargetId={dropTargetId} onToggle={toggleNode} onSelect={setSelectedId} onOpen={openProgramEditor} onContextMenu={handleContextMenu} onDragStart={handleDragStart} onDragEnd={() => { setDraggedId(null); setDropTargetId(null) }} onDragOverFolder={setDropTargetId} onDrop={moveNode} />)}</div>
     </aside>
