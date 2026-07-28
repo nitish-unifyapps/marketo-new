@@ -1,0 +1,269 @@
+/* CRM Leads directory redesign. Import after detail-polish.css. */
+.leadsView {
+  --lead-border: #e2e5e9;
+  --lead-border-strong: #cfd4da;
+  --lead-ink: #202832;
+  --lead-muted: #66717f;
+  --lead-surface: #f7f8fa;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.leadsView .leadsToolbar { margin-bottom: 14px; }
+.leadsView .leadsPageHeading {
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.leadsView .leadsTitleGroup { display: flex; align-items: baseline; gap: 12px; }
+.leadsView .leadsTitleGroup h2 {
+  margin: 0;
+  color: var(--lead-ink);
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -.55px;
+}
+.leadsView .leadsTitleGroup > span {
+  color: var(--lead-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.leadsView .leadHeaderActions { position: relative; display: flex; align-items: center; gap: 8px; }
+.leadsView .leadHeaderActions .button { min-width: auto; min-height: 38px; padding-inline: 14px; border-color: var(--lead-border-strong); color: #42505e; }
+.leadsView .leadHeaderActions .leadCreateButton { color: white; border-color: var(--accent); background: var(--accent); }
+.leadsView .leadHeaderActions .leadCreateButton:hover { color: white; border-color: var(--accent-hover); background: var(--accent-hover); }
+.leadsView .leadActionsWrap,
+.leadsView .allLeadViewsWrap { position: relative; }
+.leadsView .leadActionsMenu,
+.leadsView .allLeadViewsMenu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 45;
+  width: 205px;
+  padding: 6px;
+  border: 1px solid var(--lead-border);
+  border-radius: 9px;
+  background: white;
+  box-shadow: 0 14px 35px rgb(23 34 47 / 15%);
+}
+.leadsView .leadActionsMenu button,
+.leadsView .allLeadViewsMenu > button,
+.leadsView .allLeadViewsMenu footer button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 36px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  color: #34404d;
+  background: transparent;
+  text-align: left;
+  font-size: 11px;
+}
+.leadsView .leadActionsMenu button:hover,
+.leadsView .allLeadViewsMenu > button:hover,
+.leadsView .allLeadViewsMenu > button.active { color: var(--accent); background: var(--accent-soft); }
+.leadsView .allLeadViewsMenu header { padding: 8px 9px 7px; color: var(--lead-muted); font-size: 9px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.leadsView .allLeadViewsMenu small { color: var(--faint); font-size: 8px; }
+.leadsView .allLeadViewsMenu footer { margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--lead-border); }
+.leadsView .allLeadViewsMenu footer button { color: var(--accent); font-weight: 600; }
+
+.leadsView .leadSavedViews {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  min-height: 43px;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--lead-border);
+  scrollbar-width: thin;
+}
+.leadsView .leadSavedViews > button,
+.leadsView .allLeadViewsWrap > button {
+  position: relative;
+  height: 43px;
+  padding: 0 14px;
+  border: 0;
+  color: var(--lead-muted);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.leadsView .leadSavedViews > button::after,
+.leadsView .allLeadViewsWrap > button::after {
+  content: '';
+  position: absolute;
+  right: 11px;
+  bottom: -1px;
+  left: 11px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: transparent;
+}
+.leadsView .leadSavedViews button:hover { color: var(--lead-ink); }
+.leadsView .leadSavedViews button.active { color: var(--accent); }
+.leadsView .leadSavedViews button.active::after { background: var(--accent); }
+
+.leadsView .leadQuickFilters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 0;
+  overflow-x: auto;
+  border-bottom: 1px solid #edf0f2;
+  scrollbar-width: thin;
+}
+.leadsView .leadQuickFilters > label:not(.leadSortControl) {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  height: 36px;
+  overflow: hidden;
+  border: 1px solid var(--lead-border-strong);
+  border-radius: 7px;
+  background: white;
+}
+.leadsView .leadQuickFilters > label > span:not(.srOnly) {
+  padding-left: 10px;
+  color: #4c5866;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.leadsView .leadQuickFilters select {
+  min-width: 92px;
+  height: 34px;
+  padding: 0 27px 0 7px;
+  border: 0;
+  outline: 0;
+  color: var(--lead-muted);
+  background: white;
+  font-size: 10px;
+}
+.leadsView .leadQuickFilters > label:nth-child(3) select { min-width: 86px; }
+.leadsView .leadAddFilter {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 36px;
+  flex: 0 0 auto;
+  padding: 0 10px;
+  border: 1px solid var(--lead-border-strong);
+  border-radius: 7px;
+  color: #44515f;
+  background: white;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.leadsView .leadAddFilter:hover,
+.leadsView .leadAddFilter.active { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+.leadsView .leadAddFilter b { display: grid; place-items: center; min-width: 18px; height: 18px; border-radius: 999px; color: white; background: var(--accent); font-size: 8px; }
+.leadsView .leadSortControl { flex: 0 0 auto; margin-left: auto; border: 1px solid var(--lead-border-strong); border-radius: 7px; background: white; }
+.leadsView .leadSortControl select { min-width: 160px; color: #44515f; font-weight: 600; }
+
+.leadsView .leadsViewToolbar {
+  position: relative;
+  display: flex;
+  grid-template-columns: none;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border: 0;
+  border-radius: 0;
+  background: white;
+  box-shadow: none;
+}
+.leadsView .savedViewSelect { display: none; }
+.leadsView .leadSearch { order: 1; width: min(340px, 45vw); height: 38px; background: var(--lead-surface); }
+.leadsView .leadColumnsWrap { order: 2; }
+.leadsView .leadColumnsWrap > .button,
+.leadsView .leadExportButton { min-height: 38px; border-color: var(--lead-border-strong); color: #465361; }
+.leadsView .leadExportButton { order: 3; }
+.leadsView .leadFilterWrap { position: static; order: 4; }
+.leadsView .leadAdvancedFilterTrigger { display: none; }
+.leadsView .leadViewMode {
+  order: 5;
+  width: 78px;
+  height: 38px;
+  margin-left: auto;
+  padding: 3px;
+  border-color: var(--lead-border-strong);
+  border-radius: 7px;
+}
+.leadsView .leadViewMode button { min-width: 34px; width: 34px; height: 30px; padding: 0; }
+.leadsView .leadViewMode button svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.35; stroke-linecap: round; stroke-linejoin: round; }
+.leadsView .leadViewMode button.active { color: var(--accent); background: white; box-shadow: 0 1px 4px rgb(25 35 45 / 12%); }
+.leadsView .dynamicFilterPopover { top: calc(100% - 5px); right: 86px; width: min(720px, calc(100vw - 330px)); }
+.leadsView .leadColumnsMenu { top: 45px; right: auto; left: 0; }
+.leadsView .activeLeadFilters { min-height: 0; padding: 0 0 12px; }
+
+.leadsView .tableWrap { border-color: var(--lead-border); border-radius: 9px; box-shadow: 0 1px 3px rgb(25 35 45 / 5%); }
+.leadsView .crmTable { font-size: 12px; }
+.leadsView .crmTable th { height: 43px; color: #596675; background: #f7f8fa; font-size: 9px; letter-spacing: .055em; }
+.leadsView .crmTable td { height: 61px; border-bottom-color: #edf0f2; }
+.leadsView .crmTable tbody tr.altRow { background: white; }
+.leadsView .crmTable tbody tr:hover { background: #fff7f4; }
+.leadsView .tableLink { color: #a85539; font-weight: 650; }
+.leadsView .badge.neutral { color: #6f493c; background: #f8e6df; }
+
+.leadsView .leadKanbanBoard { padding-top: 2px; }
+.leadsView .leadKanbanColumn { border-color: var(--lead-border); background: #f6f7f9; }
+.leadsView .leadKanbanCard { border-color: var(--lead-border); }
+.leadsView .leadKanbanCard:hover { border-color: var(--accent-border); }
+
+.createLeadModal { display: flex; flex-direction: column; gap: 18px; padding: 20px; }
+.createLeadModal > p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.createLeadFields { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.createLeadFields label { display: flex; flex-direction: column; gap: 7px; color: #52606e; font-size: 10px; font-weight: 650; }
+.createLeadFields label:first-child,
+.createLeadFields label:nth-child(3) { grid-column: 1 / -1; }
+.createLeadFields input,
+.createLeadFields select { width: 100%; min-height: 41px; padding: 0 10px; border: 1px solid var(--lead-border-strong, #cfd4da); border-radius: 7px; outline: 0; color: var(--text); background: white; font-size: 11px; }
+.createLeadFields input:focus,
+.createLeadFields select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(217 119 87 / 9%); }
+.createLeadModal > footer { display: flex; justify-content: flex-end; gap: 8px; margin: 2px -20px -20px; padding: 14px 20px; border-top: 1px solid var(--border); background: var(--canvas); }
+
+@media (max-width: 1100px) {
+  .leadsView .leadQuickFilters { padding-bottom: 11px; }
+  .leadsView .leadSortControl { margin-left: 0; }
+  .leadsView .dynamicFilterPopover { right: 0; width: min(680px, calc(100vw - 310px)); }
+}
+
+@media (max-width: 760px) {
+  .leadsView .leadsPageHeading { align-items: stretch; flex-direction: column; }
+  .leadsView .leadHeaderActions { justify-content: flex-start; overflow-x: auto; padding-bottom: 2px; }
+  .leadsView .leadHeaderActions .button { white-space: nowrap; }
+  .leadsView .leadSavedViews { margin-inline: -2px; }
+  .leadsView .leadsViewToolbar { flex-wrap: wrap; }
+  .leadsView .leadSearch { width: 100%; flex: 1 0 100%; }
+  .leadsView .leadColumnsWrap { order: 2; }
+  .leadsView .leadExportButton { order: 3; }
+  .leadsView .leadViewMode { order: 5; margin-left: auto; }
+  .leadsView .dynamicFilterPopover { position: fixed; top: 12vh; right: 12px; left: 12px; width: auto; max-height: 76vh; overflow: auto; }
+  .leadsView .dynamicFilterRow { grid-template-columns: 24px 1fr 1fr 28px; padding-block: 8px; }
+  .leadsView .dynamicFilterRow > :nth-child(4) { grid-column: 2 / 4; }
+  .createLeadFields { grid-template-columns: 1fr; }
+  .createLeadFields label { grid-column: 1 !important; }
+}
+
+@media (max-width: 480px) {
+  .leadsView .leadsTitleGroup { align-items: flex-start; flex-direction: column; gap: 2px; }
+  .leadsView .leadImportButton { padding-inline: 10px; }
+  .leadsView .leadHeaderActions .leadCreateButton { margin-left: auto; }
+  .leadsView .leadColumnsWrap > .button { padding-inline: 10px; }
+  .leadsView .leadColumnsWrap > .button span { display: none; }
+  .leadsView .leadViewMode { flex: 0 0 78px; }
+}

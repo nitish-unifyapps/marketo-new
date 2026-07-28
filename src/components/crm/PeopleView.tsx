@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { BulkActionBar } from '../common/BulkActionBar'
-import { PeopleFilters, type LeadColumnKey, type LeadFilterRule, type LeadFilterState, type LeadViewMode } from './PeopleFilters'
+import { PeopleFilters, type LeadColumnKey, type LeadFilterRule, type LeadFilterState, type LeadSortKey, type LeadViewMode, type NewLeadDraft } from './PeopleFilters'
 import type { PersonRecord } from '../../types/crm'
 
 interface PeopleViewProps {
@@ -90,6 +90,15 @@ function normalizeLifecycleStage(value: string): PersonRecord['lifecycleStage'] 
   return match ?? 'Lead'
 }
 
+function activityAge(value: string) {
+  if (value.toLowerCase() === 'just now') return 0
+  const match = value.toLowerCase().match(/(\d+)\s*([mhdw])/)
+  if (!match) return Number.MAX_SAFE_INTEGER
+  const amount = Number(match[1])
+  const multipliers = { m: 1, h: 60, d: 1440, w: 10080 }
+  return amount * multipliers[match[2] as keyof typeof multipliers]
+}
+
 export function PeopleView({
   rows,
   selectedIds,
@@ -101,17 +110,25 @@ export function PeopleView({
   const [filters, setFilters] = useState<LeadFilterState>({ query: '', rules: [], logic: 'AND' })
   const [visibleColumns, setVisibleColumns] = useState<LeadColumnKey[]>(['name', 'email', 'company', 'lifecycleStage', 'score', 'lastActivity'])
   const [viewMode, setViewMode] = useState<LeadViewMode>('table')
+  const [sortKey, setSortKey] = useState<LeadSortKey>('recent')
   const [transferMessage, setTransferMessage] = useState('')
 
   const filteredRows = useMemo(() => {
     const query = filters.query.trim().toLowerCase()
 
-    return rows.filter((person) => {
+    const matchingRows = rows.filter((person) => {
       const matchesQuery = !query || [person.name, person.email, person.company].some((value) => value.toLowerCase().includes(query))
       const matchesRules = filters.rules.length === 0 || (filters.logic === 'AND' ? filters.rules.every((rule) => matchesRule(person, rule)) : filters.rules.some((rule) => matchesRule(person, rule)))
       return matchesQuery && matchesRules
     })
-  }, [filters, rows])
+
+    return matchingRows.sort((left, right) => {
+      if (sortKey === 'score-desc') return right.score - left.score
+      if (sortKey === 'name-asc') return left.name.localeCompare(right.name)
+      if (sortKey === 'company-asc') return left.company.localeCompare(right.company)
+      return activityAge(left.lastActivity) - activityAge(right.lastActivity)
+    })
+  }, [filters, rows, sortKey])
 
   const allSelected = rows.length > 0 && selectedIds.length === rows.length
 
@@ -172,17 +189,37 @@ export function PeopleView({
     setTransferMessage(`${importedRows.length.toLocaleString()} leads imported from ${file.name}.`)
   }
 
+  function createLead(draft: NewLeadDraft) {
+    const person: PersonRecord = {
+      id: `lead-${Date.now()}`,
+      ...draft,
+      score: 0,
+      lastActivity: 'Just now',
+      title: '',
+      location: '',
+      phone: '',
+      smartLists: [],
+      activity: [],
+      consent: { email: false, sms: false, tracking: false },
+    }
+    onImportRows([person])
+    setTransferMessage(`${person.name} was created and added to Leads.`)
+  }
+
   return (
     <section className='viewWrap leadsView'>
       <PeopleFilters
         totalCount={filteredRows.length}
         visibleColumns={visibleColumns}
         viewMode={viewMode}
+        sortKey={sortKey}
         onColumnsChange={setVisibleColumns}
         onFilterChange={setFilters}
         onViewModeChange={setViewMode}
+        onSortChange={setSortKey}
         onImport={(file) => void importLeads(file)}
         onExport={exportLeads}
+        onCreateLead={createLead}
       />
 
       {transferMessage && <div className='leadTransferNotice' role='status'><span>✓</span>{transferMessage}<button type='button' onClick={() => setTransferMessage('')} aria-label='Dismiss message'>×</button></div>}

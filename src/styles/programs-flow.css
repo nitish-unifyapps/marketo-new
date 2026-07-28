@@ -1417,3 +1417,327 @@
   .flowStepPalette { right: 0; width: min(360px, calc(100vw - 245px)); transform: none; }
   .flowConfigPanel { width: min(300px, calc(100vw - 220px)); }
 }
+
+/* Readable Flow builder typography */
+.programFlowHeader p,
+.programFlowCard > div:nth-child(3) p,
+.programFlowBranch > header > small,
+.programFlowBranch > header > em,
+.programFlowBranchEmpty,
+.programFlowBlankState p,
+.flowStepPalette small,
+.flowConfigPanel header small,
+.flowConfigField > span,
+.flowEmailSelection small,
+.flowEmailPickerButton small,
+.flowEmailPickerMenu small,
+.flowPanelIntro p,
+.flowBranchSummary small,
+.flowWaitModes > label small,
+.flowEndConfiguration p,
+.flowDeleteConfirmation p,
+.programFlowIncomingTags,
+.programRouterBranches > header small,
+.programStreamEmpty,
+.programStreamExit > div > span,
+.programStreamStay,
+.flowRouterConfig > section > small,
+.flowPanelSection > header small,
+.flowStayInStream {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.programFlowStart,
+.programFlowCard > div:nth-child(3) strong,
+.programFlowBranch > header > span,
+.programFlowBlankState strong,
+.flowAddStepButton,
+.flowStepPalette strong,
+.flowConfigPanel header strong,
+.flowEmailSelection strong,
+.flowEmailPickerButton strong,
+.flowEmailPickerMenu b,
+.flowWaitModes > label strong,
+.flowPanelIntro strong,
+.flowBranchSummary strong,
+.flowEndConfiguration strong,
+.programRouterBranches > header span,
+.programStreamIdentity > button,
+.flowPanelSection > header strong,
+.flowStepContextMenu button {
+  font-size: 12px;
+}
+
+.programFlowBranch > header > span,
+.flowBranchSummary span,
+.programRouterBranchRow > em,
+.flowRouterConfig header > span,
+.flowTransitionBuilder section > div > span {
+  font-size: 10px;
+}
+
+.flowAddStepWrap.compact > button,
+.flowTokenPicker > button,
+.flowPanelAddButton,
+.programRouterBranches > button,
+.programStreamCadencePopover > button {
+  font-size: 11px;
+}
+
+.flowConfigField,
+.flowMultipleBranches > div > label,
+.programStreamCadencePopover label,
+.flowRouterConfig > section > label,
+.flowTransitionBuilder section > label {
+  font-size: 11px;
+}
+
+.flowConfigField input,
+.flowConfigField select,
+.flowConfigField textarea,
+.flowConfigBody > input,
+.flowWaitModes > input,
+.flowInlineFields input,
+.flowInlineFields select,
+.flowConditionBuilder input,
+.flowConditionBuilder select,
+.flowMultipleBranches input,
+.flowMultipleBranches select,
+.programRouterBranchRow > input,
+.programRouterBranchRow > select,
+.programStreamCadencePopover input,
+.programStreamCadencePopover select,
+.flowRouterConfig input,
+.flowRouterConfig select,
+.flowTransitionBuilder input,
+.flowTransitionBuilder select,
+.flowCadenceFields input,
+.flowCadenceFields select {
+  font-size: 12px;
+}
+
+.flowEmailPickerMenu section > strong,
+.flowTokenPopover strong {
+  font-size: 10px;
+}
+
+.flowTokenPopover section button {
+  font-size: 11px;
+}
+
+.programFlowCardActions {
+  flex-wrap: wrap;
+}
+
+.flowConfigPanel {
+  width: min(340px, calc(100vw - 24px));
+}
+
+.flowStepPalette {
+  max-width: calc(100vw - 32px);
+}
+
+@media (max-width: 680px) {
+  .flowStepPalette {
+    width: min(360px, calc(100vw - 32px));
+  }
+
+  .flowConfigPanel {
+    width: min(340px, calc(100vw - 24px));
+  }
+
+  .programFlowCanvas {
+    padding-inline: 10px;
+  }
+}
+
+/* Compact production Flow timeline */
+.programSequenceFlow {
+  width: min(960px, 100%);
+  max-width: 960px;
+}
+
+.programFlowCanvas {
+  min-height: 0;
+  padding: 14px 18px 18px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.programFlowCanvasToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 38px;
+  margin-bottom: 2px;
+}
+
+.programFlowCanvasToolbar > div:last-child {
+  display: flex;
+  gap: 6px;
+}
+
+.programFlowCanvasToolbar > div:last-child button {
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #596575;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.programFlowCanvasToolbar > div:last-child button:hover {
+  color: #d97757;
+  border-color: #efc2b3;
+  background: #fff7f4;
+}
+
+.programFlowStart {
+  width: auto;
+  min-width: 62px;
+  height: 28px;
+  margin: 0;
+  padding: 0 14px;
+  color: #596575;
+  background: #f8f9fa;
+  font-size: 11px;
+}
+
+.programFlowStartLine {
+  height: 12px;
+  margin-left: 31px;
+}
+
+.programFlowSequence {
+  width: 100%;
+}
+
+.programFlowNode + .programFlowNode::before {
+  height: 10px;
+}
+
+.programFlowDayBadge {
+  width: max-content;
+  margin: 6px 0 8px;
+  padding: 4px 9px;
+  border-radius: 5px;
+  color: #fff;
+  background: #d97757;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+}
+
+.programFlowCard {
+  grid-template-columns: 22px 36px minmax(0, 1fr) auto;
+  gap: 9px;
+  width: min(780px, calc(100% - var(--flow-depth) * 28px));
+  min-height: 58px;
+  margin-left: calc(var(--flow-depth) * 28px);
+  padding: 8px 10px;
+  border-radius: 9px;
+  box-shadow: 0 1px 4px rgb(16 24 40 / 5%);
+}
+
+.programFlowCard:hover {
+  box-shadow: 0 5px 14px rgb(16 24 40 / 8%);
+  transform: none;
+}
+
+.programFlowCardIcon {
+  width: 34px;
+  height: 34px;
+  font-size: 13px;
+}
+
+.programFlowCard > div:nth-child(3) {
+  gap: 2px;
+}
+
+.programFlowCard > div:nth-child(3) strong {
+  font-size: 12px;
+}
+
+.programFlowCard > div:nth-child(3) p {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.programFlowCard.type-wait {
+  width: min(470px, calc(100% - var(--flow-depth) * 28px));
+  min-height: 48px;
+  border-style: dashed;
+  background: #fafbfc;
+}
+
+.programFlowCard.type-end {
+  min-height: 48px;
+}
+
+.programFlowCardActions button {
+  width: 25px;
+  height: 25px;
+}
+
+.programFlowBranches {
+  width: min(820px, calc(100% - 22px));
+  margin: 8px 0 4px 22px;
+  padding-left: 12px;
+}
+
+.programFlowBranch {
+  margin: 6px 0;
+  padding: 0 0 6px 8px;
+  border-radius: 8px;
+}
+
+.programFlowBranch > header {
+  min-height: 36px;
+}
+
+.programFlowBranch .programFlowCard {
+  width: calc(100% - 24px);
+  margin-left: 18px;
+}
+
+.flowAddStepWrap {
+  margin-top: 10px;
+}
+
+.flowAddStepButton {
+  min-width: 112px;
+  height: 34px;
+  background: #fff;
+}
+
+.flowStepPalette {
+  bottom: 40px;
+}
+
+.programFlowBlankState {
+  padding: 26px;
+}
+
+.programRouterBranches {
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+.programStreamNode {
+  margin-block: 8px;
+}
+
+.flowConfigPanel {
+  width: min(360px, calc(100vw - 24px));
+}
+
+@media (max-width: 760px) {
+  .programFlowCanvas { padding: 10px; }
+  .programFlowCanvasToolbar { align-items: flex-start; gap: 8px; }
+  .programFlowCard { width: calc(100% - var(--flow-depth) * 18px); margin-left: calc(var(--flow-depth) * 18px); }
+  .programFlowBranches { width: calc(100% - 8px); margin-left: 8px; }
+}

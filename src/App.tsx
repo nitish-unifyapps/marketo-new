@@ -11,7 +11,7 @@ import { PersonDetailPanel } from './components/crm/PersonDetailPanel'
 import { SmartListModal } from './components/crm/SmartListModal'
 import { SmartListEditorPage } from './components/crm/SmartListEditorPage'
 import { SmartListsView } from './components/crm/SmartListsView'
-import { Sidebar } from './components/layout/Sidebar'
+import { Sidebar, type AppVersion } from './components/layout/Sidebar'
 import { TopBar, type CreateOption } from './components/layout/TopBar'
 import { accountRows, peopleRows, smartLists } from './data/crmData'
 import type { CrmSubTabKey, MainNavKey } from './types/crm'
@@ -32,6 +32,7 @@ const sectionNameByMainTab: Record<MainNavKey, string> = {
 }
 
 function App() {
+  const [version, setVersion] = useState<AppVersion>('v2')
   const [activeMainTab, setActiveMainTab] = useState<MainNavKey>('crm')
   const [activeCrmTab, setActiveCrmTab] = useState<CrmSubTabKey>('people')
   const [activeContentTab, setActiveContentTab] = useState<ContentTabKey>('all-assets')
@@ -68,6 +69,14 @@ function App() {
     setOpenAccountId(null)
     setSelectedPeopleIds([])
     setSelectedAccountIds([])
+  }
+
+  function handleVersionChange(nextVersion: AppVersion) {
+    setVersion(nextVersion)
+    setMarketingSearchQuery('')
+    setCreateMenuOpen(false)
+    if (nextVersion === 'v1' && activeMainTab === 'programs') setActiveMainTab('execution')
+    if (nextVersion === 'v2' && activeMainTab === 'execution') setActiveMainTab('programs')
   }
 
   function handleCrmTabChange(tab: CrmSubTabKey) {
@@ -214,7 +223,7 @@ function App() {
 
   return (
     <div className='appShell'>
-      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} activeCrmTab={activeCrmTab} onCrmTabChange={handleCrmTabChange} />
+      <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} activeCrmTab={activeCrmTab} onCrmTabChange={handleCrmTabChange} version={version} onVersionChange={handleVersionChange} />
 
       <div className='mainPane'>
         {activeMainTab !== 'crm' && <TopBar

@@ -122,6 +122,61 @@ textarea {
   font-size: 20px;
 }
 
+.sidebarLogo {
+  padding-inline: 14px;
+  font-size: 15px;
+}
+
+.sidebarLogo::before {
+  margin-right: 8px;
+  flex: 0 0 auto;
+}
+
+.sidebarLogo > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebarVersionToggle {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 2px;
+  margin-left: auto;
+  padding: 2px;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: #eceff2;
+}
+
+.sidebarVersionToggle button {
+  display: grid;
+  place-items: center;
+  min-width: 25px;
+  height: 22px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: lowercase;
+}
+
+.sidebarVersionToggle button.active {
+  color: white;
+  background: var(--accent);
+  box-shadow: 0 2px 6px rgb(217 119 87 / 22%);
+}
+
+.sidebarVersionToggle button:not(.active):hover {
+  color: var(--text);
+  background: rgb(255 255 255 / 65%);
+}
+
 .sidebarNavItem {
   min-height: 46px;
   font-size: 13px;
@@ -1065,6 +1120,7 @@ textarea {
 
 @media (max-width: 760px) {
   body { font-size: 13px; }
+  .sidebarVersionToggle { display: none; }
   .button { min-height: 38px; font-size: 11px; }
   .contentArea { padding-inline: 14px; }
   .folderContents.grid,

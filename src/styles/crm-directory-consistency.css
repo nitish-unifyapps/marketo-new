@@ -1,0 +1,353 @@
+/* Shared CRM directory polish for Leads and Accounts */
+.crmContentArea {
+  background: #f6f8fa;
+}
+
+.crmContentArea > .leadsView,
+.crmContentArea > .accountsDirectory {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  color: #25303d;
+}
+
+/* Page headers */
+.leadsView .leadsPageHeading,
+.accountsDirectory .accountDirectoryHeader {
+  align-items: center;
+  min-height: 62px;
+  margin: 0;
+  padding: 0 0 14px;
+}
+
+.leadsView .leadsTitleGroup h2,
+.accountsDirectory .accountDirectoryTitle h2 {
+  color: #1f2937;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -.45px;
+}
+
+.leadsView .leadsTitleGroup > span,
+.accountsDirectory .accountDirectoryTitle p {
+  color: #697586;
+  font-size: 12px;
+}
+
+.leadsView .leadHeaderActions,
+.accountsDirectory .accountHeaderActions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.leadsView .leadHeaderActions .button,
+.accountsDirectory .accountButton {
+  min-height: 38px;
+  padding-inline: 14px;
+  border-color: #d7dce2;
+  border-radius: 7px;
+  color: #44505f;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.accountsDirectory .accountButton.primary,
+.leadsView .leadHeaderActions .leadCreateButton {
+  color: #fff;
+  border-color: #d97757;
+  background: #d97757;
+  box-shadow: 0 3px 9px rgb(217 119 87 / 17%);
+}
+
+/* Saved views */
+.leadsView .leadSavedViews,
+.accountsDirectory .accountSavedViews {
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid #dfe3e8;
+  background: transparent;
+  scrollbar-width: none;
+}
+
+.leadsView .leadSavedViews::-webkit-scrollbar,
+.accountsDirectory .accountSavedViews::-webkit-scrollbar {
+  display: none;
+}
+
+.leadsView .leadSavedViews > button,
+.leadsView .allLeadViewsWrap > button,
+.accountsDirectory .accountSavedViews button {
+  min-width: max-content;
+  height: 44px;
+  padding: 0 14px;
+  color: #667284;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+/* Quick filters */
+.leadsView .leadQuickFilters,
+.accountsDirectory .accountQuickFilters {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px;
+  overflow: visible;
+  border: 1px solid #e0e4e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);
+  flex-wrap: wrap;
+}
+
+.accountsDirectory .accountQuickFilters {
+  gap: 4px;
+  padding: 8px 10px;
+}
+
+.leadsView .leadQuickFilters > label:not(.leadSortControl),
+.accountsDirectory .accountQuickFilters > label {
+  min-width: 150px;
+  height: 38px;
+  border-color: #d8dde3;
+  border-radius: 7px;
+}
+
+.accountsDirectory .accountQuickFilters > label {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #d8dde3;
+  background: #fff;
+}
+
+.leadsView .leadQuickFilters > label > span:not(.srOnly),
+.accountsDirectory .accountQuickFilters label > span {
+  padding: 0 0 0 10px;
+  color: #4c5866;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.leadsView .leadQuickFilters select,
+.accountsDirectory .accountQuickFilters select {
+  min-width: 100px;
+  height: 36px;
+  padding: 0 28px 0 8px;
+  border: 0;
+  color: #687484;
+  background: #fff;
+  font-size: 10px;
+}
+
+.leadsView .leadAddFilter,
+.accountsDirectory .accountAddFilter summary {
+  min-height: 38px;
+  height: 38px;
+  border: 1px solid #d8dde3;
+  border-radius: 7px;
+  color: #4c5866;
+  background: #fff;
+  font-size: 10px;
+}
+
+.leadsView .leadSortControl,
+.accountsDirectory .accountSort {
+  margin-left: 0;
+  border-color: #d8dde3;
+  border-radius: 7px;
+}
+
+.leadsView .leadSortControl select,
+.accountsDirectory .accountSort select {
+  min-width: 170px;
+  font-weight: 650;
+}
+
+/* Search, columns, export and layout */
+.leadsView .leadsViewToolbar,
+.accountsDirectory .accountToolkit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 62px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #e0e4e9;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 4%);
+}
+
+.leadsView .leadSearch,
+.accountsDirectory .accountSearch {
+  width: min(560px, 52%);
+  min-width: 260px;
+  height: 40px;
+  flex: 1 1 420px;
+  border-color: #d8dde3;
+  border-radius: 8px;
+  background: #f8fafb;
+}
+
+.accountsDirectory .accountSearch input {
+  height: 40px;
+  border-color: #d8dde3;
+  border-radius: 8px;
+  background: #f8fafb;
+  font-size: 11px;
+}
+
+.leadsView .leadColumnsWrap > .button,
+.leadsView .leadExportButton,
+.accountsDirectory .accountToolkit .accountButton {
+  min-height: 40px;
+  border-color: #d8dde3;
+  color: #485565;
+  background: #fff;
+  font-size: 11px;
+}
+
+.accountsDirectory .accountResultCount {
+  color: #738091;
+  font-size: 10px;
+}
+
+.leadsView .leadViewMode,
+.accountsDirectory .accountViewToggle {
+  width: 78px;
+  height: 40px;
+  flex: 0 0 78px;
+  margin-left: auto;
+  padding: 3px;
+  border: 1px solid #d8dde3;
+  border-radius: 8px;
+  background: #f4f6f8;
+}
+
+.leadsView .leadViewMode button,
+.accountsDirectory .accountViewToggle button {
+  width: 34px;
+  min-width: 34px;
+  height: 32px;
+  padding: 0;
+  border-radius: 6px;
+}
+
+/* Tables and boards */
+.leadsView .tableWrap,
+.accountsDirectory .accountTableWrap {
+  margin: 14px 0 24px;
+  border-color: #e0e4e9;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px rgb(16 24 40 / 4%);
+}
+
+.leadsView .crmTable th,
+.accountsDirectory .accountTable th {
+  height: 44px;
+  padding-inline: 13px;
+  color: #657181;
+  background: #f7f9fb;
+  font-size: 9px;
+  letter-spacing: .045em;
+}
+
+.leadsView .crmTable td,
+.accountsDirectory .accountTable td {
+  height: 58px;
+  padding-inline: 13px;
+  border-bottom-color: #edf0f3;
+  font-size: 11px;
+}
+
+.accountsDirectory .accountBoard,
+.leadsView .leadKanbanBoard {
+  gap: 12px;
+  margin-top: 14px;
+  padding: 0 0 24px;
+}
+
+.accountsDirectory .accountBoardColumn,
+.leadsView .leadKanbanColumn {
+  border-color: #e0e4e9;
+  border-radius: 10px;
+  background: #f6f8fa;
+}
+
+@media (max-width: 1050px) {
+  .leadsView .leadQuickFilters,
+  .accountsDirectory .accountQuickFilters {
+    align-items: stretch;
+  }
+
+  .leadsView .leadQuickFilters > label:not(.leadSortControl),
+  .accountsDirectory .accountQuickFilters > label {
+    flex: 1 1 190px;
+  }
+
+  .leadsView .leadSortControl,
+  .accountsDirectory .accountSort {
+    flex: 1 1 190px;
+  }
+
+  .leadsView .leadSortControl select,
+  .accountsDirectory .accountSort select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .crmContentArea > .leadsView,
+  .crmContentArea > .accountsDirectory {
+    max-width: none;
+  }
+
+  .leadsView .leadsPageHeading,
+  .accountsDirectory .accountDirectoryHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .leadsView .leadHeaderActions,
+  .accountsDirectory .accountHeaderActions {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .leadsView .leadQuickFilters,
+  .accountsDirectory .accountQuickFilters,
+  .leadsView .leadsViewToolbar,
+  .accountsDirectory .accountToolkit {
+    padding: 8px;
+  }
+
+  .leadsView .leadSearch,
+  .accountsDirectory .accountSearch {
+    width: 100%;
+    min-width: 100%;
+    flex-basis: 100%;
+  }
+
+  .leadsView .leadsViewToolbar,
+  .accountsDirectory .accountToolkit {
+    flex-wrap: wrap;
+  }
+
+  .leadsView .leadViewMode,
+  .accountsDirectory .accountViewToggle {
+    margin-left: auto;
+  }
+}

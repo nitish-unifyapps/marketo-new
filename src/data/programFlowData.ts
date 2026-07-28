@@ -47,8 +47,25 @@ export function createProgramFlowStep(type: ProgramFlowStepType, id: string): Pr
 
 export function defaultFlowStepsForProgramType(type: ProgramType): ProgramFlowStep[] {
   if (type === 'Simple Email') {
-    const email = createProgramFlowStep('Send Email', 'simple-email-send')
-    return [email, createProgramFlowStep('End', 'simple-email-end')]
+    const intro = createProgramFlowStep('Send Email', 'simple-email-intro')
+    intro.config = { ...intro.config, emailName: 'Product Announcement', personalization: '{{lead.FirstName}}', suppressionList: 'Global Unsubscribes' }
+    const initialWait = createProgramFlowStep('Wait', 'simple-email-wait-2d')
+    initialWait.config = { ...initialWait.config, waitMode: 'duration', duration: 2, unit: 'days' }
+    const engagement = createProgramFlowStep('If/Then', 'simple-email-engagement')
+    engagement.config = { field: 'Program Status', operator: 'is', value: 'Engaged' }
+    const priorityTask = createProgramFlowStep('Create Task', 'simple-email-priority-task')
+    priorityTask.config = { subject: 'Priority follow-up call', dueDate: '2026-07-31', assignTo: 'Person Owner' }
+    const alert = createProgramFlowStep('Send Alert', 'simple-email-owner-alert')
+    alert.config = { recipient: 'Person Owner', subject: 'Engaged prospect ready for follow-up', message: '{{lead.FirstName}} opened the product announcement.' }
+    const reminder = createProgramFlowStep('Send Email', 'simple-email-reminder')
+    reminder.config = { ...reminder.config, emailName: 'Customer Success Digest', personalization: '{{lead.Company}}', suppressionList: '' }
+    engagement.branches = [
+      { id: 'simple-email-engaged-yes', label: 'Engaged', condition: 'Program status is Engaged', steps: [priorityTask, alert] },
+      { id: 'simple-email-engaged-no', label: 'Not engaged', condition: 'Otherwise', steps: [reminder] },
+    ]
+    const finalWait = createProgramFlowStep('Wait', 'simple-email-final-wait')
+    finalWait.config = { ...finalWait.config, waitMode: 'duration', duration: 3, unit: 'days' }
+    return [intro, initialWait, engagement, finalWait, createProgramFlowStep('End', 'simple-email-end')]
   }
 
   if (type === 'Event') {

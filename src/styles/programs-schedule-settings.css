@@ -712,3 +712,101 @@
   .programTokenList > div { grid-template-columns: 1fr 70px; }
   .programTokenList input { grid-column: 1; }
 }
+
+/* Readable Schedule and Settings typography */
+.programScheduleHeader p,
+.programScheduleCard header small,
+.scheduleCardToggle small,
+.scheduleCronField small,
+.reentryModeField small,
+.qualificationOptions small,
+.reentryControl small,
+.reentryControl > p,
+.triggerScheduleNote p,
+.programScheduleFooter small,
+.programSettingsPanel > header small,
+.programSettingsSection > header small,
+.programSettingsSection label > small,
+.assetFolderSettings small,
+.eventWaitlistSetting small,
+.pauseEngagementSetting small {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.programScheduleMode button,
+.programScheduleFixedMode,
+.programScheduleCard header strong,
+.scheduleCardToggle strong,
+.qualificationOptions strong,
+.reentryControl strong,
+.triggerScheduleNote strong,
+.programScheduleFooter strong,
+.programSettingsSection > header strong,
+.assetFolderSettings strong,
+.eventWaitlistSetting strong,
+.pauseEngagementSetting strong {
+  font-size: 12px;
+}
+
+.programScheduleFields > label,
+.reentryModeField,
+.programSettingsSection > label,
+.eventSettingsDates label,
+.eventCapacitySettings > label:first-child,
+.communicationLimitFields label,
+.nurtureSettingsSection > label:first-of-type {
+  font-size: 11px;
+}
+
+.programScheduleFields input,
+.programScheduleFields select,
+.reentryModeField select,
+.programSettingsSection input:not([type='checkbox']),
+.programSettingsSection select,
+.programSettingsSection textarea {
+  font-size: 12px;
+}
+
+.programSettingsSection > header code,
+.programTokenList code {
+  font-size: 10px;
+}
+
+.programSettingsSection > header button,
+.newProgramToken > button,
+.settingsRichToolbar button {
+  font-size: 11px;
+}
+
+.programTokenList button {
+  font-size: 10px;
+}
+
+.programScheduleHeader,
+.programScheduleFooter,
+.programSettingsSection > header {
+  flex-wrap: wrap;
+}
+
+.programScheduleMode {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .programSettingsPanel {
+    width: calc(100vw - 24px);
+  }
+
+  .eventSettingsDates,
+  .communicationLimitFields,
+  .eventCapacitySettings {
+    grid-template-columns: 1fr;
+  }
+
+  .programScheduleFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

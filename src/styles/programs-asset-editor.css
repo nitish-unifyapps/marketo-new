@@ -723,3 +723,106 @@
   .programLandingAssetBuilder,
   .programFormAssetBuilder { grid-template-columns: 190px minmax(0, 1fr) 270px; }
 }
+
+/* Readable asset editor typography */
+.programAssetEditorTopbar > button,
+.assetBuilderLibrary header small,
+.assetBuilderCanvas > header,
+.assetBuilderProperties > header > button,
+.assetBuilderProperties section header button,
+.assetTokenResolved,
+.assetTokenPopover small,
+.programInboxPreview span,
+.programInboxPreview small,
+.assetDynamicContent em,
+.programEmailBlock.type-brand,
+.programFormDocument > div:first-child small,
+.programFormDocument > div:first-child p,
+.programFormDocument section i,
+.assetDiscardDialog p {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.flowEditSelectedAsset,
+.programAssetsView .programAssetSections article > button::before,
+.assetBuilderLibrary > button,
+.assetBuilderCanvas > header button,
+.assetBuilderProperties section header strong,
+.assetBuilderProperties label:not(.assetTokenField),
+.assetBuilderProperties section > label,
+.assetTokenField,
+.assetTokenRendering,
+.assetTokenPopover code,
+.assetTokenPopover p,
+.landingEmbeddedForm label,
+.programFormDocument section label {
+  font-size: 12px;
+}
+
+.assetBuilderLibrary header strong,
+.assetBuilderProperties > header strong,
+.assetTokenPopover header strong,
+.programInboxPreview strong {
+  font-size: 13px;
+}
+
+.assetBuilderProperties input,
+.assetBuilderProperties select,
+.assetBuilderProperties textarea,
+.assetTokenField input,
+.assetTokenField textarea {
+  font-size: 12px;
+}
+
+.assetTokenField > span:first-child > button,
+.assetTokenPopover > nav button,
+.assetTokenRendering > i {
+  font-size: 10px;
+}
+
+.programAssetEditor {
+  min-width: 0;
+}
+
+.programAssetEditorTopbar > div {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.assetTokenPopover {
+  max-width: calc(100vw - 24px);
+}
+
+@media (max-width: 900px) {
+  .programEmailAssetBuilder,
+  .programLandingAssetBuilder,
+  .programFormAssetBuilder {
+    grid-template-columns: 170px minmax(360px, 1fr) 250px;
+    overflow-x: auto;
+  }
+
+  .programAssetEditorTopbar {
+    grid-template-columns: auto minmax(180px, 1fr) auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .programEmailAssetBuilder,
+  .programLandingAssetBuilder,
+  .programFormAssetBuilder {
+    grid-template-columns: 140px minmax(320px, 1fr) 230px;
+  }
+
+  .programAssetEditorTopbar {
+    height: auto;
+    min-height: 56px;
+    grid-template-columns: auto minmax(140px, 1fr);
+    padding-block: 6px;
+  }
+
+  .programAssetEditorTopbar > div {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+}

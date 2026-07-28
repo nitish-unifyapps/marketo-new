@@ -8,7 +8,7 @@ import { ProgramScheduleEditor } from './ProgramScheduleEditor'
 import { ProgramSegmentEditor } from './ProgramSegmentEditor'
 import { ProgramSettingsPanel } from './ProgramSettingsPanel'
 import { defaultEventDetails, defaultScheduleForProgramType, defaultSegmentForProgramType, defaultTokensForProgramType, initialProgramFolders, initialPrograms, programAssetFolderLabels, programFlowTemplates, programTypeDefaults } from '../../data/programsData'
-import { countFlowSteps, defaultFlowStepsForProgramType, flowStepSummary } from '../../data/programFlowData'
+import { defaultFlowStepsForProgramType } from '../../data/programFlowData'
 import type { ProgramAssetFolderKey, ProgramAssetRecord, ProgramAssetType, ProgramFlowStep, ProgramFolderRecord, ProgramRecord, ProgramStatus, ProgramType } from '../../types/programs'
 
 interface ProgramsWorkspaceProps {
@@ -18,13 +18,13 @@ interface ProgramsWorkspaceProps {
   onSearchChange?: (value: string) => void
 }
 
-type ProgramTab = 'overview' | 'segment' | 'flow' | 'schedule' | 'reports' | 'assets' | 'settings'
+type ProgramTab = 'segment' | 'flow' | 'schedule' | 'reports' | 'settings'
 type CreateState = { kind: 'folder' | 'program'; parentId: string | null }
 type RenameState = { kind: 'folder' | 'program' | 'asset'; id: string; programId?: string; name: string }
 type DraggedNode = { kind: 'folder' | 'program'; id: string }
 type ContextTarget = { kind: 'folder' | 'program' | 'asset'; id: string; programId?: string; x: number; y: number }
 type AssetCreateState = { programId: string; type: ProgramAssetType; folder: ProgramAssetFolderKey }
-type AssetEditorState = { programId: string; assetId: string; origin: 'tree' | 'assets' | 'flow' }
+type AssetEditorState = { programId: string; assetId: string }
 
 const assetTypeFolder: Record<ProgramAssetType, ProgramAssetFolderKey> = {
   Email: 'emails',
@@ -34,6 +34,10 @@ const assetTypeFolder: Record<ProgramAssetType, ProgramAssetFolderKey> = {
 }
 
 const statusLabels: ProgramStatus[] = ['Active', 'Draft', 'Paused', 'Error', 'Archived']
+
+function initialTabForProgram(type: ProgramType): ProgramTab {
+  return type === 'Container' ? 'reports' : 'segment'
+}
 
 function updateFlowAssetName(steps: ProgramFlowStep[] | undefined, previousName: string, nextName: string): ProgramFlowStep[] | undefined {
   return steps?.map((step) => ({
@@ -90,7 +94,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
   const [expandedPrograms, setExpandedPrograms] = useState(() => new Set<string>())
   const [expandedAssetFolders, setExpandedAssetFolders] = useState(() => new Set<string>())
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<ProgramTab>('overview')
+  const [activeTab, setActiveTab] = useState<ProgramTab>('segment')
   const [internalQuery, setInternalQuery] = useState('')
   const query = embedded ? searchValue : internalQuery
   const setQuery = (value: string) => embedded ? onSearchChange?.(value) : setInternalQuery(value)
@@ -213,7 +217,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     setPrograms((current) => [...current, program])
     if (parentId) setExpandedFolders((current) => new Set(current).add(parentId))
     setSelectedProgramId(program.id)
-    setActiveTab('overview')
+    setActiveTab(initialTabForProgram(type))
     setNotice(`Program “${name}” created as Draft.`)
   }
 
@@ -258,6 +262,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     }
     setPrograms((current) => [...current, clone])
     setSelectedProgramId(clonedId)
+    setActiveTab(initialTabForProgram(clone.type))
     setNotice(`“${source.name}” cloned as Draft.`)
   }
 
@@ -317,7 +322,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
       >
         <button type='button' className='programTreeChevron' disabled={!hasFolders} onClick={(event) => { event.stopPropagation(); if (hasFolders) toggleSet(setExpandedPrograms, program.id) }} aria-label={`${open ? 'Collapse' : 'Expand'} ${program.name}`}>{hasFolders ? (open ? '⌄' : '›') : ''}</button>
         <span className='programTypeIcon'><ProgramObjectIcon type={program.type} /></span>
-        <button type='button' className='programTreeName' onClick={() => { setSelectedProgramId(program.id); setActiveTab('overview') }}>{program.name}</button>
+        <button type='button' className='programTreeName' onClick={() => { setSelectedProgramId(program.id); setActiveTab(initialTabForProgram(program.type)) }}>{program.name}</button>
         <span className={`programStatusDot status-${program.status.toLowerCase()}`} title={program.status} />
       </div>
       {open && hasFolders && <div>
@@ -340,7 +345,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
             >
               <span className='programTreeChevron' />
               <AssetTypeIcon type={asset.type} />
-              <button type='button' className='programTreeName' onClick={() => asset.type === 'File' ? setNotice(`Previewing file “${asset.name}”.`) : setAssetEditorState({ programId: program.id, assetId: asset.id, origin: 'tree' })}>{asset.name}</button>
+              <button type='button' className='programTreeName' onClick={() => asset.type === 'File' ? setNotice(`Previewing file “${asset.name}”.`) : setAssetEditorState({ programId: program.id, assetId: asset.id })}>{asset.name}</button>
             </div>)}
           </div>
         })}
@@ -396,7 +401,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
   return <div className={`programsWorkspace ${embedded ? 'embeddedProgramsWorkspace' : ''}`}>
     <aside className='programsTreePane'>
       {!embedded && <div className='programsWorkspaceBrand'><button type='button' onClick={onExit} aria-label='Back to main navigation'>‹</button><WireframeIcon name='programs' /><span>Marketo Next</span></div>}
-      <div className='programTreeRootHeader'>
+      {!embedded && <div className='programTreeRootHeader'>
         <strong>Programs</strong>
         <div>
           <button type='button' title='Collapse all' onClick={collapseAll}>−</button>
@@ -404,7 +409,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
           <button type='button' className='programTreeAdd' title='Create' onClick={() => setAddMenuOpen((open) => !open)}>+</button>
         </div>
         {addMenuOpen && <div className='programTreeAddMenu'><button type='button' onClick={() => { setCreateState({ kind: 'folder', parentId: null }); setAddMenuOpen(false) }}>New Folder</button><button type='button' onClick={() => { setCreateState({ kind: 'program', parentId: null }); setAddMenuOpen(false) }}>New Program</button></div>}
-      </div>
+      </div>}
       <label className='programTreeSearch'><WireframeIcon name='search' className='iconSmall' /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder='Search programs and assets…' />{query && <button type='button' onClick={() => setQuery('')} aria-label='Clear search'>×</button>}</label>
       <div
         className='programTreeScroll'
@@ -426,11 +431,9 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onUpdate={(updater) => updateProgram(selectedProgram.id, updater)}
-        onManageAssets={() => setManageProgramId(selectedProgram.id)}
         onOpenSettings={() => setSettingsProgramId(selectedProgram.id)}
         onActivate={() => updateProgram(selectedProgram.id, (program) => ({ ...program, status: 'Active', schedule: { ...(program.schedule ?? defaultScheduleForProgramType(program.type)), active: true } }))}
-        onCreateAsset={(type, folder) => setAssetCreateState({ programId: selectedProgram.id, type, folder })}
-        onEditAsset={(assetId) => { const asset = selectedProgram.assets.find((item) => item.id === assetId); if (asset?.type === 'File') setNotice(`Previewing file “${asset.name}”.`); else setAssetEditorState({ programId: selectedProgram.id, assetId, origin: 'assets' }) }}
+        onEditAsset={(assetId) => { const asset = selectedProgram.assets.find((item) => item.id === assetId); if (asset?.type === 'File') setNotice(`Previewing file “${asset.name}”.`); else setAssetEditorState({ programId: selectedProgram.id, assetId }) }}
       /> : <div className='programsEmptyState'><span><WireframeIcon name='programs' /></span><h2>Select a program from the tree to view details.</h2><p>Browse folders or search to find a program.</p></div>}
     </main>
 
@@ -454,7 +457,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
         if (target.kind === 'program') {
           const program = programs.find((item) => item.id === target.id)
           if (!program) return
-          if (action === 'open') { setSelectedProgramId(program.id); setActiveTab('overview') }
+          if (action === 'open') { setSelectedProgramId(program.id); setActiveTab(initialTabForProgram(program.type)) }
           if (action === 'edit') { setSelectedProgramId(program.id); setSettingsProgramId(program.id) }
           if (action === 'clone') cloneProgram(program.id)
           if (action === 'activate') updateProgram(program.id, (item) => { const active = item.status !== 'Active'; return { ...item, status: active ? 'Active' : 'Paused', schedule: item.schedule ? { ...item.schedule, active } : item.schedule } })
@@ -474,7 +477,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
           if (!program || !asset) return
           if (action === 'edit') {
             if (asset.type === 'File') setNotice(`Previewing “${asset.name}”.`)
-            else setAssetEditorState({ programId: program.id, assetId: asset.id, origin: 'tree' })
+            else setAssetEditorState({ programId: program.id, assetId: asset.id })
           }
           if (action === 'preview') setNotice(`Previewing “${asset.name}”.`)
           if (action === 'rename') setRenameState({ kind: 'asset', id: asset.id, programId: program.id, name: asset.name })
@@ -510,40 +513,21 @@ function ProgramContextMenu({ target, folders, programs, copiedProgramId, onActi
   </div>
 }
 
-function ProgramDetails({ program, activeTab, onTabChange, onUpdate, onManageAssets, onOpenSettings, onActivate, onCreateAsset, onEditAsset }: { program: ProgramRecord; activeTab: ProgramTab; onTabChange: (tab: ProgramTab) => void; onUpdate: (updater: (program: ProgramRecord) => ProgramRecord) => void; onManageAssets: () => void; onOpenSettings: () => void; onActivate: () => void; onCreateAsset: (type: ProgramAssetType, folder: ProgramAssetFolderKey) => void; onEditAsset: (assetId: string) => void }) {
-  const detailTabs: ProgramTab[] = program.type === 'Container' ? ['overview', 'reports', 'assets'] : ['overview', 'segment', 'flow', 'schedule', 'reports', 'assets']
-  const effectiveFlowSteps = program.flowSteps ?? defaultFlowStepsForProgramType(program.type)
-  const flowStepCount = countFlowSteps(effectiveFlowSteps)
+function ProgramDetails({ program, activeTab, onTabChange, onUpdate, onOpenSettings, onActivate, onEditAsset }: { program: ProgramRecord; activeTab: ProgramTab; onTabChange: (tab: ProgramTab) => void; onUpdate: (updater: (program: ProgramRecord) => ProgramRecord) => void; onOpenSettings: () => void; onActivate: () => void; onEditAsset: (assetId: string) => void }) {
+  const detailTabs: ProgramTab[] = program.type === 'Container' ? ['reports'] : ['segment', 'flow', 'schedule', 'reports']
   const displayType = program.convertedToNurture ? 'Nurture (converted)' : program.type
 
-  useEffect(() => {
-    if (activeTab !== 'assets') return
-    const orderedAssets = program.enabledAssetFolders.flatMap((folder) => program.assets.filter((asset) => asset.folder === folder))
-    const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('.programAssetsView .programAssetSections article > button'))
-    const cleanups = buttons.map((button, index) => {
-      const handler = () => { const asset = orderedAssets[index]; if (asset) onEditAsset(asset.id) }
-      button.addEventListener('click', handler)
-      return () => button.removeEventListener('click', handler)
-    })
-    return () => cleanups.forEach((cleanup) => cleanup())
-  }, [activeTab, onEditAsset, program.assets, program.enabledAssetFolders])
   return <div className='programDetails'>
     <header className='programDetailsHeader'>
       <div className='programDetailsIdentity'><span className='programDetailTypeIcon'><ProgramObjectIcon type={program.type} /></span><div><small>Programs / {displayType}</small><h1>{program.name}</h1><p>{program.description || 'No description added yet.'}</p></div></div>
       <div><span className={`programStatusBadge status-${program.status.toLowerCase()}`}><i />{program.status}</span>{program.type !== 'Container' && <button type='button' className='button solid programHeaderActivate' disabled={program.status === 'Active'} onClick={onActivate}>{program.status === 'Active' ? 'Active' : 'Activate'}</button>}<button type='button' className='programSettingsGear' onClick={onOpenSettings} aria-label='Open Program Settings'>⚙</button></div>
     </header>
-    <nav className='programDetailTabs' aria-label='Program details'>{detailTabs.map((tab) => <button type='button' key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => onTabChange(tab)}>{tab[0].toUpperCase() + tab.slice(1)}{tab === 'assets' && <span>{program.assets.length}</span>}</button>)}</nav>
+    <nav className='programDetailTabs' aria-label='Program details'>{detailTabs.map((tab) => <button type='button' key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => onTabChange(tab)}>{tab[0].toUpperCase() + tab.slice(1)}</button>)}</nav>
     <div className='programDetailBody'>
-      {activeTab === 'overview' && <div className='programOverview'>
-        <section className='programOverviewHero'><div><span>Program health</span><strong>{program.status === 'Active' ? 'Running normally' : program.status === 'Error' ? 'Needs attention' : `${program.status} configuration`}</strong><p>{flowStepCount} flow steps · {program.assets.length} local assets · Created {program.createdAt}</p></div><i className={`status-${program.status.toLowerCase()}`} /></section>
-        <div className='programMetricGrid'><article><span>Status</span><strong>{program.status}</strong><small>Current operating state</small></article><article><span>Flow Steps</span><strong>{flowStepCount}</strong><small>{program.type === 'Container' ? 'Not available for Containers' : 'Editable in the Flow tab'}</small></article><article><span>Local Assets</span><strong>{program.assets.length}</strong><small>Across {program.enabledAssetFolders.length} enabled folders</small></article><article><span>Program Type</span><strong>{displayType}</strong><small>Template and behavior</small></article></div>
-        {program.type !== 'Container' && <section className='programOverviewCard'><header><div><strong>Flow preview</strong><small>Pre-built automation template</small></div><button type='button' onClick={() => onTabChange('flow')}>Edit Flow →</button></header>{effectiveFlowSteps.length ? <div className='programMiniFlow'>{effectiveFlowSteps.map((step, index) => <div key={step.id}><span>{index + 1}</span><strong>{flowStepSummary(step)}</strong>{index < effectiveFlowSteps.length - 1 && <i>→</i>}</div>)}</div> : <div className='programOverviewEmpty'>Start only. Open Flow to add the first step.</div>}</section>}
-      </div>}
       {activeTab === 'segment' && program.type !== 'Container' && <ProgramSegmentEditor program={program} onChange={(segment) => onUpdate((item) => ({ ...item, segment }))} />}
       {activeTab === 'flow' && program.type !== 'Container' && <ProgramFlowEditor program={program} onChange={(flowSteps) => onUpdate((item) => ({ ...item, flowSteps }))} onConvertToNurture={() => onUpdate((item) => ({ ...item, convertedToNurture: true }))} onEditAsset={onEditAsset} />}
       {activeTab === 'schedule' && program.type !== 'Container' && <ProgramScheduleEditor program={program} onChange={(schedule) => onUpdate((item) => ({ ...item, schedule }))} onActivate={() => onUpdate((item) => ({ ...item, status: 'Active', schedule: { ...(item.schedule ?? defaultScheduleForProgramType(item.type)), active: true } }))} />}
       {activeTab === 'reports' && <ProgramReportsView program={program} onMembersChange={(members) => onUpdate((item) => ({ ...item, members }))} />}
-      {activeTab === 'assets' && <div className='programAssetsView'><header><div><h2>Local Assets</h2><p>Assets scoped to this program and organized by enabled folders.</p></div><button type='button' className='button outline' onClick={onManageAssets}>Manage Folders</button></header>{program.enabledAssetFolders.length ? <div className='programAssetSections'>{program.enabledAssetFolders.map((folder) => { const assets = program.assets.filter((asset) => asset.folder === folder); const createType: ProgramAssetType | null = folder === 'emails' ? 'Email' : folder === 'landing-pages' ? 'Landing Page' : folder === 'forms' ? 'Form' : null; return <section key={folder}><header><div><FolderTreeIcon open /><strong>{programAssetFolderLabels[folder]}</strong><span>{assets.length}</span></div>{createType && <button type='button' onClick={() => onCreateAsset(createType, folder)}>+ New</button>}</header><div>{assets.map((asset) => <article key={asset.id}><AssetTypeIcon type={asset.type} /><div><strong>{asset.name}</strong><small>{asset.type} · Local asset</small></div><button type='button'>•••</button></article>)}{assets.length === 0 && <p>No assets in this folder.</p>}</div></section>})}</div> : <div className='programAssetsEmpty'><FolderTreeIcon open={false} /><h3>No local asset folders enabled</h3><p>Enable Emails, Landing Pages, Forms, or Files in Settings.</p><button type='button' className='button outline accent' onClick={onManageAssets}>Manage Assets</button></div>}</div>}
       {activeTab === 'settings' && <div className='programSettingsView'><header><h2>Program Settings</h2><p>Control program status, description, and local asset folders.</p></header><div className='programSettingsGrid'><section><header><strong>General</strong><small>Core program configuration</small></header><label>Program Name<input value={program.name} onChange={(event) => onUpdate((item) => ({ ...item, name: event.target.value }))} /></label><label>Status<select value={program.status} onChange={(event) => onUpdate((item) => ({ ...item, status: event.target.value as ProgramStatus }))}>{statusLabels.map((status) => <option key={status}>{status}</option>)}</select></label><label>Description<textarea value={program.description} onChange={(event) => onUpdate((item) => ({ ...item, description: event.target.value }))} placeholder='Describe the purpose of this program…' /></label></section><section><header><strong>Local Asset Folders</strong><small>Show or hide folders beneath this program</small></header>{(Object.keys(programAssetFolderLabels) as ProgramAssetFolderKey[]).map((folder) => <label className='programAssetToggle' key={folder}><span><FolderTreeIcon open={program.enabledAssetFolders.includes(folder)} /><span><strong>{programAssetFolderLabels[folder]}</strong><small>{program.assets.filter((asset) => asset.folder === folder).length} existing assets</small></span></span><input type='checkbox' checked={program.enabledAssetFolders.includes(folder)} onChange={(event) => onUpdate((item) => ({ ...item, enabledAssetFolders: event.target.checked ? [...item.enabledAssetFolders, folder] : item.enabledAssetFolders.filter((value) => value !== folder) }))} /></label>)}</section></div></div>}
     </div>
   </div>

@@ -1,0 +1,329 @@
+.accountsDirectory {
+  --account-accent: #d97757;
+  --account-ink: #252422;
+  --account-muted: #6f6c68;
+  --account-border: #e6e2dd;
+  --account-soft: #f8f7f5;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--account-ink);
+  background: #fff;
+}
+
+.accountDirectoryHeader,
+.accountToolkit,
+.accountQuickFilters { display: flex; align-items: center; }
+.accountDirectoryHeader { justify-content: space-between; gap: 24px; padding: 24px 28px 18px; }
+.accountDirectoryTitle { display: flex; align-items: baseline; gap: 10px; }
+.accountDirectoryTitle h2 { margin: 0; font-size: 24px; letter-spacing: -.03em; }
+.accountDirectoryTitle p { margin: 0; color: var(--account-muted); font-size: 12px; }
+.accountHeaderActions { display: flex; align-items: center; gap: 8px; }
+
+.accountButton,
+.accountSavedViews button,
+.accountQuickFilters summary,
+.accountNameLink,
+.accountColumns button,
+.accountMenu button { font: inherit; }
+.accountButton { min-height: 34px; padding: 0 13px; border: 1px solid var(--account-border); border-radius: 6px; background: #fff; color: #45423f; font-size: 11px; font-weight: 650; cursor: pointer; }
+.accountButton:hover { border-color: #cac4bd; background: var(--account-soft); }
+.accountButton.primary { border-color: var(--account-accent); background: var(--account-accent); color: #fff; }
+.accountButton.primary:hover { background: #c9694b; }
+.accountMenu, .accountColumns, .accountAddFilter { position: relative; }
+.accountMenu summary, .accountColumns summary, .accountAddFilter summary { list-style: none; cursor: pointer; }
+.accountMenu summary::-webkit-details-marker, .accountColumns summary::-webkit-details-marker, .accountAddFilter summary::-webkit-details-marker { display: none; }
+.accountMenu > div { position: absolute; z-index: 15; top: calc(100% + 6px); right: 0; width: 180px; padding: 6px; border: 1px solid var(--account-border); border-radius: 8px; background: #fff; box-shadow: 0 12px 28px rgb(41 36 31 / 12%); }
+.accountMenu button { display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 5px; background: transparent; text-align: left; font-size: 11px; cursor: pointer; }
+.accountMenu button:hover { background: var(--account-soft); }
+
+.accountSavedViews { display: flex; gap: 24px; min-height: 42px; padding: 0 28px; border-bottom: 1px solid var(--account-border); overflow-x: auto; }
+.accountSavedViews button { position: relative; flex: none; padding: 0 1px; border: 0; background: transparent; color: var(--account-muted); font-size: 11px; font-weight: 600; cursor: pointer; }
+.accountSavedViews button:hover { color: var(--account-ink); }
+.accountSavedViews button.active { color: var(--account-accent); }
+.accountSavedViews button.active::after { position: absolute; right: 0; bottom: -1px; left: 0; height: 2px; background: var(--account-accent); content: ''; }
+.accountSavedViews button span { margin-left: 5px; }
+
+.accountQuickFilters { gap: 8px; padding: 12px 28px; border-bottom: 1px solid #efedea; background: #fdfcfb; }
+.accountQuickFilters > label { display: flex; flex-direction: column; gap: 3px; }
+.accountQuickFilters label > span { padding-left: 2px; color: var(--account-muted); font-size: 8px; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
+.accountQuickFilters select { min-width: 124px; height: 31px; padding: 0 27px 0 9px; border: 1px solid var(--account-border); border-radius: 5px; background: #fff; color: #4c4945; font: inherit; font-size: 10px; }
+.accountQuickFilters select:focus, .accountSearch input:focus { border-color: var(--account-accent); outline: 2px solid rgb(217 119 87 / 12%); }
+.accountSort { margin-left: auto; }
+.accountAddFilter { align-self: flex-end; }
+.accountAddFilter summary { display: flex; align-items: center; height: 31px; padding: 0 9px; border: 1px dashed #d2cbc4; border-radius: 5px; color: var(--account-accent); font-size: 10px; font-weight: 650; }
+.accountAddFilter summary b { display: grid; width: 16px; height: 16px; margin-left: 6px; border-radius: 50%; place-items: center; background: #f7e5df; font-size: 8px; }
+.accountAddFilter > div { position: absolute; z-index: 14; top: calc(100% + 6px); left: 0; width: 190px; padding: 12px; border: 1px solid var(--account-border); border-radius: 8px; background: #fff; box-shadow: 0 12px 28px rgb(41 36 31 / 12%); }
+.accountAddFilter > div label { display: flex; flex-direction: column; gap: 6px; font-size: 10px; font-weight: 650; }
+.accountAddFilter input { height: 30px; padding: 0 8px; border: 1px solid var(--account-border); border-radius: 5px; }
+.accountAddFilter button { margin-top: 9px; padding: 0; border: 0; background: none; color: var(--account-accent); font-size: 10px; cursor: pointer; }
+
+.accountToolkit { gap: 8px; padding: 13px 28px; }
+.accountSearch { position: relative; width: min(320px, 40%); }
+.accountSearch svg { position: absolute; top: 9px; left: 10px; width: 15px; height: 15px; color: #89847f; }
+.accountSearch input { box-sizing: border-box; width: 100%; height: 34px; padding: 0 10px 0 32px; border: 1px solid var(--account-border); border-radius: 6px; background: #fff; font: inherit; font-size: 11px; }
+.accountResultCount { margin-left: 4px; color: var(--account-muted); font-size: 10px; white-space: nowrap; }
+.accountViewToggle { display: flex; margin-left: auto; padding: 2px; border: 1px solid var(--account-border); border-radius: 6px; background: var(--account-soft); }
+.accountViewToggle button { display: grid; width: 30px; height: 28px; padding: 0; border: 0; border-radius: 4px; place-items: center; background: transparent; color: #89847f; font-size: 16px; cursor: pointer; }
+.accountViewToggle button.active { background: #fff; color: var(--account-accent); box-shadow: 0 1px 3px rgb(40 35 30 / 10%); }
+
+.accountColumns > div { position: absolute; z-index: 15; top: calc(100% + 6px); right: 0; width: 250px; padding: 8px; border: 1px solid var(--account-border); border-radius: 8px; background: #fff; box-shadow: 0 14px 32px rgb(41 36 31 / 13%); }
+.accountColumns header { display: flex; flex-direction: column; gap: 3px; padding: 8px 8px 10px; border-bottom: 1px solid #eeeae6; }
+.accountColumns header strong { font-size: 12px; }
+.accountColumns header small { color: var(--account-muted); font-size: 9px; }
+.accountColumns > div > label { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 5px; font-size: 10px; }
+.accountColumns > div > label:hover { background: var(--account-soft); }
+.accountColumns > div > label span { flex: 1; }
+.accountColumns em { color: #99938d; font-size: 8px; font-style: normal; }
+.accountColumns footer { display: flex; justify-content: flex-end; gap: 12px; padding: 9px 8px 3px; border-top: 1px solid #eeeae6; }
+.accountColumns footer button { padding: 0; border: 0; background: transparent; color: var(--account-accent); font-size: 9px; cursor: pointer; }
+
+.accountNotice { display: flex; align-items: center; gap: 7px; margin: 0 28px 12px; padding: 9px 11px; border: 1px solid #ead1c7; border-radius: 6px; background: #fff8f5; color: #775043; font-size: 10px; }
+.accountNotice > span { color: var(--account-accent); font-weight: 800; }
+.accountNotice button { margin-left: auto; border: 0; background: transparent; color: #96766c; cursor: pointer; }
+
+.accountTableWrap { margin: 0 28px 28px; border: 1px solid var(--account-border); border-radius: 8px; overflow: auto; }
+.accountTable { width: 100%; min-width: 760px; border-collapse: collapse; text-align: left; }
+.accountTable th { height: 38px; padding: 0 12px; border-bottom: 1px solid var(--account-border); background: #faf9f7; color: #746f69; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .035em; white-space: nowrap; }
+.accountTable td { height: 48px; padding: 0 12px; border-bottom: 1px solid #efedea; color: #4d4945; font-size: 10px; white-space: nowrap; }
+.accountTable tr:last-child td { border-bottom: 0; }
+.accountTable tbody tr:hover { background: #fdf9f7; }
+.accountTable tbody tr.selected { background: #fff6f2; }
+.accountSelectCell { box-sizing: border-box; width: 42px; text-align: center; }
+.accountTable input[type='checkbox'], .accountCard input[type='checkbox'], .accountColumns input[type='checkbox'] { accent-color: var(--account-accent); }
+.accountNameLink { display: inline-flex; align-items: center; gap: 9px; padding: 0; border: 0; background: none; color: #3b3835; font-size: 10px; font-weight: 700; cursor: pointer; }
+.accountNameLink:hover span { color: var(--account-accent); text-decoration: underline; }
+.accountNameLink i, .accountCard header button > i { display: grid; flex: none; width: 26px; height: 26px; border-radius: 6px; place-items: center; background: #f6e4dd; color: var(--account-accent); font-size: 10px; font-style: normal; font-weight: 800; }
+.accountStatus { display: inline-flex; padding: 3px 7px; border-radius: 999px; background: #f2f0ed; color: #625e59; font-size: 9px; font-weight: 650; }
+.accountStatus.customer { background: #e8f3ec; color: #397453; }
+.accountStatus.target { background: #f8ede8; color: #a75c43; }
+.accountContactCount { color: var(--account-accent); font-weight: 700; }
+.accountEmpty { height: 190px !important; text-align: center; }
+.accountEmpty strong, .accountEmpty span { display: block; margin-bottom: 7px; }
+.accountEmpty span { color: var(--account-muted); font-weight: 400; }
+.accountEmpty button { border: 0; background: transparent; color: var(--account-accent); font: inherit; font-weight: 700; cursor: pointer; }
+
+.accountBoard { display: grid; grid-template-columns: repeat(3, minmax(220px, 1fr)); gap: 12px; min-width: 0; padding: 0 28px 28px; overflow-x: auto; }
+.accountBoardColumn { min-width: 220px; border: 1px solid var(--account-border); border-radius: 8px; background: var(--account-soft); overflow: hidden; }
+.accountBoardColumn > header { display: flex; align-items: center; justify-content: space-between; height: 43px; padding: 0 12px; border-bottom: 1px solid var(--account-border); background: #fff; }
+.accountBoardColumn > header > div { display: flex; align-items: center; gap: 7px; }
+.accountBoardColumn > header i { width: 7px; height: 7px; border-radius: 50%; background: #9b9690; }
+.accountBoardColumn.customer > header i { background: #4e8b68; }
+.accountBoardColumn.target > header i { background: var(--account-accent); }
+.accountBoardColumn > header strong { font-size: 10px; }
+.accountBoardColumn > header > span { display: grid; width: 20px; height: 20px; border-radius: 50%; place-items: center; background: var(--account-soft); color: var(--account-muted); font-size: 9px; }
+.accountBoardColumn > div { display: flex; flex-direction: column; gap: 8px; min-height: 170px; padding: 9px; }
+.accountBoardColumn > div > p { margin: auto; color: #99938d; font-size: 9px; }
+.accountCard { padding: 11px; border: 1px solid #e7e2dd; border-radius: 7px; background: #fff; box-shadow: 0 1px 2px rgb(40 35 30 / 4%); }
+.accountCard:hover { border-color: #d8b4a7; box-shadow: 0 5px 14px rgb(75 53 43 / 7%); }
+.accountCard > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.accountCard header button { display: flex; min-width: 0; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.accountCard header button > span { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.accountCard header strong { overflow: hidden; color: var(--account-ink); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.accountCard header small { overflow: hidden; color: var(--account-muted); font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+.accountCard dl { display: grid; grid-template-columns: 1fr 1fr; margin: 12px 0; padding: 9px 0; border-top: 1px solid #f0ede9; border-bottom: 1px solid #f0ede9; }
+.accountCard dl div + div { padding-left: 10px; border-left: 1px solid #f0ede9; }
+.accountCard dt { margin-bottom: 3px; color: var(--account-muted); font-size: 8px; }
+.accountCard dd { margin: 0; color: #4a4642; font-size: 10px; font-weight: 700; }
+.accountCard > footer { display: flex; justify-content: space-between; gap: 8px; color: #716c66; font-size: 8px; }
+.accountCard > footer small { color: #99938d; font-size: inherit; }
+
+@media (max-width: 1050px) {
+  .accountQuickFilters, .accountToolkit { flex-wrap: wrap; }
+  .accountSort { margin-left: 0; }
+  .accountSearch { width: min(300px, 100%); }
+  .accountViewToggle { margin-left: auto; }
+}
+
+@media (max-width: 720px) {
+  .accountDirectoryHeader { align-items: flex-start; padding: 18px 16px 14px; }
+  .accountHeaderActions { flex-wrap: wrap; justify-content: flex-end; }
+  .accountSavedViews, .accountQuickFilters, .accountToolkit { padding-right: 16px; padding-left: 16px; }
+  .accountQuickFilters > label { flex: 1 1 130px; }
+  .accountQuickFilters select { width: 100%; min-width: 0; }
+  .accountSearch { width: 100%; flex: 1 0 100%; }
+  .accountTableWrap { margin: 0 16px 20px; }
+  .accountBoard { padding: 0 16px 20px; }
+}
+
+@media (max-width: 480px) {
+  .accountDirectoryHeader { flex-direction: column; }
+  .accountHeaderActions { width: 100%; justify-content: flex-start; }
+  .accountButton { padding: 0 9px; }
+  .accountSavedViews { gap: 18px; }
+  .accountColumns > div { right: auto; left: 0; }
+}
+
+/* Shared CRM directory shell */
+.crmDirectoryHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 0 0 18px;
+  padding: 0;
+}
+
+.crmDirectoryTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.crmDirectoryTitle h2 {
+  margin: 0;
+  color: #202832;
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -.55px;
+}
+
+.crmDirectoryTitle > span {
+  margin: 0;
+  color: #66717f;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.crmDirectoryActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crmDirectoryActions .button,
+.crmDirectoryActions .accountButton {
+  min-width: auto;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 11px;
+}
+
+/* Accounts now follows the same directory rhythm as Leads. */
+.accountsDirectory {
+  --account-border: #e2e5e9;
+  --account-soft: #f7f8fa;
+  color: #202832;
+  background: transparent;
+}
+
+.accountDirectoryHeader { margin-bottom: 18px; padding: 0; }
+.accountDirectoryTitle p { display: none; }
+.accountDirectoryTitle h2 { font-size: 25px; }
+.accountHeaderActions .accountButton { border-color: #cfd4da; color: #42505e; background: #fff; }
+.accountHeaderActions .accountButton.primary { color: #fff; border-color: var(--accent); background: var(--accent); }
+.accountHeaderActions .accountButton.primary:hover { border-color: var(--accent-hover); background: var(--accent-hover); }
+
+.accountSavedViews {
+  align-items: flex-end;
+  gap: 4px;
+  min-height: 43px;
+  padding: 0;
+  border-color: #e2e5e9;
+}
+
+.accountSavedViews button {
+  height: 43px;
+  padding: 0 14px;
+  color: #66717f;
+  font-size: 11px;
+}
+
+.accountSavedViews button.active::after { right: 11px; left: 11px; }
+
+.accountQuickFilters {
+  gap: 8px;
+  flex-wrap: nowrap;
+  padding: 13px 0;
+  overflow-x: auto;
+  border-color: #edf0f2;
+  background: transparent;
+  scrollbar-width: thin;
+}
+
+.accountQuickFilters > label:not(.accountSort) {
+  display: flex;
+  align-items: center;
+  height: 36px;
+  flex: 0 0 auto;
+  flex-direction: row;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #cfd4da;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.accountQuickFilters label > span {
+  padding: 0 0 0 10px;
+  color: #4c5866;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.accountQuickFilters select {
+  min-width: 92px;
+  height: 34px;
+  padding: 0 27px 0 7px;
+  border: 0;
+  border-radius: 0;
+  color: #66717f;
+  background: #fff;
+  font-size: 10px;
+}
+
+.accountSort {
+  flex: 0 0 auto;
+  margin-left: auto;
+  border: 1px solid #cfd4da;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.accountSort > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+.accountSort select { min-width: 160px; color: #44515f; font-weight: 600; }
+.accountAddFilter { align-self: center; }
+.accountAddFilter summary { height: 36px; border: 1px solid #cfd4da; border-radius: 7px; color: #44515f; background: #fff; }
+.accountAddFilter summary:hover { color: var(--accent); border-color: var(--accent-border); background: var(--accent-soft); }
+
+.accountToolkit {
+  gap: 8px;
+  padding: 12px 0;
+  border: 0;
+  background: transparent;
+}
+
+.accountSearch { width: min(340px, 45vw); }
+.accountSearch input { height: 38px; border-color: #cfd4da; border-radius: 7px; background: #f7f8fa; }
+.accountSearch svg { top: 11px; }
+.accountToolkit .accountButton { min-height: 38px; border-color: #cfd4da; border-radius: 7px; color: #465361; }
+.accountColumns > summary > span { margin-left: 5px; padding: 3px 6px; border-radius: 999px; color: var(--accent); background: var(--accent-soft); font-size: 8px; }
+.accountResultCount { color: #66717f; }
+.accountViewToggle { width: 78px; height: 38px; box-sizing: border-box; margin-left: auto; padding: 3px; border-color: #cfd4da; border-radius: 7px; }
+.accountViewToggle button { width: 34px; height: 30px; }
+.accountTableWrap { margin: 0 0 28px; border-color: #e2e5e9; border-radius: 9px; box-shadow: 0 1px 3px rgb(25 35 45 / 5%); }
+.accountTable th { height: 43px; color: #596675; background: #f7f8fa; }
+.accountTable td { height: 61px; border-bottom-color: #edf0f2; font-size: 11px; }
+.accountBoard { padding: 0 0 28px; }
+
+/* Segments list uses the same page header system. */
+.segmentsDirectory .segmentDirectoryHeader { margin-bottom: 18px; }
+.segmentsDirectory .smartListGrid { gap: 14px; }
+.segmentsDirectory .smartListCard { border-color: #e2e5e9; box-shadow: 0 1px 3px rgb(25 35 45 / 5%); }
+
+@media (max-width: 760px) {
+  .crmDirectoryHeader { align-items: stretch; flex-direction: column; }
+  .crmDirectoryActions { overflow-x: auto; }
+  .accountSavedViews, .accountQuickFilters, .accountToolkit { padding-right: 0; padding-left: 0; }
+  .accountQuickFilters > label:not(.accountSort) { flex: 0 0 auto; }
+  .accountTableWrap { margin-right: 0; margin-left: 0; }
+  .accountBoard { padding-right: 0; padding-left: 0; }
+}
+
+@media (max-width: 480px) {
+  .crmDirectoryTitle { align-items: flex-start; flex-direction: column; gap: 2px; }
+}

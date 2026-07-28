@@ -209,6 +209,10 @@ function flowStepIcon(type: ProgramFlowStepType) {
   return flowStepPalette.find((item) => item.type === type)?.icon ?? '◇'
 }
 
+function flowDayAt(sequence: ProgramFlowStep[], index: number) {
+  return sequence.slice(0, index).reduce((day, step) => step.type === 'Wait' && step.config.waitMode === 'duration' && step.config.unit === 'days' ? day + Number(step.config.duration || 0) : day, 1)
+}
+
 function routerBranchCondition(branch: ProgramFlowBranch) {
   if (branch.conditionField && branch.conditionOperator && branch.conditionValue) return `${branch.conditionField} ${branch.conditionOperator} ${branch.conditionValue}`
   return branch.condition
@@ -350,6 +354,7 @@ export function ProgramFlowEditor({ program, onChange, onConvertToNurture, onEdi
 
   function renderSequence(sequence: ProgramFlowStep[], depth = 0): React.ReactNode {
     return <div className='programFlowSequence'>{sequence.map((step, index) => <div className={`programFlowNode ${step.type === 'Stream' ? 'programStreamNode' : ''}`} key={step.id}>
+      {depth === 0 && (index === 0 || sequence[index - 1]?.type === 'Wait') && <div className='programFlowDayBadge'>Day {flowDayAt(sequence, index)}</div>}
       {incomingLabels.has(step.id) && <div className='programFlowIncomingTags'>From {incomingLabels.get(step.id)?.join(', ')}</div>}
       <article
         className={`programFlowCard type-${step.type.toLowerCase().replaceAll(/[^a-z]+/g, '-')} ${step.type === 'Stream' ? 'programStreamHeader' : ''}`}
@@ -375,9 +380,8 @@ export function ProgramFlowEditor({ program, onChange, onConvertToNurture, onEdi
   }
 
   return <div className='programSequenceFlow'>
-    <header className='programFlowHeader'><div><h2>Flow</h2><p>Build the sequence that runs after a person enters this program.</p></div><div><button type='button' className='button outline' onClick={() => { setCollapsedBranches(new Set()); setCollapsedStreams(new Set()) }}>Expand All</button><button type='button' className='button outline' onClick={() => { setCollapsedBranches(new Set(collectBranchIds(steps))); setCollapsedStreams(new Set(allFlowSteps.filter((step) => step.type === 'Stream').map((step) => step.id))) }}>Collapse All</button></div></header>
     <div className='programFlowCanvas'>
-      <div className='programFlowStart'>Start</div>
+      <div className='programFlowCanvasToolbar'><div className='programFlowStart'>Start</div><div><button type='button' onClick={() => { setCollapsedBranches(new Set()); setCollapsedStreams(new Set()) }}>Expand all</button><button type='button' onClick={() => { setCollapsedBranches(new Set(collectBranchIds(steps))); setCollapsedStreams(new Set(allFlowSteps.filter((step) => step.type === 'Stream').map((step) => step.id))) }}>Collapse all</button></div></div>
       <div className='programFlowStartLine' />
       {steps.length ? renderSequence(steps) : <div className='programFlowBlankState'><span>＋</span><strong>Start building this flow</strong><p>Add the first step after Start.</p></div>}
       {renderAddStep('root')}

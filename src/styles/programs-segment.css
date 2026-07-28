@@ -474,19 +474,6 @@
   height: 28px;
 }
 
-.segmentGroupConnector span {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 22px;
-  border: 1px solid #efc2b3;
-  border-radius: 999px;
-  color: #b35f43;
-  background: #fff3ef;
-  font-size: 7px;
-  font-weight: 800;
-}
-
 .segmentAddFirstGroup {
   width: 100%;
   min-height: 100px;
@@ -749,5 +736,712 @@
   .segmentFilterCanvas { padding: 12px; }
   .segmentCanvasIntro,
   .segmentTriggerToolbar { align-items: flex-start; flex-direction: column; }
+  .segmentTriggerConfig label { grid-template-columns: 1fr; }
+}
+
+/* Two-pane audience builder */
+.programSegmentEditor {
+  max-width: 1440px;
+  color: #253044;
+}
+
+.segmentEditorHeader {
+  min-height: 76px;
+  margin-bottom: 18px;
+}
+
+.segmentEditorHeader h2 {
+  color: #202939;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.segmentEditorHeader p {
+  margin-top: 7px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.segmentModeToggle {
+  gap: 4px;
+  padding: 4px;
+  background: #f5f6f8;
+}
+
+.segmentModeToggle button {
+  min-width: 82px;
+  height: 38px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.segmentFixedMode {
+  min-height: 38px;
+  padding-inline: 14px;
+  font-size: 12px;
+}
+
+.segmentEditorWorkspace {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(340px, 3fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.segmentDefinitionPane {
+  min-width: 0;
+}
+
+.segmentFilterCanvas {
+  padding: 0;
+  background: transparent;
+}
+
+.segmentAudienceSection {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.segmentAudienceSection + .segmentAudienceSection {
+  margin-top: 18px;
+}
+
+.segmentExcludeSection {
+  border-style: dashed;
+  box-shadow: none;
+}
+
+.segmentCanvasIntro {
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.segmentPageInstruction {
+  margin: 0 0 12px;
+  color: #697384;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.segmentCanvasIntro h3 {
+  margin-top: 5px;
+  color: #252f40;
+  font-size: 17px;
+  line-height: 1.3;
+}
+
+.segmentCanvasIntro p {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.segmentCanvasIntro .button,
+.segmentTriggerToolbar .button {
+  min-height: 38px;
+  padding-inline: 14px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.segmentSectionEyebrow {
+  color: #a85e45;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+}
+
+.segmentConditionGroup {
+  overflow: visible;
+  border-color: #e5e8ec;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+}
+
+.segmentConditionGroup.exclude {
+  border-left: 3px solid #d97757;
+}
+
+.segmentConditionGroup > header {
+  min-height: 42px;
+  padding: 7px 11px;
+  background: #fbfcfd;
+}
+
+.segmentGroupTitle {
+  display: flex;
+  align-items: flex-start !important;
+  flex-direction: column;
+  gap: 1px !important;
+}
+
+.segmentConditionGroup > header > div:first-child {
+  gap: 11px;
+}
+
+.segmentConditionGroup > header > div:first-child > span {
+  width: 24px;
+  height: 24px;
+  font-size: 9px;
+}
+
+.segmentConditionGroup header strong {
+  font-size: 11px;
+}
+
+.segmentConditionGroup header small {
+  margin-top: 1px;
+  font-size: 9px;
+}
+
+.segmentDeleteGroup {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  color: #b65d5d;
+  background: transparent;
+  font-size: 9px;
+}
+
+.segmentDeleteGroup:hover { background: #fdf0f0; }
+.segmentDeleteGroup svg { width: 14px; height: 14px; }
+
+.segmentGroupLogic {
+  gap: 3px;
+  padding: 3px;
+  border-radius: 7px;
+}
+
+.segmentGroupLogic button {
+  min-width: 43px;
+  height: 29px;
+  padding-inline: 9px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.segmentGroupLogic button.deleteGroup {
+  min-width: auto;
+  margin-left: 6px;
+  font-size: 10px;
+}
+
+.segmentConditionGroup > div {
+  padding: 5px 11px;
+}
+
+.segmentConditionRow {
+  grid-template-columns: minmax(145px, 1.2fr) minmax(125px, .85fr) minmax(150px, 1fr) 28px;
+  gap: 8px;
+  min-height: 46px;
+  border-bottom: 0;
+}
+
+.segmentConditionRow select,
+.segmentConditionRow input {
+  height: 36px;
+  padding-inline: 10px;
+  border-color: #d8dde4;
+  font-size: 10px;
+}
+
+.segmentConditionRow > button {
+  width: 27px;
+  height: 27px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.segmentConditionEmpty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 92px;
+  flex-direction: column;
+  margin: 8px 0;
+  border: 1px dashed #d3d8df;
+  border-radius: 7px;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.segmentConditionEmpty strong {
+  color: #4d5868;
+  font-size: 12px;
+}
+
+.segmentConditionEmpty small {
+  margin-top: 4px;
+  color: #8992a0;
+  font-size: 11px;
+}
+
+.segmentConditionGroup > footer {
+  min-height: 38px;
+  padding: 6px 12px;
+}
+
+.segmentConditionGroup > footer button {
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.segmentConditionGroup > footer span {
+  font-size: 10px;
+}
+
+.segmentGroupConnector {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 30px;
+  padding-left: 10px;
+}
+
+.segmentConditionConnector {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 18px;
+}
+
+.segmentLogicMenu { position: relative; }
+
+.segmentLogicTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 50px;
+  height: 22px;
+  padding: 0 7px;
+  border: 1px solid #dfe3e8;
+  border-radius: 999px;
+  color: #687385;
+  background: #fff;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.segmentLogicCaret {
+  width: 0;
+  height: 0;
+  border-top: 4px solid currentColor;
+  border-right: 3px solid transparent;
+  border-left: 3px solid transparent;
+}
+
+.segmentLogicTrigger:hover,
+.segmentLogicTrigger[aria-expanded='true'] {
+  color: #b35f43;
+  border-color: #efc2b3;
+  background: #fff8f5;
+}
+
+.segmentLogicPopover {
+  position: absolute;
+  top: 27px;
+  left: 50%;
+  z-index: 40;
+  width: 76px;
+  padding: 4px;
+  border: 1px solid #dfe3e8;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgb(16 24 40 / 15%);
+  transform: translateX(-50%);
+}
+
+.segmentLogicPopover button {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 5px;
+  color: #4b5563;
+  background: transparent;
+  text-align: center;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.segmentLogicPopover button:hover,
+.segmentLogicPopover button.active { background: #fff3ef; }
+
+.segmentAddGroupBottom {
+  min-height: 31px;
+  margin-top: 9px;
+  padding: 0 10px;
+  border: 1px dashed #d4d9df;
+  border-radius: 6px;
+  color: #a85e45;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.segmentAddGroupBottom:hover { border-color: #efc2b3; background: #fff8f5; }
+
+.segmentAddFirstGroup {
+  min-height: 110px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.segmentAddAnotherExclude {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 12px;
+  border: 1px dashed #d6dbe1;
+  border-radius: 7px;
+  color: #a85e45;
+  background: #fffaf8;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.segmentResultsPane {
+  position: sticky;
+  top: 20px;
+  overflow: hidden;
+  border: 1px solid #e1e5ea;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(16 24 40 / 6%);
+}
+
+.segmentResultsTop {
+  padding: 16px;
+  border-bottom: 1px solid #e8eaed;
+  background: #fafbfc;
+}
+
+.segmentResultsHeading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0;
+}
+
+.segmentResultsHeading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.segmentResultsHeading strong {
+  font-size: 14px;
+}
+
+.segmentResultsHeading small {
+  color: #7d8794;
+  font-size: 11px;
+}
+
+.segmentResultStatus {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #a8b0bb;
+  box-shadow: 0 0 0 4px rgb(168 176 187 / 13%);
+}
+
+.segmentResultStatus.updating {
+  background: #d97757;
+  box-shadow: 0 0 0 4px rgb(217 119 87 / 14%);
+  animation: segmentStatusPulse 1s ease-in-out infinite;
+}
+
+.segmentResultStatus.ready {
+  background: #43835f;
+  box-shadow: 0 0 0 4px rgb(67 131 95 / 13%);
+}
+
+.segmentResultStatus.warning {
+  background: #c48537;
+  box-shadow: 0 0 0 4px rgb(196 133 55 / 13%);
+}
+
+@keyframes segmentStatusPulse {
+  50% { opacity: .45; }
+}
+
+.segmentResultsMetrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.segmentResultsMetric {
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e4e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.segmentResultsMetric > span {
+  display: block;
+  color: #7b8492;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.segmentResultsMetric > strong {
+  display: block;
+  min-height: 25px;
+  margin-top: 3px;
+  color: #222b3a;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+}
+
+.segmentResultsMetric.secondary {
+  background: #fffaf8;
+}
+
+.segmentResultsMetric.secondary > strong {
+  color: #b35f43;
+}
+
+.segmentResultsAction {
+  width: 100%;
+  min-height: 38px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+
+.segmentResultsAction:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+.segmentMemberPreview {
+  background: #fff;
+}
+
+.segmentMemberPreviewHeading {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #eceef1;
+}
+
+.segmentMemberPreviewHeading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.segmentMemberPreviewHeading strong {
+  color: #303846;
+  font-size: 12px;
+}
+
+.segmentMemberPreviewHeading small {
+  color: #7d8794;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.segmentMemberTableWrap {
+  max-height: 360px;
+  overflow: auto;
+}
+
+.segmentMemberTable {
+  width: 100%;
+  min-width: 610px;
+  border-collapse: collapse;
+  color: #4b5563;
+  font-size: 10px;
+  text-align: left;
+}
+
+.segmentMemberTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 9px 11px;
+  border-bottom: 1px solid #e4e7eb;
+  color: #697384;
+  background: #f7f8fa;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .025em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.segmentMemberTable td {
+  padding: 10px 11px;
+  border-bottom: 1px solid #eef0f2;
+  white-space: nowrap;
+}
+
+.segmentMemberTable tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.segmentMemberTable td strong {
+  color: #303846;
+  font-weight: 700;
+}
+
+.segmentMemberTable td span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: #9b5a43;
+  background: #fff3ef;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.segmentMemberTable td.segmentMemberTableEmpty {
+  height: 112px;
+  color: #8b94a1;
+  text-align: center;
+  white-space: normal;
+}
+
+.segmentResultsNote {
+  margin: 0;
+  padding: 11px 16px 14px;
+  border-top: 1px solid #eceef1;
+  color: #8b94a1;
+  background: #fafbfc;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.segmentBatchNotice {
+  margin-bottom: 18px;
+  padding: 13px 15px;
+}
+
+.segmentBatchNotice strong { font-size: 12px; }
+.segmentBatchNotice small { font-size: 10px; }
+
+.segmentTriggerMode {
+  min-height: 0;
+}
+
+.segmentTriggerToolbar {
+  min-height: 74px;
+  padding: 14px 18px;
+  border-radius: 12px;
+}
+
+.segmentTriggerToolbar strong { font-size: 14px; }
+.segmentTriggerToolbar small { font-size: 11px; }
+
+.segmentTriggerMenu button {
+  min-height: 40px;
+  font-size: 12px;
+}
+
+.segmentTriggerList {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.segmentTriggerBlock > header {
+  min-height: 66px;
+  padding: 11px 16px;
+}
+
+.segmentTriggerBlock header strong { font-size: 13px; }
+.segmentTriggerBlock header small { font-size: 10px; }
+
+.segmentTriggerConfig {
+  padding: 16px;
+}
+
+.segmentTriggerConfig label {
+  grid-template-columns: 150px minmax(0, 1fr);
+  font-size: 11px;
+}
+
+.segmentTriggerConfig select,
+.segmentTriggerConfig input {
+  height: 42px;
+  font-size: 12px;
+}
+
+.segmentTriggerConstraints {
+  padding: 0 16px 15px;
+}
+
+.segmentTriggerConstraints > header {
+  min-height: 61px;
+}
+
+.segmentTriggerConstraints header strong { font-size: 12px; }
+.segmentTriggerConstraints header small { font-size: 10px; }
+.segmentTriggerConstraints header button { font-size: 11px; }
+.segmentTriggerConstraints > p { padding: 18px 10px; font-size: 10px; }
+
+.segmentTriggerEmpty h3 { font-size: 16px; }
+.segmentTriggerEmpty p { font-size: 12px; }
+
+@media (max-width: 1180px) {
+  .segmentEditorWorkspace {
+    grid-template-columns: minmax(0, 7fr) minmax(300px, 3fr);
+    gap: 16px;
+  }
+
+  .segmentAudienceSection { padding: 0; }
+
+  .segmentConditionRow {
+    grid-template-columns: 1fr 1fr 32px;
+    padding-block: 8px;
+  }
+
+  .segmentConditionRow input { grid-column: 1 / 3; }
+  .segmentConditionRow > button { grid-column: 3; grid-row: 1; }
+}
+
+@media (max-width: 900px) {
+  .segmentEditorWorkspace { grid-template-columns: 1fr; }
+  .segmentResultsPane { position: static; }
+  .segmentMemberTableWrap { max-height: 300px; }
+}
+
+@media (max-width: 640px) {
+  .segmentEditorHeader h2 { font-size: 21px; }
+  .segmentModeToggle { width: 100%; }
+  .segmentModeToggle button { min-width: 0; flex: 1; }
+  .segmentAudienceSection { padding: 0; }
+  .segmentCanvasIntro { align-items: flex-start; flex-direction: column; }
+  .segmentCanvasIntro .button { width: 100%; }
+  .segmentConditionGroup > header { align-items: center; flex-direction: row; }
+  .segmentGroupLogic { width: 100%; }
+  .segmentGroupLogic button.deleteGroup { margin-left: auto; }
+  .segmentConditionRow { grid-template-columns: minmax(0, 1fr) 32px; gap: 8px; }
+  .segmentConditionRow select,
+  .segmentConditionRow input { grid-column: 1; }
+  .segmentConditionRow select:nth-of-type(1) { grid-row: 1; }
+  .segmentConditionRow select:nth-of-type(2) { grid-row: 2; }
+  .segmentConditionRow input { grid-row: 3; }
+  .segmentConditionRow > button { grid-column: 2; grid-row: 1; }
+  .segmentConditionGroup > footer { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .segmentResultsMetrics { grid-template-columns: 1fr 1fr; }
+  .segmentTriggerToolbar { gap: 12px; }
+  .segmentAddTriggerWrap,
+  .segmentAddTriggerWrap > .button { width: 100%; }
   .segmentTriggerConfig label { grid-template-columns: 1fr; }
 }

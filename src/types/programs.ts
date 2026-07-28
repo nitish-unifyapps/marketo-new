@@ -96,11 +96,13 @@ export interface ProgramSegmentCondition {
   field: string
   operator: string
   value: string
+  logic?: 'AND' | 'OR'
 }
 
 export interface ProgramSegmentGroup {
   id: string
   logic: 'AND' | 'OR'
+  joinLogic?: 'AND' | 'OR'
   conditions: ProgramSegmentCondition[]
 }
 

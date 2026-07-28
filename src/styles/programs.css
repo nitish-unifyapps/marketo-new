@@ -1267,7 +1267,7 @@
 }
 
 .embeddedProgramsWorkspace .programsTreePane {
-  top: 339px;
+  top: 288px;
   right: auto;
   bottom: 12px;
   left: 12px;
@@ -1337,4 +1337,118 @@
 
 @media (max-width: 760px) {
   .embeddedProgramsWorkspace .programsTreePane { display: none; }
+}
+
+/* Readable Programs typography */
+.programTreeAddMenu button,
+.programTreeRow,
+.programContextMenu button {
+  font-size: 12px;
+}
+
+.programTreeSearch input,
+.assetFolderRow,
+.assetRow,
+.programTreeNoResults,
+.programTreeRootDrop,
+.programTreeNotice,
+.programsEmptyState p,
+.programDetailsIdentity small,
+.programStatusBadge,
+.programOverviewHero span,
+.programMetricGrid span,
+.programMetricGrid small,
+.programOverviewCard header small,
+.programOverviewCard header button,
+.programOverviewEmpty,
+.programFlowEmpty,
+.programFlowEditor header p,
+.programAssetsView header p,
+.programSettingsView header p,
+.programAssetSections header span,
+.programAssetSections header button,
+.programAssetSections article small,
+.programAssetSections section > div > p,
+.programAssetsEmpty p,
+.programSettingsGrid header small,
+.programAssetToggle small,
+.manageProgramAssets label small,
+.programTypePreview header small,
+.programTypePreview > p {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.programTreeCount,
+.programDetailTabs button span,
+.programAssetTypeIcon,
+.programTypePreview > div i {
+  font-size: 10px;
+}
+
+.programContextLabel,
+.programOverviewCard header strong,
+.programMiniFlow strong,
+.programAssetSections header strong,
+.programAssetSections article strong,
+.programSettingsGrid header strong,
+.programSettingsGrid > section:first-child > label,
+.programAssetToggle strong,
+.manageProgramAssets label strong,
+.programCreateModal > label,
+.programTypePreview header strong,
+.programTypePreview > div > span,
+.manageProgramAssets > p,
+.newAssetDestination {
+  font-size: 12px;
+}
+
+.programDetailsIdentity p,
+.programOverviewHero p {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.programDetailTabs button,
+.programSettingsGrid input,
+.programSettingsGrid select,
+.programSettingsGrid textarea,
+.programCreateModal input,
+.programCreateModal select {
+  font-size: 12px;
+}
+
+.programMiniFlow span,
+.programFlowStep > span {
+  font-size: 11px;
+}
+
+.embeddedProgramsWorkspace .programTreeRootHeader > strong {
+  font-size: 11px;
+}
+
+.embeddedProgramsWorkspace .programTreeRow {
+  font-size: 12px;
+}
+
+.programDetailsHeader,
+.programDetailsHeader > div:last-child,
+.programDetailTabs {
+  flex-wrap: wrap;
+}
+
+.programDetailTabs button {
+  min-height: 48px;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .programDetailsHeader > div:last-child {
+    justify-content: flex-start;
+  }
+
+  .programOverviewHero {
+    align-items: flex-start;
+    gap: 16px;
+  }
 }

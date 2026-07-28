@@ -8,13 +8,13 @@ interface SmartListsViewProps {
 
 export function SmartListsView({ lists, onOpenCreateSmartList }: SmartListsViewProps) {
   return (
-    <section className='viewWrap'>
-      <header className='cardHeader'>
-        <h2>Segments</h2>
-        <button type='button' className='button solid' onClick={onOpenCreateSmartList}>
+    <section className='viewWrap segmentsDirectory'>
+      <header className='crmDirectoryHeader segmentDirectoryHeader'>
+        <div className='crmDirectoryTitle'><h2>Segments</h2><span>{lists.length.toLocaleString()} records</span></div>
+        <div className='crmDirectoryActions'><button type='button' className='button solid' onClick={onOpenCreateSmartList}>
           <WireframeIcon name='plus' className='iconSmall' />
-          New Smart List
-        </button>
+          Create segment
+        </button></div>
       </header>
 
       <div className='smartListGrid'>

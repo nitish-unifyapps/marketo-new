@@ -635,3 +635,80 @@
   .programMemberSearch { grid-column: auto; }
   .programMemberBulkBar { align-items: flex-start; flex-direction: column; }
 }
+
+/* Readable Reports and membership typography */
+.programReportsHeader p,
+.programReportKpis article > span,
+.programReportKpis article > small,
+.programReportChartCard header small,
+.reportDateFilter span,
+.programChartLegend span,
+.programMemberNotice,
+.programMembersFooter,
+.programManualEmailModal > p,
+.programMemberDetailPanel header small,
+.programMemberSnapshot span,
+.programMemberDetailPanel section header small,
+.programMemberTimeline article small {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.programReportsSubnav button,
+.programReportChartCard header strong,
+.programMemberSearch input,
+.programMemberBulkBar > strong,
+.programMembersTable td,
+.programMembersTable td > button,
+.programMemberStatus,
+.programMemberStream,
+.programMemberDetailPanel header strong,
+.programMemberSnapshot strong,
+.programMemberDetailPanel section header strong,
+.programMemberTimeline article strong {
+  font-size: 12px;
+}
+
+.programReportsSubnav button span {
+  font-size: 10px;
+}
+
+.reportDateFilter select,
+.reportDateFilter input,
+.programMemberFilters > select,
+.programMemberBulkBar select,
+.programMemberBulkBar button,
+.programManualEmailModal input,
+.programManualEmailModal textarea {
+  font-size: 12px;
+}
+
+.programMembersTable th,
+.programManualEmailModal > label {
+  font-size: 11px;
+}
+
+.programReportsSubnav,
+.programMemberFilters,
+.programMemberBulkBar {
+  overflow-x: auto;
+}
+
+.programReportChartCard > header,
+.programMemberBulkBar {
+  flex-wrap: wrap;
+}
+
+@media (max-width: 680px) {
+  .programReportsSubnav button {
+    min-width: max-content;
+  }
+
+  .programReportKpis {
+    grid-template-columns: 1fr;
+  }
+
+  .programMemberDetailPanel {
+    width: min(380px, calc(100vw - 24px));
+  }
+}

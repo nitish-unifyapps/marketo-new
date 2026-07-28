@@ -2,6 +2,8 @@ import { mainNavigation } from '../../data/crmData'
 import type { CrmSubTabKey, MainNavKey } from '../../types/crm'
 import { WireframeIcon } from '../common/WireframeIcon'
 
+export type AppVersion = 'v1' | 'v2'
+
 interface SidebarProps {
   activeTab: MainNavKey
   onTabChange: (tab: MainNavKey) => void
@@ -9,6 +11,8 @@ interface SidebarProps {
   onSearchChange: (value: string) => void
   activeCrmTab: CrmSubTabKey
   onCrmTabChange: (tab: CrmSubTabKey) => void
+  version: AppVersion
+  onVersionChange: (version: AppVersion) => void
 }
 
 const crmSubNavigation: Array<{ key: CrmSubTabKey; label: string; icon: string }> = [
@@ -17,10 +21,12 @@ const crmSubNavigation: Array<{ key: CrmSubTabKey; label: string; icon: string }
   { key: 'smart-lists', label: 'Segments', icon: '☷' },
 ]
 
-export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange, activeCrmTab, onCrmTabChange }: SidebarProps) {
+export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange, activeCrmTab, onCrmTabChange, version, onVersionChange }: SidebarProps) {
+  const visibleNavigation = mainNavigation.filter((item) => version === 'v1' ? item.key !== 'programs' : item.key !== 'execution')
+
   return (
-    <aside className='sidebar'>
-      <div className='sidebarLogo'>Marketo Next</div>
+    <aside className={`sidebar version-${version}`}>
+      <div className='sidebarLogo'><span>Marketo Next</span><div className='sidebarVersionToggle' role='group' aria-label='Application version'><button type='button' className={version === 'v1' ? 'active' : ''} aria-pressed={version === 'v1'} onClick={() => onVersionChange('v1')}>v1</button><button type='button' className={version === 'v2' ? 'active' : ''} aria-pressed={version === 'v2'} onClick={() => onVersionChange('v2')}>v2</button></div></div>
 
       <label className='sidebarPersistentSearch'>
         <WireframeIcon name='search' className='iconSmall' />
@@ -29,7 +35,7 @@ export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange, a
       </label>
 
       <nav className='sidebarNav' aria-label='Main navigation'>
-        {mainNavigation.map((item) => {
+        {visibleNavigation.map((item) => {
           const isActive = item.key === activeTab
           return (
             <div key={item.key} className={`sidebarNavGroup group-${item.key} ${isActive ? 'active' : ''}`}>

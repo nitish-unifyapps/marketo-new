@@ -25,17 +25,22 @@ export const programFlowTemplates: Record<ProgramType, string[]> = {
 }
 
 export function defaultSegmentForProgramType(type: ProgramType): ProgramSegmentConfig {
+  const sampleConditions = [
+    { id: `default-${type.toLowerCase().replaceAll(' ', '-')}-lifecycle`, field: 'Lifecycle Stage', operator: 'is', value: 'MQL' },
+    { id: `default-${type.toLowerCase().replaceAll(' ', '-')}-score`, field: 'Lead Score', operator: 'greater than', value: '70' },
+  ]
+
   if (type === 'Event') {
     return {
       mode: 'trigger',
-      groups: [{ id: 'event-filter-group', logic: 'AND', conditions: [] }],
+      groups: [{ id: 'event-filter-group', logic: 'AND', conditions: sampleConditions }],
       triggers: [{ id: 'event-registration-trigger', type: 'Fills Out Registration Form', source: 'Event Registration Form', constraints: [] }],
     }
   }
 
   return {
     mode: 'filter',
-    groups: [{ id: `default-${type.toLowerCase().replaceAll(' ', '-')}-group`, logic: 'AND', conditions: [] }],
+    groups: [{ id: `default-${type.toLowerCase().replaceAll(' ', '-')}-group`, logic: 'AND', conditions: sampleConditions }],
     triggers: [],
   }
 }
