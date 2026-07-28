@@ -24,7 +24,7 @@ export function Sidebar({ activeTab, onTabChange, searchValue, onSearchChange, a
 
       <label className='sidebarPersistentSearch'>
         <WireframeIcon name='search' className='iconSmall' />
-        <input value={searchValue} onChange={(event) => onSearchChange(event.target.value)} placeholder='Search programs…' aria-label='Search Marketing Activities programs' />
+        <input value={searchValue} onChange={(event) => onSearchChange(event.target.value)} placeholder={activeTab === 'programs' ? 'Search Programs…' : 'Search programs…'} aria-label={activeTab === 'programs' ? 'Search Programs' : 'Search Marketing Activities programs'} />
         {searchValue && <button type='button' onClick={() => onSearchChange('')} aria-label='Clear program search'>×</button>}
       </label>
 

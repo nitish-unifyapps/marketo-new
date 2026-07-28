@@ -2,6 +2,7 @@ type IconName =
   | 'crm'
   | 'content'
   | 'execution'
+  | 'programs'
   | 'campaigns'
   | 'journeys'
   | 'analytics'
@@ -66,6 +67,13 @@ export function WireframeIcon({ name, className }: WireframeIconProps) {
           <circle cx='18' cy='12' r='2.5' />
           <circle cx='6' cy='18' r='2.5' />
           <path d='M8.5 6h2.7a4 4 0 0 1 4 4v0M8.5 18h2.7a4 4 0 0 0 4-4v0' />
+        </svg>
+      )
+    case 'programs':
+      return (
+        <svg {...shared}>
+          <rect x='3' y='7' width='18' height='13' rx='2.5' />
+          <path d='M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18M10 12v2h4v-2' />
         </svg>
       )
     case 'campaigns':

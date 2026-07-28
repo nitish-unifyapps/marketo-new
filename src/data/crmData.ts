@@ -10,6 +10,7 @@ export const mainNavigation: Array<{ key: MainNavKey; label: string }> = [
   { key: 'crm', label: 'CRM' },
   { key: 'content', label: 'Content' },
   { key: 'execution', label: 'Marketing Activities' },
+  { key: 'programs', label: 'Programs' },
 ]
 
 export const peopleRows: PersonRecord[] = [

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { AccountsView } from './components/crm/AccountsView'
 import { AccountDetailPanel } from './components/crm/AccountDetailPanel'
 import { ContentModule } from './components/content/ContentModule'
@@ -18,10 +18,13 @@ import type { CrmSubTabKey, MainNavKey } from './types/crm'
 import type { ContentTabKey } from './types/content'
 import type { AnalyticsTabKey } from './types/analytics'
 
+const ProgramsWorkspace = lazy(() => import('./components/programs/ProgramsWorkspace').then((module) => ({ default: module.ProgramsWorkspace })))
+
 const sectionNameByMainTab: Record<MainNavKey, string> = {
   crm: 'CRM',
   content: 'Content',
   execution: 'Marketing Activities',
+  programs: 'Programs',
   analytics: 'Analytics',
   integrations: 'Integrations',
   calendar: 'Calendar',
@@ -37,6 +40,7 @@ function App() {
   const [createMenuOpen, setCreateMenuOpen] = useState(false)
   const [smartListModalOpen, setSmartListModalOpen] = useState(false)
   const [crmSmartLists, setCrmSmartLists] = useState(smartLists)
+  const [crmPeople, setCrmPeople] = useState(peopleRows)
   const [smartListDraft, setSmartListDraft] = useState<{ name: string; description: string } | null>(null)
   const [marketingSearchQuery, setMarketingSearchQuery] = useState('')
 
@@ -46,8 +50,8 @@ function App() {
   const [openAccountId, setOpenAccountId] = useState<string | null>(null)
 
   const activePerson = useMemo(
-    () => peopleRows.find((person) => person.id === openPersonId),
-    [openPersonId],
+    () => crmPeople.find((person) => person.id === openPersonId),
+    [crmPeople, openPersonId],
   )
 
   const activeAccount = useMemo(
@@ -57,6 +61,7 @@ function App() {
 
   function handleMainTabChange(tab: MainNavKey) {
     setActiveMainTab(tab)
+    setMarketingSearchQuery('')
     setContentBuilderOpen(false)
     setCreateMenuOpen(false)
     setOpenPersonId(null)
@@ -130,6 +135,10 @@ function App() {
   }
 
   function renderMainContent() {
+    if (activeMainTab === 'programs') {
+      return <Suspense fallback={<div className='programsLoading'>Loading Programs…</div>}><ProgramsWorkspace embedded searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} onExit={() => handleMainTabChange('crm')} /></Suspense>
+    }
+
     if (activeMainTab === 'analytics') {
       return <AnalyticsModule activeTab={activeAnalyticsTab} />
     }
@@ -163,14 +172,14 @@ function App() {
     if (activeCrmTab === 'people') {
       return (
         <PeopleView
-          rows={peopleRows}
+          rows={crmPeople}
           selectedIds={selectedPeopleIds}
           onToggleRow={togglePeopleRow}
           onToggleAll={(selected) =>
-            setSelectedPeopleIds(selected ? peopleRows.map((person) => person.id) : [])
+            setSelectedPeopleIds(selected ? crmPeople.map((person) => person.id) : [])
           }
           onOpenPerson={setOpenPersonId}
-          onCreateSmartListFromView={() => setSmartListModalOpen(true)}
+          onImportRows={(importedRows) => setCrmPeople((current) => [...current, ...importedRows])}
         />
       )
     }
@@ -192,7 +201,7 @@ function App() {
     }
 
     if (smartListDraft) {
-      return <SmartListEditorPage initialName={smartListDraft.name} description={smartListDraft.description} rows={peopleRows} onCancel={() => setSmartListDraft(null)} onSave={(name, description, memberCount) => { setCrmSmartLists((current) => [...current, { id: `sl-created-${current.length + 1}`, name, description: description || 'Dynamic CRM segment', memberCount, lastModified: 'Just now' }]); setSmartListDraft(null) }} />
+      return <SmartListEditorPage initialName={smartListDraft.name} description={smartListDraft.description} rows={crmPeople} onCancel={() => setSmartListDraft(null)} onSave={(name, description, memberCount) => { setCrmSmartLists((current) => [...current, { id: `sl-created-${current.length + 1}`, name, description: description || 'Dynamic CRM segment', memberCount, lastModified: 'Just now' }]); setSmartListDraft(null) }} />
     }
 
     return (
@@ -208,7 +217,7 @@ function App() {
       <Sidebar activeTab={activeMainTab} onTabChange={handleMainTabChange} searchValue={marketingSearchQuery} onSearchChange={setMarketingSearchQuery} activeCrmTab={activeCrmTab} onCrmTabChange={handleCrmTabChange} />
 
       <div className='mainPane'>
-        <TopBar
+        {activeMainTab !== 'crm' && <TopBar
           sectionName={sectionNameByMainTab[activeMainTab]}
           createMenuOpen={createMenuOpen}
           onToggleCreateMenu={() => setCreateMenuOpen((prev) => !prev)}
@@ -221,8 +230,8 @@ function App() {
                   ? ['Dashboard', 'Report', 'Attribution Model']
               : undefined
           }
-          hideCreate={activeMainTab === 'execution'}
-        />
+          hideCreate={activeMainTab === 'execution' || activeMainTab === 'programs'}
+        />}
 
         {activeMainTab === 'content' && !contentBuilderOpen && (
           <ContentSubNav activeTab={activeContentTab} onChange={setActiveContentTab} />
@@ -233,7 +242,7 @@ function App() {
         )}
 
         <main
-          className={`contentArea ${contentBuilderOpen ? 'builderContentArea' : ''} ${activeMainTab === 'execution' ? 'phaseOneContentArea' : ''} ${activeMainTab === 'crm' ? 'crmContentArea' : ''}`}
+          className={`contentArea ${contentBuilderOpen ? 'builderContentArea' : ''} ${activeMainTab === 'execution' ? 'phaseOneContentArea' : ''} ${activeMainTab === 'programs' ? 'programsContentArea' : ''} ${activeMainTab === 'crm' ? 'crmContentArea' : ''}`}
         >
           {renderMainContent()}
         </main>

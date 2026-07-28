@@ -1,0 +1,753 @@
+/* Programs Segment editor */
+.programSegmentEditor {
+  max-width: 1260px;
+  margin: 0 auto;
+}
+
+.segmentEditorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 66px;
+  margin-bottom: 14px;
+}
+
+.segmentEditorHeader h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.segmentEditorHeader p {
+  margin: 3px 0 0;
+  color: #667085;
+  font-size: 9px;
+}
+
+.segmentHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.segmentModeToggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #f3f4f6;
+}
+
+.segmentModeToggle button {
+  min-width: 70px;
+  height: 32px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  color: #667085;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.segmentModeToggle button.active {
+  color: #fff;
+  background: #d97757;
+  box-shadow: 0 2px 7px rgb(217 119 87 / 22%);
+}
+
+.segmentFixedMode {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 11px;
+  border-radius: 999px;
+  color: #9b5a43;
+  background: #fff3ef;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.segmentPreviewButton {
+  min-width: 148px;
+}
+
+.segmentPreviewResult {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  margin-bottom: 14px;
+  padding: 9px 12px;
+  border: 1px solid #cce4d7;
+  border-radius: 9px;
+  color: #356b4d;
+  background: #f2faf5;
+}
+
+.segmentPreviewResult.warning {
+  color: #8a6535;
+  border-color: #ecd6b5;
+  background: #fff9ef;
+}
+
+.segmentPreviewResult > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #fff;
+  background: #4e8b68;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.segmentPreviewResult.warning > span {
+  background: #d28a3c;
+}
+
+.segmentPreviewResult > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmentPreviewResult strong { font-size: 10px; }
+.segmentPreviewResult small { color: #667085; font-size: 8px; }
+.segmentPreviewResult > button { border: 0; color: currentColor; background: transparent; font-size: 15px; }
+
+.segmentFilterWorkspace {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  min-height: 610px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(16 24 40 / 5%);
+}
+
+.segmentFilterPalette {
+  overflow-y: auto;
+  border-right: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.segmentFilterPalette > header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-height: 59px;
+  padding: 13px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.segmentFilterPalette > header strong {
+  color: #303846;
+  font-size: 11px;
+}
+
+.segmentFilterPalette > header small {
+  color: #98a2b3;
+  font-size: 8px;
+}
+
+.segmentFilterPalette > section {
+  padding: 7px;
+  border-bottom: 1px solid #e7eaee;
+}
+
+.segmentFilterPalette section > header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 31px;
+  padding: 0 6px;
+  color: #4b5563;
+}
+
+.segmentFilterPalette section > header span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  color: #d97757;
+  font-size: 11px;
+}
+
+.segmentFilterPalette section > header strong {
+  font-size: 9px;
+}
+
+.segmentFilterPalette section > button {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-height: 31px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #667085;
+  background: transparent;
+  text-align: left;
+  font-size: 8px;
+}
+
+.segmentFilterPalette section > button:hover {
+  color: #a6583e;
+  border-color: #efc2b3;
+  background: #fff3ef;
+}
+
+.segmentFilterPalette section > button > span {
+  color: #b2b8c1;
+  cursor: grab;
+  letter-spacing: -2px;
+}
+
+.segmentFilterPalette section > button > i {
+  color: #d97757;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.segmentFilterCanvas {
+  min-width: 0;
+  padding: 18px;
+  background: #f7f8fa;
+}
+
+.segmentCanvasIntro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.segmentCanvasIntro h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.segmentCanvasIntro p {
+  margin: 3px 0 0;
+  color: #667085;
+  font-size: 8px;
+}
+
+.segmentBatchNotice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 13px;
+  padding: 11px 12px;
+  border: 1px solid #c9dce8;
+  border-radius: 8px;
+  color: #426f90;
+  background: #f3f8fb;
+}
+
+.segmentBatchNotice > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  color: #fff;
+  background: #557f9d;
+  font-size: 12px;
+}
+
+.segmentBatchNotice > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmentBatchNotice strong { font-size: 9px; }
+.segmentBatchNotice small { font-size: 7px; }
+
+.segmentConditionGroups > div + div {
+  margin-top: 8px;
+}
+
+.segmentConditionGroup {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 7px rgb(16 24 40 / 4%);
+}
+
+.segmentConditionGroup > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 56px;
+  padding: 9px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.segmentConditionGroup > header > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.segmentConditionGroup > header > div:first-child > span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.segmentConditionGroup > header > div:first-child > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmentConditionGroup header strong { font-size: 9px; }
+.segmentConditionGroup header small { color: #98a2b3; font-size: 7px; }
+
+.segmentGroupLogic {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.segmentGroupLogic button {
+  min-width: 38px;
+  height: 26px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 4px;
+  color: #667085;
+  background: transparent;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.segmentGroupLogic button.active {
+  color: #fff;
+  background: #d97757;
+}
+
+.segmentGroupLogic button.deleteGroup {
+  margin-left: 4px;
+  color: #c45353;
+  font-weight: 600;
+}
+
+.segmentConditionGroup > div {
+  padding: 6px 12px;
+}
+
+.segmentConditionRow {
+  display: grid;
+  grid-template-columns: 20px 1.2fr .85fr 1fr 28px;
+  align-items: center;
+  gap: 7px;
+  min-height: 55px;
+  border-bottom: 1px solid #eef0f2;
+}
+
+.segmentConditionRow:last-child {
+  border-bottom: 0;
+}
+
+.segmentConditionGrip {
+  color: #c1c7d0;
+  cursor: grab;
+  font-size: 9px;
+  letter-spacing: -2px;
+}
+
+.segmentConditionRow select,
+.segmentConditionRow input {
+  min-width: 0;
+  width: 100%;
+  height: 37px;
+  padding: 0 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: 0;
+  color: #394150;
+  background: #fff;
+  font-size: 8px;
+}
+
+.segmentConditionRow select:focus,
+.segmentConditionRow input:focus {
+  border-color: #efc2b3;
+  box-shadow: 0 0 0 3px rgb(217 119 87 / 8%);
+}
+
+.segmentConditionRow > button {
+  width: 27px;
+  height: 27px;
+  border: 0;
+  border-radius: 5px;
+  color: #98a2b3;
+  background: transparent;
+  font-size: 14px;
+}
+
+.segmentConditionRow > button:hover {
+  color: #c45353;
+  background: #fceeee;
+}
+
+.segmentConditionDropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 112px;
+  flex-direction: column;
+  margin: 6px 0;
+  border: 1px dashed #cfd5dc;
+  border-radius: 8px;
+  color: #98a2b3;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.segmentConditionDropzone > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 16px;
+}
+
+.segmentConditionDropzone strong { color: #667085; font-size: 9px; }
+.segmentConditionDropzone small { margin-top: 2px; font-size: 7px; }
+
+.segmentConditionGroup > footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 7px 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.segmentConditionGroup > footer button {
+  border: 0;
+  color: #d97757;
+  background: transparent;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.segmentConditionGroup > footer span {
+  color: #98a2b3;
+  font-size: 7px;
+}
+
+.segmentGroupConnector {
+  display: flex;
+  justify-content: center;
+  height: 28px;
+}
+
+.segmentGroupConnector span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 22px;
+  border: 1px solid #efc2b3;
+  border-radius: 999px;
+  color: #b35f43;
+  background: #fff3ef;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.segmentAddFirstGroup {
+  width: 100%;
+  min-height: 100px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 9px;
+  color: #d97757;
+  background: #fff;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.segmentTriggerMode {
+  min-height: 610px;
+}
+
+.segmentTriggerToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  padding: 11px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 7px rgb(16 24 40 / 4%);
+}
+
+.segmentTriggerToolbar > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.segmentTriggerToolbar strong { font-size: 11px; }
+.segmentTriggerToolbar small { color: #667085; font-size: 8px; }
+
+.segmentAddTriggerWrap {
+  position: relative;
+}
+
+.segmentAddTriggerWrap > .button span {
+  margin-left: 3px;
+  font-size: 8px;
+}
+
+.segmentTriggerMenu {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  z-index: 30;
+  width: 220px;
+  padding: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 16px 38px rgb(16 24 40 / 17%);
+}
+
+.segmentTriggerMenu button {
+  width: 100%;
+  min-height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 5px;
+  color: #394150;
+  background: transparent;
+  text-align: left;
+  font-size: 8px;
+}
+
+.segmentTriggerMenu button:hover {
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.segmentTriggerList {
+  width: min(900px, 100%);
+  margin: 14px auto 0;
+}
+
+.segmentTriggerBlock {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(16 24 40 / 5%);
+}
+
+.segmentTriggerBlock.needsConfiguration {
+  border-color: #e6c99e;
+}
+
+.segmentTriggerBlock > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 59px;
+  padding: 9px 13px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.segmentTriggerBlock > header > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.segmentTriggerBlock > header > div > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 13px;
+}
+
+.segmentTriggerBlock > header > div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmentTriggerBlock header strong { font-size: 10px; }
+.segmentTriggerBlock header small { color: #4e8b68; font-size: 7px; }
+.segmentTriggerBlock.needsConfiguration header small { color: #b47735; }
+
+.segmentTriggerBlock > header > button {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 5px;
+  color: #98a2b3;
+  background: transparent;
+  font-size: 15px;
+}
+
+.segmentTriggerBlock > header > button:hover {
+  color: #c45353;
+  background: #fceeee;
+}
+
+.segmentTriggerConfig {
+  padding: 13px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.segmentTriggerConfig label {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.segmentTriggerConfig label span strong {
+  color: #c45353;
+}
+
+.segmentTriggerConfig select,
+.segmentTriggerConfig input {
+  width: 100%;
+  height: 39px;
+  padding: 0 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  outline: 0;
+  background: #fff;
+  font-size: 9px;
+}
+
+.segmentTriggerConfig select:focus,
+.segmentTriggerConfig input:focus {
+  border-color: #efc2b3;
+  box-shadow: 0 0 0 3px rgb(217 119 87 / 8%);
+}
+
+.segmentTriggerConstraints {
+  padding: 0 13px 11px;
+}
+
+.segmentTriggerConstraints > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 51px;
+}
+
+.segmentTriggerConstraints > header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.segmentTriggerConstraints header strong { font-size: 9px; }
+.segmentTriggerConstraints header small { color: #98a2b3; font-size: 7px; }
+.segmentTriggerConstraints header button { border: 0; color: #d97757; background: transparent; font-size: 8px; font-weight: 700; }
+.segmentTriggerConstraints > p { margin: 0; padding: 15px 9px; border: 1px dashed #d6dae0; border-radius: 7px; color: #98a2b3; background: #fafbfc; text-align: center; font-size: 7px; }
+
+.segmentOrDivider {
+  display: flex;
+  justify-content: center;
+  height: 35px;
+}
+
+.segmentOrDivider span {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 23px;
+  margin-top: 6px;
+  border-radius: 999px;
+  color: #fff;
+  background: #d97757;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.segmentTriggerEmpty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 70px 24px;
+  border: 1px dashed #d6dae0;
+  border-radius: 11px;
+  background: #fff;
+  text-align: center;
+}
+
+.segmentTriggerEmpty > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 17px;
+}
+
+.segmentTriggerEmpty h3 { margin: 11px 0 3px; font-size: 12px; }
+.segmentTriggerEmpty p { margin: 0 0 13px; color: #667085; font-size: 8px; }
+
+@media (max-width: 1050px) {
+  .segmentFilterWorkspace { grid-template-columns: 210px minmax(0, 1fr); }
+  .segmentConditionRow { grid-template-columns: 18px 1fr 1fr 28px; padding-block: 6px; }
+  .segmentConditionRow input { grid-column: 2 / 4; }
+  .segmentConditionRow > button { grid-column: 4; grid-row: 1; }
+}
+
+@media (max-width: 760px) {
+  .segmentEditorHeader { align-items: flex-start; flex-direction: column; }
+  .segmentHeaderActions { width: 100%; flex-wrap: wrap; }
+  .segmentFilterWorkspace { grid-template-columns: 1fr; }
+  .segmentFilterPalette { max-height: 250px; border-right: 0; border-bottom: 1px solid #e5e7eb; }
+  .segmentFilterCanvas { padding: 12px; }
+  .segmentCanvasIntro,
+  .segmentTriggerToolbar { align-items: flex-start; flex-direction: column; }
+  .segmentTriggerConfig label { grid-template-columns: 1fr; }
+}

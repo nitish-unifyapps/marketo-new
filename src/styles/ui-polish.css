@@ -132,55 +132,46 @@ textarea {
 }
 
 .group-crm.active > .sidebarNavItem {
-  border-radius: 7px 7px 0 0;
+  border-radius: 8px;
 }
 
 .crmSidebarSubnav {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin: 0 0 5px;
-  padding: 6px 8px 8px 35px;
-  border-radius: 0 0 8px 8px;
-  background: rgb(255 243 239 / 58%);
+  gap: 4px;
+  margin: 6px 0 8px;
+  padding: 0 6px 0 34px;
+  background: transparent;
 }
 
 .crmSidebarSubnav button {
-  position: relative;
   display: grid;
   grid-template-columns: 20px 1fr;
   align-items: center;
-  gap: 7px;
-  min-height: 34px;
-  padding: 0 9px;
-  border: 0;
-  border-radius: 6px;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 11px;
+  border: 1px solid transparent;
+  border-radius: 8px;
   color: var(--muted);
   background: transparent;
   text-align: left;
   font-size: 12px;
-  font-weight: 600;
-}
-
-.crmSidebarSubnav button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: -15px;
-  width: 1px;
-  background: #dfd6d2;
+  font-weight: 500;
+  transition: color .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 
 .crmSidebarSubnav button:hover {
   color: var(--text);
-  background: rgb(255 255 255 / 68%);
+  background: rgb(255 255 255 / 62%);
 }
 
 .crmSidebarSubnav button.active {
   color: var(--accent);
-  background: white;
-  box-shadow: 0 1px 3px rgb(16 24 40 / 7%);
+  background: rgb(217 119 87 / 7%);
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 600;
 }
 
 .crmSidebarSubnav button > span {

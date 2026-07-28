@@ -934,7 +934,7 @@
 
 /* CRM navigation and Leads */
 .crmContentArea {
-  min-height: calc(100vh - 72px);
+  min-height: 100vh;
 }
 
 .leadsToolbar {
@@ -966,9 +966,32 @@
   gap: 8px;
 }
 
+.leadHeaderActions {
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.leadHeaderActions .button {
+  min-width: 88px;
+  color: var(--muted);
+  border-color: var(--detail-border);
+  background: white;
+  box-shadow: none;
+}
+
+.leadHeaderActions .button:hover {
+  color: var(--accent);
+  border-color: var(--accent-border);
+  background: var(--accent-soft);
+}
+
+.leadImportInput {
+  display: none;
+}
+
 .leadsViewToolbar {
   display: grid;
-  grid-template-columns: 155px minmax(240px, 1fr) auto auto 38px;
+  grid-template-columns: 170px auto minmax(250px, 1fr) auto auto;
   align-items: center;
   gap: 8px;
   padding: 11px;
@@ -999,6 +1022,43 @@
   outline: 0;
   background: transparent;
   font-size: 11px;
+}
+
+.leadViewMode {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 42px;
+  padding: 3px;
+  border: 1px solid var(--detail-border);
+  border-radius: 8px;
+  background: #f7f8fa;
+}
+
+.leadViewMode button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 72px;
+  height: 34px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.leadViewMode button:hover {
+  color: var(--text);
+}
+
+.leadViewMode button.active {
+  color: var(--accent);
+  background: white;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 8%);
 }
 
 .leadSearch {
@@ -1230,7 +1290,8 @@
 
 .leadColumnsMenu > footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 3px;
   padding: 8px 7px 2px;
   border-top: 1px solid var(--detail-border);
 }
@@ -1248,6 +1309,192 @@
   padding-inline: 10px;
   color: white;
   background: var(--accent);
+}
+
+.leadTransferNotice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: -5px 0 14px;
+  padding: 8px 11px;
+  border: 1px solid #cce4d7;
+  border-radius: 8px;
+  color: #356b4d;
+  background: #f2faf5;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.leadTransferNotice > span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: white;
+  background: #4e8b68;
+  font-size: 9px;
+}
+
+.leadTransferNotice > button {
+  margin-left: auto;
+  border: 0;
+  color: #548069;
+  background: transparent;
+  font-size: 16px;
+}
+
+.leadKanbanBoard {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: start;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.leadKanbanColumn {
+  min-width: 220px;
+  overflow: hidden;
+  border: 1px solid var(--detail-border);
+  border-radius: 11px;
+  background: #f4f6f8;
+}
+
+.leadKanbanColumn > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--detail-border);
+  background: rgb(255 255 255 / 72%);
+}
+
+.leadKanbanColumn > header > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.leadKanbanColumn > header i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #98a2b3;
+}
+
+.leadKanbanColumn.stage-mql > header i { background: #d97757; }
+.leadKanbanColumn.stage-sql > header i { background: #7c72c5; }
+.leadKanbanColumn.stage-customer > header i { background: #4e8b68; }
+
+.leadKanbanColumn > header strong {
+  font-size: 11px;
+}
+
+.leadKanbanColumn > header > span {
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding-inline: 6px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: #e9edf1;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.leadKanbanColumn > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 150px;
+  padding: 9px;
+}
+
+.leadKanbanCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e3e7eb;
+  border-radius: 9px;
+  color: var(--text);
+  background: white;
+  box-shadow: 0 1px 2px rgb(16 24 40 / 4%);
+  text-align: left;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.leadKanbanCard:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 7px 18px rgb(16 24 40 / 8%);
+  transform: translateY(-1px);
+}
+
+.leadKanbanIdentity {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.leadKanbanIdentity > i {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #955239;
+  background: #f8d9ce;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.leadKanbanIdentity > span {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.leadKanbanIdentity strong,
+.leadKanbanIdentity small,
+.leadKanbanCompany,
+.leadKanbanMeta span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leadKanbanIdentity strong { font-size: 10px; }
+.leadKanbanIdentity small { color: var(--muted); font-size: 8px; }
+.leadKanbanCompany { color: var(--muted); font-size: 9px; }
+
+.leadKanbanMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #eef0f2;
+  color: var(--muted);
+  font-size: 8px;
+}
+
+.leadKanbanMeta strong { color: var(--accent); }
+
+.leadKanbanEmpty {
+  margin: auto;
+  padding: 28px 8px;
+  color: var(--faint);
+  text-align: center;
+  font-size: 9px;
 }
 
 .activeLeadFilters {
@@ -1380,7 +1627,7 @@
 
 .crmSmartListEditor {
   display: flex;
-  min-height: calc(100vh - 72px);
+  min-height: 100vh;
   flex-direction: column;
   background: var(--detail-bg);
 }
@@ -1546,14 +1793,23 @@
 .smartListPreviewTable em { padding: 4px 7px; border-radius: 999px; color: var(--accent); background: var(--accent-soft); font-size: 7px; font-style: normal; }
 .smartListPreviewTable > p { margin: 0; padding: 55px; color: var(--muted); text-align: center; font-size: 10px; }
 
+@media (max-width: 1200px) {
+  .leadsViewToolbar { grid-template-columns: 170px auto minmax(200px, 1fr); }
+  .leadFilterWrap { grid-column: 2; }
+  .leadColumnsWrap { grid-column: 3; justify-self: end; }
+}
+
 @media (max-width: 1050px) {
-  .leadsViewToolbar { grid-template-columns: 140px minmax(180px, 1fr) auto auto 36px; }
   .crmSmartListWorkspace { grid-template-columns: 200px minmax(0, 1fr); }
 }
 
 @media (max-width: 760px) {
   .leadsPageHeading, .smartListEditorPageHeader, .smartListMemberPreview > header { align-items: flex-start; flex-direction: column; }
-  .leadsViewToolbar { grid-template-columns: 1fr 1fr; }.leadSearch { grid-column: 1 / -1; }.savedViewSelect { grid-column: 1 / -1; }
+  .leadsViewToolbar { grid-template-columns: 1fr 1fr; }
+  .leadSearch, .savedViewSelect, .leadViewMode { grid-column: 1 / -1; }
+  .leadFilterWrap { grid-column: 1; }
+  .leadColumnsWrap { grid-column: 2; justify-self: end; }
+  .leadViewMode button { flex: 1; }
   .dynamicFilterPopover { position: fixed; top: 15%; right: 12px; left: 84px; width: auto; }
   .dynamicFilterRow { grid-template-columns: 25px 1fr 28px; padding-block: 7px; }.dynamicFilterRow select, .dynamicFilterRow input { grid-column: 2; }.dynamicFilterRow > button { grid-column: 3; grid-row: 1; }
   .crmSmartListWorkspace { grid-template-columns: 1fr; }.crmFilterLibrary { display: none; }

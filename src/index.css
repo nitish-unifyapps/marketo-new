@@ -881,6 +881,7 @@ input[type='range'] { accent-color: var(--accent); }
 .sidebarIcon { width: 19px; height: 19px; }
 .activityTreePane { position: fixed; z-index: 21; top: 288px; bottom: 88px; left: 12px; width: 216px; height: auto; padding-top: 6px; border: 0; border-radius: 0 0 8px 8px; background: linear-gradient(180deg, rgb(255 243 239 / 72%) 0, rgb(255 243 239 / 24%) 110px, transparent 230px); }
 .appShell:has(.marketingPhaseOne) .group-execution > .sidebarNavItem { border-radius: 7px 7px 0 0; }
+.appShell:has(.marketingPhaseOne) .group-programs { display: none; }
 .group-execution > .sidebarNavItem { gap: 11px; padding-right: 37px; font-size: 13px; }
 .group-execution > .sidebarNavItem > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .marketingNavAction { position: fixed; z-index: 26; top: 250px; left: 198px; width: 30px; height: 30px; }

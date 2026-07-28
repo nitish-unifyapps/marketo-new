@@ -1,0 +1,1419 @@
+/* Programs vertical Flow builder */
+.programSequenceFlow {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.programFlowHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 66px;
+  margin-bottom: 14px;
+}
+
+.programFlowHeader h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.programFlowHeader p {
+  margin: 3px 0 0;
+  color: #667085;
+  font-size: 9px;
+}
+
+.programFlowHeader > div:last-child {
+  display: flex;
+  gap: 7px;
+}
+
+.programFlowCanvas {
+  position: relative;
+  min-height: 560px;
+  padding: 24px 28px 50px;
+  border: 1px solid #e5e7eb;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgb(16 24 40 / 5%);
+}
+
+.programFlowStart {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 30px;
+  margin: 0 auto;
+  border: 1px solid #cfd5dc;
+  border-radius: 999px;
+  color: #5f6978;
+  background: #f9fafb;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.programFlowStartLine {
+  width: 1px;
+  height: 22px;
+  margin: 0 auto;
+  background: #d8dde3;
+}
+
+.programFlowSequence {
+  position: relative;
+}
+
+.programFlowNode {
+  position: relative;
+}
+
+.programFlowNode + .programFlowNode::before {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 16px;
+  margin: 0 auto;
+  background: #d8dde3;
+}
+
+.programFlowCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: 25px 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: min(690px, calc(100% - var(--flow-depth) * 34px));
+  min-height: 68px;
+  margin-left: calc(var(--flow-depth) * 34px);
+  margin-inline-end: auto;
+  padding: 10px 12px;
+  border: 1px solid #e2e6ea;
+  border-radius: 10px;
+  color: #303846;
+  background: #fff;
+  box-shadow: 0 2px 7px rgb(16 24 40 / 5%);
+  cursor: pointer;
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.programFlowCard:hover {
+  border-color: #efc2b3;
+  box-shadow: 0 8px 20px rgb(16 24 40 / 9%);
+  transform: translateY(-1px);
+}
+
+.programFlowDrag {
+  color: #b7bec8;
+  cursor: grab;
+  font-size: 16px;
+}
+
+.programFlowDrag:active {
+  cursor: grabbing;
+}
+
+.programFlowCardIcon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 14px;
+}
+
+.programFlowCard > div:nth-child(3) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.programFlowCard > div:nth-child(3) strong,
+.programFlowCard > div:nth-child(3) p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.programFlowCard > div:nth-child(3) strong {
+  font-size: 10px;
+}
+
+.programFlowCard > div:nth-child(3) p {
+  margin: 0;
+  color: #667085;
+  font-size: 8px;
+}
+
+.programFlowCard.type-end {
+  border-style: dashed;
+  color: #667085;
+  background: #f9fafb;
+}
+
+.programFlowCard.type-end .programFlowCardIcon {
+  color: #667085;
+  background: #e9edf1;
+}
+
+.programFlowCardActions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+
+.programFlowCard:hover .programFlowCardActions,
+.programFlowCard:focus-within .programFlowCardActions {
+  opacity: 1;
+}
+
+.programFlowCardActions button {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  color: #667085;
+  background: transparent;
+  font-size: 10px;
+}
+
+.programFlowCardActions button:hover:not(:disabled) {
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.programFlowCardActions button.delete:hover {
+  color: #c45353;
+  background: #fceeee;
+}
+
+.programFlowCardActions button:disabled {
+  cursor: not-allowed;
+  opacity: .28;
+}
+
+.programFlowBranches {
+  width: min(760px, 100%);
+  margin: 10px auto 0;
+  padding: 2px 0 2px 22px;
+  border-left: 2px solid #efc2b3;
+}
+
+.programFlowBranch {
+  margin: 8px 0;
+  padding: 0 0 8px 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fafbfc;
+}
+
+.programFlowBranch > header {
+  display: grid;
+  grid-template-columns: 22px auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 4px 7px 4px 2px;
+}
+
+.programFlowBranch > header > button:first-child {
+  width: 22px;
+  height: 25px;
+  border: 0;
+  color: #667085;
+  background: transparent;
+}
+
+.programFlowBranch > header > span {
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #a6573d;
+  background: #fff3ef;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.programFlowBranch > header > small {
+  overflow: hidden;
+  color: #667085;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.programFlowBranch > header > em {
+  color: #98a2b3;
+  font-size: 7px;
+  font-style: normal;
+}
+
+.programFlowBranch .programFlowCard {
+  width: min(620px, calc(100% - var(--flow-depth) * 22px));
+  margin-left: calc((var(--flow-depth) - 1) * 22px);
+}
+
+.programFlowBranchEmpty {
+  padding: 18px 12px;
+  color: #98a2b3;
+  text-align: center;
+  font-size: 7px;
+}
+
+.programFlowBlankState {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: min(690px, 100%);
+  margin: 0 auto;
+  padding: 38px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 10px;
+  color: #667085;
+  background: #fafbfc;
+  text-align: center;
+}
+
+.programFlowBlankState > span {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 18px;
+}
+
+.programFlowBlankState strong { margin-top: 9px; font-size: 10px; }
+.programFlowBlankState p { margin: 3px 0 0; color: #98a2b3; font-size: 8px; }
+
+.flowAddStepWrap {
+  position: relative;
+  width: max-content;
+  margin: 18px auto 0;
+}
+
+.flowAddStepWrap.compact {
+  margin: 0;
+}
+
+.flowAddStepButton {
+  min-width: 124px;
+  height: 38px;
+  border: 1px dashed #d97757;
+  border-radius: 8px;
+  color: #d97757;
+  background: #fffaf8;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.flowAddStepButton:hover {
+  background: #fff3ef;
+}
+
+.flowAddStepWrap.compact > button {
+  min-width: 70px;
+  height: 27px;
+  border: 0;
+  border-radius: 5px;
+  color: #d97757;
+  background: transparent;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.flowAddStepWrap.compact > button:hover {
+  background: #fff3ef;
+}
+
+.flowStepPalette {
+  position: absolute;
+  right: 50%;
+  bottom: 45px;
+  z-index: 35;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 410px;
+  max-height: 380px;
+  padding: 7px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 18px 42px rgb(16 24 40 / 18%);
+  transform: translateX(50%);
+}
+
+.flowAddStepWrap.compact .flowStepPalette {
+  right: 0;
+  bottom: 34px;
+  transform: none;
+}
+
+.flowStepPalette > button {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 50px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  color: #394150;
+  background: transparent;
+  text-align: left;
+}
+
+.flowStepPalette > button:hover {
+  color: #a6573d;
+  border-color: #efc2b3;
+  background: #fff3ef;
+}
+
+.flowStepPalette > button > span {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  border-radius: 7px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 12px;
+}
+
+.flowStepPalette > button > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flowStepPalette strong { font-size: 8px; }
+.flowStepPalette small { overflow: hidden; color: #98a2b3; font-size: 6px; text-overflow: ellipsis; white-space: nowrap; }
+
+.flowConfigPanel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  display: flex;
+  width: 300px;
+  flex-direction: column;
+  border-left: 1px solid #e5e7eb;
+  background: #fff;
+  box-shadow: -14px 0 38px rgb(16 24 40 / 18%);
+}
+
+.flowConfigPanel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 68px;
+  padding: 11px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.flowConfigPanel > header > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.flowConfigPanel > header > div > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 13px;
+}
+
+.flowConfigPanel > header > div > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flowConfigPanel header strong { font-size: 11px; }
+.flowConfigPanel header small { color: #98a2b3; font-size: 7px; }
+.flowConfigPanel > header > button { width: 29px; height: 29px; border: 0; border-radius: 6px; color: #667085; background: transparent; font-size: 16px; }
+.flowConfigPanel > header > button:hover { color: #c45353; background: #fceeee; }
+
+.flowConfigBody {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.flowConfigPanel > footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 11px 14px;
+  border-top: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.flowConfigField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 13px;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.flowConfigField > span {
+  color: #98a2b3;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+.flowConfigField input,
+.flowConfigField select,
+.flowConfigField textarea,
+.flowConfigBody > input,
+.flowWaitModes > input {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  outline: 0;
+  color: #303846;
+  background: #fff;
+  font-size: 9px;
+}
+
+.flowConfigField textarea {
+  min-height: 120px;
+  padding-top: 9px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  line-height: 1.5;
+}
+
+.flowConfigField input:focus,
+.flowConfigField select:focus,
+.flowConfigField textarea:focus,
+.flowConfigBody input:focus,
+.flowConfigBody select:focus {
+  border-color: #efc2b3;
+  box-shadow: 0 0 0 3px rgb(217 119 87 / 8%);
+}
+
+.flowEmailSelection {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 58px;
+  margin: -4px 0 13px;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.flowEmailSelection > span {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  color: #d97757;
+  background: linear-gradient(145deg, #fff3ef, #f6d8cd);
+  font-size: 15px;
+}
+
+.flowEmailSelection > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.flowEmailSelection strong,
+.flowEmailSelection small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flowEmailSelection strong { font-size: 9px; }
+.flowEmailSelection small { color: #98a2b3; font-size: 7px; }
+
+.flowEmailPicker {
+  position: relative;
+}
+
+.flowEmailPickerButton {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 58px;
+  padding: 7px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #303846;
+  background: #fafbfc;
+  text-align: left;
+}
+
+.flowEmailPickerButton:hover {
+  border-color: #efc2b3;
+  background: #fffaf8;
+}
+
+.flowEmailPickerButton > span,
+.flowEmailPickerMenu section > button > span {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  color: #d97757;
+  background: linear-gradient(145deg, #fff3ef, #f6d8cd);
+  font-size: 14px;
+}
+
+.flowEmailPickerButton > div,
+.flowEmailPickerMenu section > button > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flowEmailPickerButton strong,
+.flowEmailPickerButton small,
+.flowEmailPickerMenu b,
+.flowEmailPickerMenu small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flowEmailPickerButton strong { font-size: 9px; }
+.flowEmailPickerButton small { color: #98a2b3; font-size: 7px; font-weight: 400; }
+.flowEmailPickerButton em { color: #98a2b3; font-size: 9px; font-style: normal; }
+
+.flowEmailPickerMenu {
+  position: absolute;
+  top: 64px;
+  right: 0;
+  left: 0;
+  z-index: 88;
+  max-height: 330px;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgb(16 24 40 / 18%);
+}
+
+.flowEmailPickerMenu section + section {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #eef0f2;
+}
+
+.flowEmailPickerMenu section > strong {
+  display: block;
+  padding: 4px 6px;
+  color: #98a2b3;
+  font-size: 6px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.flowEmailPickerMenu section > button {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  min-height: 46px;
+  padding: 5px 6px;
+  border: 0;
+  border-radius: 6px;
+  color: #394150;
+  background: transparent;
+  text-align: left;
+}
+
+.flowEmailPickerMenu section > button:hover {
+  color: #a6573d;
+  background: #fff3ef;
+}
+
+.flowEmailPickerMenu section > button > span {
+  width: 32px;
+  height: 32px;
+  font-size: 11px;
+}
+
+.flowEmailPickerMenu b { font-size: 8px; }
+.flowEmailPickerMenu small { color: #98a2b3; font-size: 6px; }
+
+.flowTokenPicker {
+  position: relative;
+  width: max-content;
+  margin: -3px 0 14px;
+}
+
+.flowTokenPicker > button,
+.flowPanelAddButton {
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid #efc2b3;
+  border-radius: 6px;
+  color: #b45f43;
+  background: #fff7f4;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.flowTokenPopover {
+  position: absolute;
+  top: 35px;
+  left: 0;
+  z-index: 90;
+  width: 245px;
+  max-height: 330px;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgb(16 24 40 / 17%);
+}
+
+.flowTokenPopover section + section {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid #eef0f2;
+}
+
+.flowTokenPopover strong {
+  display: block;
+  padding: 4px 7px;
+  color: #98a2b3;
+  font-size: 6px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.flowTokenPopover section button {
+  width: 100%;
+  min-height: 29px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 5px;
+  color: #4b5563;
+  background: transparent;
+  text-align: left;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 7px;
+}
+
+.flowTokenPopover section button:hover {
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.flowWaitModes > label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 52px;
+  padding: 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.flowWaitModes > label + label {
+  margin-top: 8px;
+}
+
+.flowWaitModes > label:has(input:checked) {
+  border-color: #efc2b3;
+  background: #fff7f4;
+}
+
+.flowWaitModes > label input {
+  margin-top: 2px;
+  accent-color: #d97757;
+}
+
+.flowWaitModes > label span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.flowWaitModes > label strong { font-size: 8px; }
+.flowWaitModes > label small { color: #98a2b3; font-size: 7px; }
+.flowWaitModes > input { margin: 7px 0 12px; }
+
+.flowInlineFields {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 7px;
+  margin: 7px 0 12px;
+}
+
+.flowInlineFields input,
+.flowInlineFields select,
+.flowConditionBuilder input,
+.flowConditionBuilder select,
+.flowMultipleBranches input,
+.flowMultipleBranches select {
+  min-width: 0;
+  width: 100%;
+  height: 38px;
+  padding: 0 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: 0;
+  background: #fff;
+  font-size: 8px;
+}
+
+.flowPanelIntro {
+  margin-bottom: 12px;
+  padding: 11px;
+  border-radius: 8px;
+  color: #667085;
+  background: #f5f7f9;
+}
+
+.flowPanelIntro strong { color: #303846; font-size: 9px; }
+.flowPanelIntro p { margin: 4px 0 0; font-size: 7px; line-height: 1.5; }
+
+.flowConditionBuilder {
+  display: grid;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.flowBranchSummary {
+  display: grid;
+  gap: 7px;
+}
+
+.flowBranchSummary > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 7px;
+  padding: 9px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+}
+
+.flowBranchSummary span { grid-row: 1 / 3; align-self: center; padding: 4px 7px; border-radius: 999px; color: #a6573d; background: #fff3ef; font-size: 7px; font-weight: 700; }
+.flowBranchSummary strong { font-size: 8px; }
+.flowBranchSummary small { color: #98a2b3; font-size: 7px; }
+
+.flowMultipleBranches {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.flowMultipleBranches > div {
+  display: grid;
+  grid-template-columns: .8fr 1fr auto 25px;
+  gap: 5px;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #fafbfc;
+}
+
+.flowMultipleBranches > div > label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #667085;
+  font-size: 7px;
+}
+
+.flowMultipleBranches > div > label input { width: 54px; }
+.flowMultipleBranches > div > button { border: 0; color: #c45353; background: transparent; }
+
+.flowEndConfiguration {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 40px 14px;
+  color: #667085;
+  text-align: center;
+}
+
+.flowEndConfiguration span {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: #667085;
+  background: #e9edf1;
+}
+
+.flowEndConfiguration strong { margin-top: 10px; color: #303846; font-size: 10px; }
+.flowEndConfiguration p { margin: 4px 0 0; font-size: 8px; line-height: 1.5; }
+
+.flowDeleteConfirmation {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px 24px 0;
+  text-align: center;
+}
+
+.flowDeleteConfirmation > span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  color: #c45353;
+  background: #fceeee;
+  font-size: 17px;
+}
+
+.flowDeleteConfirmation h3 { margin: 12px 0 5px; font-size: 14px; }
+.flowDeleteConfirmation p { max-width: 360px; margin: 0; color: #667085; font-size: 8px; line-height: 1.55; }
+.flowDeleteConfirmation footer { display: flex; justify-content: flex-end; gap: 7px; width: calc(100% + 48px); margin: 20px -24px 0; padding: 12px 20px; border-top: 1px solid #e5e7eb; background: #fafbfc; }
+.button.solid.danger { border-color: #c45353; background: #c45353; }
+
+/* Router and Stream orchestration */
+.programFlowIncomingTags {
+  width: min(690px, 100%);
+  margin: 0 auto 6px;
+  padding-left: 12px;
+  color: #b15d41;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.programFlowIncomingTags::before {
+  content: '↳';
+  margin-right: 5px;
+  color: #d97757;
+}
+
+.programRouterBranches {
+  width: min(650px, calc(100% - 40px));
+  margin: 8px auto 14px;
+  padding: 8px;
+  border-left: 2px solid #d97757;
+  border-radius: 0 8px 8px 0;
+  background: #fafbfc;
+}
+
+.programRouterBranches > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  padding: 0 5px 5px;
+}
+
+.programRouterBranches > header span {
+  color: #394150;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.programRouterBranches > header small {
+  color: #98a2b3;
+  font-size: 6px;
+}
+
+.programRouterBranchRow {
+  display: grid;
+  grid-template-columns: 18px 20px minmax(75px, .7fr) 28px minmax(150px, 1.2fr);
+  align-items: center;
+  gap: 5px;
+  min-height: 38px;
+  padding: 3px 5px;
+  border-top: 1px solid #e7eaee;
+  color: #667085;
+  background: #fff;
+}
+
+.programRouterBranchRow:first-of-type {
+  border-radius: 6px 6px 0 0;
+}
+
+.programRouterBranchGrip {
+  color: #b7bec8;
+  cursor: grab;
+  font-size: 12px;
+}
+
+.programRouterBranchRow > em {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #a6573d;
+  background: #fff3ef;
+  font-size: 6px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.programRouterBranchRow > input,
+.programRouterBranchRow > select {
+  min-width: 0;
+  width: 100%;
+  height: 29px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  outline: 0;
+  color: #394150;
+  background: transparent;
+  font-size: 7px;
+}
+
+.programRouterBranchRow > select {
+  border-color: #e5e7eb;
+  background: #fafbfc;
+}
+
+.programRouterBranchRow > input:focus {
+  border-color: #efc2b3;
+  background: #fff;
+}
+
+.programRouterFunnel {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  color: #98a2b3;
+  background: #fff;
+  font-size: 0;
+}
+
+.programRouterFunnel::before {
+  content: '';
+  width: 11px;
+  height: 10px;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 0, 64% 48%, 64% 100%, 38% 82%, 38% 48%);
+}
+
+.programRouterFunnel.active {
+  color: #d97757;
+  border-color: #efc2b3;
+  background: #fff3ef;
+}
+
+.programRouterBranches > button {
+  margin-top: 6px;
+  padding: 5px 7px;
+  border: 0;
+  color: #d97757;
+  background: transparent;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.programStreamNode {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 0 0 0 3px;
+  border-left: 3px solid #d97757;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(16 24 40 / 8%);
+}
+
+.programStreamNode + .programFlowNode::before,
+.programFlowNode + .programStreamNode::before {
+  margin-left: calc(50% - 2px);
+}
+
+.programStreamHeader {
+  width: 100%;
+  min-height: 72px;
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid #e5e7eb;
+  border-radius: 8px 8px 0 0;
+  box-shadow: none;
+}
+
+.programStreamHeader:hover {
+  border-color: #e5e7eb;
+  box-shadow: none;
+  transform: none;
+}
+
+.programStreamIdentity {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.programStreamIdentity > input {
+  min-width: 0;
+  width: 100%;
+  padding: 2px 5px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  outline: 0;
+  color: #303846;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.programStreamIdentity > input:focus {
+  border-color: #efc2b3;
+  background: #fffaf8;
+}
+
+.programStreamIdentity > button {
+  width: max-content;
+  padding: 2px 5px;
+  border: 0;
+  border-radius: 4px;
+  color: #b15d41;
+  background: #fff3ef;
+  font-size: 7px;
+}
+
+.programStreamCadencePopover {
+  position: absolute;
+  top: 65px;
+  right: 18px;
+  z-index: 42;
+  display: grid;
+  grid-template-columns: 64px 90px 90px;
+  gap: 7px;
+  width: 300px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 16px 36px rgb(16 24 40 / 18%);
+}
+
+.programStreamCadencePopover label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #667085;
+  font-size: 6px;
+}
+
+.programStreamCadencePopover input,
+.programStreamCadencePopover select {
+  min-width: 0;
+  width: 100%;
+  height: 31px;
+  padding: 0 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  font-size: 7px;
+}
+
+.programStreamCadencePopover > button {
+  grid-column: 1 / -1;
+  justify-self: end;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 5px;
+  color: #fff;
+  background: #d97757;
+  font-size: 7px;
+}
+
+.programStreamContainer {
+  overflow: visible;
+  border-radius: 0 0 8px 8px;
+}
+
+.programStreamBody {
+  padding: 14px 16px;
+  background: #fafbfc;
+}
+
+.programStreamBody.collapsed {
+  display: none;
+}
+
+.programStreamBody .programFlowCard {
+  width: calc(100% - 34px);
+  margin-left: 34px;
+  min-height: 59px;
+  box-shadow: 0 1px 4px rgb(16 24 40 / 5%);
+}
+
+.programStreamBody .programFlowNode + .programFlowNode::before {
+  margin-left: calc(50% + 16px);
+}
+
+.programStreamEmpty {
+  padding: 24px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 8px;
+  color: #98a2b3;
+  text-align: center;
+  font-size: 8px;
+}
+
+.programStreamExit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.programStreamExit > button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid #efc2b3;
+  border-radius: 50%;
+  color: #d97757;
+  background: #fff7f4;
+  font-size: 11px;
+}
+
+.programStreamExit > div {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.programStreamExit > div > span {
+  overflow: hidden;
+  color: #667085;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.programStreamExit strong {
+  color: #b15d41;
+}
+
+.programStreamStay {
+  color: #98a2b3;
+  font-size: 7px;
+  font-weight: 600;
+}
+
+.flowRouterConfig {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.flowRouterConfig > section,
+.flowTransitionBuilder > section {
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  background: #fafbfc;
+}
+
+.flowRouterConfig section > header {
+  display: grid;
+  grid-template-columns: 22px 1fr 22px;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+.flowRouterConfig header > span,
+.flowTransitionBuilder section > div > span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #a6573d;
+  background: #fff3ef;
+  font-size: 6px;
+  font-weight: 800;
+}
+
+.flowRouterConfig input,
+.flowRouterConfig select,
+.flowTransitionBuilder input,
+.flowTransitionBuilder select,
+.flowCadenceFields input,
+.flowCadenceFields select {
+  min-width: 0;
+  width: 100%;
+  height: 34px;
+  padding: 0 7px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: 0;
+  background: #fff;
+  font-size: 7px;
+}
+
+.flowRouterConfig header > button,
+.flowTransitionBuilder section > div > button {
+  border: 0;
+  color: #c45353;
+  background: transparent;
+}
+
+.flowRouterCondition {
+  display: grid;
+  grid-template-columns: 1fr .8fr .7fr;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.flowRouterConfig > section > label,
+.flowTransitionBuilder section > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #667085;
+  font-size: 6px;
+}
+
+.flowRouterConfig > section > small {
+  display: block;
+  margin-top: 5px;
+  color: #98a2b3;
+  font-size: 6px;
+}
+
+.flowPanelSection {
+  margin-bottom: 14px;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fafbfc;
+}
+
+.flowPanelSection > header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.flowPanelSection > header strong { font-size: 8px; }
+.flowPanelSection > header small { color: #98a2b3; font-size: 6px; }
+
+.flowCadenceFields {
+  display: grid;
+  grid-template-columns: 55px 1fr 82px;
+  gap: 5px;
+}
+
+.flowTransitionBuilder > section + section {
+  margin-top: 7px;
+}
+
+.flowTransitionBuilder section > div {
+  display: grid;
+  grid-template-columns: 22px 60px 22px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  margin-bottom: 6px;
+}
+
+.flowTransitionBuilder section > select,
+.flowTransitionBuilder section > input {
+  margin-bottom: 5px;
+}
+
+.flowStayInStream {
+  margin-bottom: 8px;
+  padding: 13px 8px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 7px;
+  color: #98a2b3;
+  text-align: center;
+  font-size: 7px;
+}
+
+.flowStepContextMenu {
+  position: fixed;
+  z-index: 110;
+  width: 220px;
+  padding: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 16px 38px rgb(16 24 40 / 20%);
+}
+
+.flowStepContextMenu button {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 9px;
+  border: 0;
+  border-radius: 5px;
+  color: #394150;
+  background: transparent;
+  text-align: left;
+  font-size: 8px;
+}
+
+.flowStepContextMenu button:hover:not(:disabled) {
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.flowStepContextMenu button:disabled {
+  opacity: .4;
+}
+
+@media (max-width: 900px) {
+  .programFlowCanvas { padding-inline: 16px; }
+  .programFlowCard { width: calc(100% - var(--flow-depth) * 25px); margin-left: calc(var(--flow-depth) * 25px); }
+  .programFlowBranches { padding-left: 12px; }
+}
+
+@media (max-width: 680px) {
+  .programFlowHeader { align-items: flex-start; flex-direction: column; }
+  .programFlowCard { grid-template-columns: 20px 34px minmax(0, 1fr); }
+  .programFlowCardActions { grid-column: 2 / -1; justify-content: flex-end; opacity: 1; }
+  .flowStepPalette { right: 0; width: min(360px, calc(100vw - 245px)); transform: none; }
+  .flowConfigPanel { width: min(300px, calc(100vw - 220px)); }
+}

@@ -1,0 +1,725 @@
+/* Full-screen Program asset editor */
+.programAssetEditor {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  min-width: 900px;
+  flex-direction: column;
+  color: #303846;
+  background: #f7f8fa;
+}
+
+.programAssetEditorTopbar {
+  position: relative;
+  z-index: 210;
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 420px) 1fr;
+  align-items: center;
+  gap: 16px;
+  height: 48px;
+  flex: 0 0 48px;
+  padding: 0 14px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.programAssetEditorTopbar > button {
+  justify-self: start;
+  border: 0;
+  color: #d97757;
+  background: transparent;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.programAssetEditorTopbar > input {
+  min-width: 0;
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  outline: 0;
+  color: #202733;
+  background: transparent;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.programAssetEditorTopbar > input:focus {
+  border-color: #efc2b3;
+  background: #fffaf8;
+}
+
+.programAssetEditorTopbar > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.programAssetEditorTopbar .button {
+  min-height: 34px;
+}
+
+.programAssetEditorBody {
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.flowEditSelectedAsset {
+  width: 100%;
+  min-height: 32px;
+  margin: -5px 0 12px;
+  border: 1px solid #efc2b3;
+  border-radius: 6px;
+  color: #b15d41;
+  background: #fff7f4;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.programAssetsView .programAssetSections article > button {
+  width: auto;
+  min-width: 38px;
+  padding: 0 6px;
+  border-radius: 5px;
+  color: #d97757;
+  font-size: 0;
+}
+
+.programAssetsView .programAssetSections article > button::before {
+  content: '✎ Edit';
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.programEmailAssetBuilder,
+.programLandingAssetBuilder,
+.programFormAssetBuilder {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 310px;
+  height: calc(100vh - 48px);
+}
+
+.assetBuilderLibrary,
+.assetBuilderProperties {
+  min-height: 0;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.assetBuilderLibrary {
+  padding: 12px;
+  border-right: 1px solid #e5e7eb;
+}
+
+.assetBuilderLibrary > header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+  padding: 3px 2px 9px;
+  border-bottom: 1px solid #eef0f2;
+}
+
+.assetBuilderLibrary header strong { font-size: 10px; }
+.assetBuilderLibrary header small { color: #98a2b3; font-size: 7px; }
+
+.assetBuilderLibrary > button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  margin-bottom: 6px;
+  padding: 5px 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 7px;
+  color: #4b5563;
+  background: #fff;
+  text-align: left;
+  font-size: 8px;
+}
+
+.assetBuilderLibrary > button:hover:not(:disabled) {
+  color: #a6573d;
+  border-color: #efc2b3;
+  background: #fff3ef;
+}
+
+.assetBuilderLibrary > button:disabled {
+  cursor: not-allowed;
+  opacity: .42;
+}
+
+.assetBuilderLibrary > button > span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 6px;
+  color: #d97757;
+  background: #fff3ef;
+  font-size: 10px;
+}
+
+.assetBuilderCanvas {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  background: #eef1f4;
+}
+
+.assetBuilderCanvas > header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 45px;
+  padding: 0 13px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #667085;
+  background: rgb(255 255 255 / 95%);
+  font-size: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.assetBuilderCanvas > header > div {
+  display: flex;
+  gap: 3px;
+  padding: 2px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #f3f4f6;
+}
+
+.assetBuilderCanvas > header button {
+  min-height: 29px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 4px;
+  color: #667085;
+  background: transparent;
+  font-size: 7px;
+}
+
+.assetBuilderCanvas > header button.active {
+  color: #d97757;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 8%);
+}
+
+.assetBuilderProperties {
+  border-left: 1px solid #e5e7eb;
+}
+
+.assetBuilderProperties > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 13px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.assetBuilderProperties > header strong { font-size: 10px; }
+.assetBuilderProperties > header > button { border: 0; color: #d97757; background: transparent; font-size: 7px; font-weight: 700; }
+
+.assetBuilderProperties > section {
+  padding: 13px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.assetBuilderProperties > section > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 9px;
+}
+
+.assetBuilderProperties section header strong { font-size: 9px; }
+.assetBuilderProperties section header button { border: 0; color: #c45353; background: transparent; font-size: 7px; }
+
+.assetBuilderProperties label:not(.assetTokenField),
+.assetBuilderProperties section > label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 11px;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.assetBuilderProperties input,
+.assetBuilderProperties select,
+.assetBuilderProperties textarea {
+  width: 100%;
+  min-height: 39px;
+  padding: 0 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: 0;
+  background: #fff;
+  font-size: 8px;
+}
+
+.assetTokenField {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 0 13px 13px;
+  color: #667085;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.assetBuilderProperties section .assetTokenField {
+  margin-inline: 0;
+}
+
+.assetTokenField > span:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.assetTokenField > span:first-child > button {
+  padding: 3px 6px;
+  border: 1px solid #efc2b3;
+  border-radius: 5px;
+  color: #b15d41;
+  background: #fff7f4;
+  font-size: 6px;
+  font-weight: 700;
+}
+
+.assetTokenField input,
+.assetTokenField textarea {
+  width: 100%;
+  min-height: 39px;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  outline: 0;
+  font-size: 8px;
+}
+
+.assetTokenField textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.assetTokenField input:focus,
+.assetTokenField textarea:focus {
+  border-color: #efc2b3;
+  box-shadow: 0 0 0 3px rgb(217 119 87 / 8%);
+}
+
+.assetTokenRendering {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 31px;
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: #f7f8fa;
+  flex-wrap: wrap;
+  font-size: 7px;
+  font-weight: 400;
+}
+
+.assetTokenRendering > i {
+  padding: 3px 6px;
+  border: 1px solid #efc2b3;
+  border-radius: 999px;
+  color: #b15d41;
+  background: #fff3ef;
+  font-size: 6px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.assetTokenResolved {
+  color: #98a2b3;
+  font-size: 6px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.assetTokenPopover {
+  position: absolute;
+  top: 24px;
+  right: 0;
+  z-index: 40;
+  width: 285px;
+  max-height: 390px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 18px 42px rgb(16 24 40 / 19%);
+}
+
+.assetTokenPopover > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 42px;
+  padding: 0 10px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.assetTokenPopover header strong { font-size: 9px; }
+.assetTokenPopover header button { border: 0; color: #667085; background: transparent; font-size: 14px; }
+
+.assetTokenPopover > nav {
+  display: flex;
+  overflow-x: auto;
+  padding: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.assetTokenPopover > nav button {
+  min-width: max-content;
+  height: 29px;
+  padding: 0 7px;
+  border: 0;
+  border-radius: 5px;
+  color: #667085;
+  background: transparent;
+  font-size: 6px;
+}
+
+.assetTokenPopover > nav button.active {
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.assetTokenPopover > div {
+  max-height: 290px;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.assetTokenPopover > div > button {
+  display: flex;
+  width: 100%;
+  min-height: 39px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 7px;
+  border: 0;
+  border-radius: 5px;
+  color: #394150;
+  background: transparent;
+  text-align: left;
+}
+
+.assetTokenPopover > div > button:hover {
+  background: #fff3ef;
+}
+
+.assetTokenPopover code { color: #b15d41; font-size: 7px; }
+.assetTokenPopover small { color: #98a2b3; font-size: 6px; }
+.assetTokenPopover p { padding: 20px; color: #98a2b3; text-align: center; font-size: 7px; }
+
+.programEmailDocument {
+  width: min(680px, calc(100% - 50px));
+  min-height: 780px;
+  margin: 28px auto;
+  background: #fff;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 13%);
+  transition: width .2s ease;
+}
+
+.programEmailDocument.mobile {
+  width: 390px;
+}
+
+.programInboxPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafbfc;
+}
+
+.programInboxPreview span { color: #98a2b3; font-size: 6px; text-transform: uppercase; }
+.programInboxPreview strong { font-size: 9px; }
+.programInboxPreview small { color: #667085; font-size: 7px; }
+
+.programEmailBlock {
+  position: relative;
+  min-height: 55px;
+  padding: 18px 34px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.programEmailBlock:hover,
+.programEmailBlock.selected {
+  border-color: #d97757;
+}
+
+.programEmailBlock > span:first-child {
+  position: absolute;
+  top: 8px;
+  left: 7px;
+  color: #b7bec8;
+  font-size: 10px;
+}
+
+.programEmailBlock h1 { margin: 0; font-size: 28px; line-height: 1.25; }
+.programEmailBlock p { margin: 0; font-size: 12px; line-height: 1.6; }
+.programEmailBlock.type-brand { color: #d97757; font-size: 8px; font-weight: 700; letter-spacing: .12em; }
+.programEmailBlock.type-button { text-align: center; }
+.programEmailBlock.type-button > button { padding: 10px 18px; border: 0; border-radius: 6px; color: #fff; background: #d97757; }
+.programEmailBlock hr { border: 0; border-top: 1px solid #e5e7eb; }
+
+.assetImagePlaceholder {
+  display: grid;
+  place-items: center;
+  min-height: 130px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 7px;
+  color: #98a2b3;
+  background: #f7f8fa;
+}
+
+.assetDynamicContent {
+  overflow: hidden;
+  border: 1px solid #efc2b3;
+  border-radius: 7px;
+}
+
+.assetDynamicContent em {
+  display: block;
+  padding: 6px 9px;
+  color: #a6573d;
+  background: #fff3ef;
+  font-size: 7px;
+  font-style: normal;
+}
+
+.assetDynamicContent p { padding: 12px; }
+
+.programLandingDocument {
+  width: min(900px, calc(100% - 40px));
+  min-height: 900px;
+  margin: 24px auto;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 13%);
+}
+
+.pageSection {
+  position: relative;
+  min-height: 140px;
+  padding: 36px 50px;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.pageSection:hover,
+.pageSection.selected {
+  border-color: #d97757;
+}
+
+.pageSection > span:first-child {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: #b7bec8;
+}
+
+.pageSection.type-hero {
+  display: grid;
+  place-items: center;
+  min-height: 360px;
+  color: #fff;
+  background: linear-gradient(135deg, #27313d, #495b6d);
+  text-align: center;
+}
+
+.pageSection.type-hero h1 { max-width: 720px; margin: 10px auto; font-size: 38px; }
+.pageSection.type-hero p { color: #dbe1e7; }
+.pageSection.type-hero button { padding: 11px 18px; border: 0; border-radius: 6px; color: #fff; background: #d97757; }
+
+.landingEmbeddedForm {
+  width: min(430px, 100%);
+  margin: auto;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgb(16 24 40 / 9%);
+}
+
+.landingEmbeddedForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+  color: #667085;
+  font-size: 8px;
+}
+
+.landingEmbeddedForm input { height: 38px; border: 1px solid #e5e7eb; border-radius: 6px; }
+.landingEmbeddedForm button { width: 100%; height: 40px; margin-top: 12px; border: 0; border-radius: 6px; color: #fff; background: #d97757; }
+
+.assetPropertyTabs {
+  justify-content: flex-start !important;
+  gap: 3px;
+}
+
+.assetPropertyTabs button {
+  min-height: 32px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 5px;
+  color: #667085 !important;
+  background: transparent;
+}
+
+.assetPropertyTabs button.active {
+  color: #d97757 !important;
+  background: #fff3ef;
+}
+
+.assetToggleRow {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row !important;
+}
+
+.assetToggleRow > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assetToggleRow input {
+  width: 34px !important;
+  height: 18px !important;
+  min-height: 18px !important;
+  appearance: none;
+  border: 0 !important;
+  border-radius: 999px;
+  background: #d7dbe1;
+}
+
+.assetToggleRow input::before {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 14px;
+  margin: 2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgb(16 24 40 / 18%);
+}
+
+.assetToggleRow input:checked { background: #d97757; }
+.assetToggleRow input:checked::before { transform: translateX(16px); }
+
+.programFormDocument {
+  width: min(650px, calc(100% - 50px));
+  min-height: 720px;
+  margin: 26px auto;
+  padding: 35px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgb(16 24 40 / 13%);
+}
+
+.programFormDocument > div:first-child { margin-bottom: 22px; text-align: center; }
+.programFormDocument > div:first-child small { color: #d97757; font-size: 7px; font-weight: 700; }
+.programFormDocument > div:first-child h2 { margin: 8px 0 5px; font-size: 24px; }
+.programFormDocument > div:first-child p { color: #667085; font-size: 9px; }
+
+.programFormDocument > section {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto 25px;
+  align-items: center;
+  gap: 8px;
+  min-height: 72px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.programFormDocument > section:hover,
+.programFormDocument > section.selected {
+  border-color: #efc2b3;
+  background: #fffaf8;
+}
+
+.programFormDocument section > span { color: #b7bec8; }
+.programFormDocument section label { display: flex; flex-direction: column; gap: 5px; color: #4b5563; font-size: 8px; }
+.programFormDocument section label em { color: #c45353; }
+.programFormDocument section input { height: 38px; border: 1px solid #e5e7eb; border-radius: 6px; }
+.programFormDocument section i { color: #4e8b68; font-size: 7px; font-style: normal; }
+.programFormDocument section > button { border: 0; color: #c45353; background: transparent; }
+
+.formAssetSubmit {
+  width: 100%;
+  height: 42px;
+  margin-top: 14px;
+  border: 0;
+  border-radius: 6px;
+  color: #fff;
+  background: #d97757;
+}
+
+.assetDiscardScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  background: rgb(16 24 40 / 36%);
+  backdrop-filter: blur(2px);
+}
+
+.assetDiscardDialog {
+  width: min(410px, calc(100vw - 40px));
+  padding: 24px 24px 0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 24px 60px rgb(16 24 40 / 24%);
+  text-align: center;
+}
+
+.assetDiscardDialog > span {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: auto;
+  border-radius: 10px;
+  color: #c45353;
+  background: #fceeee;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.assetDiscardDialog h3 { margin: 12px 0 5px; font-size: 14px; }
+.assetDiscardDialog p { margin: 0; color: #667085; font-size: 8px; line-height: 1.5; }
+.assetDiscardDialog footer { display: flex; justify-content: flex-end; gap: 7px; margin: 20px -24px 0; padding: 12px 20px; border-top: 1px solid #e5e7eb; background: #fafbfc; }
+
+@media (max-width: 1100px) {
+  .programEmailAssetBuilder,
+  .programLandingAssetBuilder,
+  .programFormAssetBuilder { grid-template-columns: 190px minmax(0, 1fr) 270px; }
+}
