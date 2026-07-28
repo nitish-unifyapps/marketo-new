@@ -209,10 +209,6 @@ function flowStepIcon(type: ProgramFlowStepType) {
   return flowStepPalette.find((item) => item.type === type)?.icon ?? '◇'
 }
 
-function flowDayAt(sequence: ProgramFlowStep[], index: number) {
-  return sequence.slice(0, index).reduce((day, step) => step.type === 'Wait' && step.config.waitMode === 'duration' && step.config.unit === 'days' ? day + Number(step.config.duration || 0) : day, 1)
-}
-
 function routerBranchCondition(branch: ProgramFlowBranch) {
   if (branch.conditionField && branch.conditionOperator && branch.conditionValue) return `${branch.conditionField} ${branch.conditionOperator} ${branch.conditionValue}`
   return branch.condition
@@ -354,7 +350,6 @@ export function ProgramFlowEditor({ program, onChange, onConvertToNurture, onEdi
 
   function renderSequence(sequence: ProgramFlowStep[], depth = 0): React.ReactNode {
     return <div className='programFlowSequence'>{sequence.map((step, index) => <div className={`programFlowNode ${step.type === 'Stream' ? 'programStreamNode' : ''}`} key={step.id}>
-      {depth === 0 && (index === 0 || sequence[index - 1]?.type === 'Wait') && <div className='programFlowDayBadge'>Day {flowDayAt(sequence, index)}</div>}
       {incomingLabels.has(step.id) && <div className='programFlowIncomingTags'>From {incomingLabels.get(step.id)?.join(', ')}</div>}
       <article
         className={`programFlowCard type-${step.type.toLowerCase().replaceAll(/[^a-z]+/g, '-')} ${step.type === 'Stream' ? 'programStreamHeader' : ''}`}

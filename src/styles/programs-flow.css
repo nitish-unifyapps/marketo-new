@@ -1619,19 +1619,6 @@
   height: 10px;
 }
 
-.programFlowDayBadge {
-  width: max-content;
-  margin: 6px 0 8px;
-  padding: 4px 9px;
-  border-radius: 5px;
-  color: #fff;
-  background: #d97757;
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: .035em;
-  text-transform: uppercase;
-}
-
 .programFlowCard {
   grid-template-columns: 22px 36px minmax(0, 1fr) auto;
   gap: 9px;
@@ -1740,4 +1727,83 @@
   .programFlowCanvasToolbar { align-items: flex-start; gap: 8px; }
   .programFlowCard { width: calc(100% - var(--flow-depth) * 18px); margin-left: calc(var(--flow-depth) * 18px); }
   .programFlowBranches { width: calc(100% - 8px); margin-left: 8px; }
+}
+
+/* Final Flow surface cleanup */
+.programDetailBody:has(.programSequenceFlow) {
+  padding: 10px 14px 28px;
+}
+
+.programSequenceFlow {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.programFlowCanvas {
+  width: 100%;
+  padding: 10px 12px 14px;
+}
+
+.programFlowCard {
+  width: calc(100% - var(--flow-depth) * 24px);
+  max-width: none;
+  margin-left: calc(var(--flow-depth) * 24px);
+  margin-right: 0;
+}
+
+.programFlowCard.type-wait {
+  width: min(520px, calc(100% - var(--flow-depth) * 24px));
+}
+
+.programFlowBranches {
+  width: calc(100% - 16px);
+  max-width: none;
+  margin-left: 16px;
+  margin-right: 0;
+}
+
+.programFlowBranch .programFlowCard {
+  width: calc(100% - 18px);
+  margin-left: 18px;
+}
+
+.programRouterBranches,
+.programStreamNode {
+  width: calc(100% - 16px);
+  max-width: none;
+  margin-right: 0;
+}
+
+.flowConfigPanel {
+  top: 232px;
+  right: 18px;
+  bottom: auto;
+  height: auto;
+  width: min(360px, calc(100vw - 36px));
+  max-height: calc(100vh - 252px);
+  overflow: hidden;
+  border: 1px solid #e1e5ea;
+  border-radius: 12px;
+  box-shadow: 0 18px 48px rgb(16 24 40 / 18%);
+}
+
+.flowConfigPanel > header {
+  min-height: 58px;
+}
+
+.flowConfigPanel > footer {
+  min-height: 52px;
+}
+
+@media (max-width: 900px) {
+  .programDetailBody:has(.programSequenceFlow) { padding-inline: 8px; }
+  .programFlowCanvas { padding-inline: 8px; }
+  .flowConfigPanel {
+    top: 82px;
+    right: 10px;
+    bottom: auto;
+    width: min(360px, calc(100vw - 20px));
+    max-height: calc(100vh - 92px);
+  }
 }
