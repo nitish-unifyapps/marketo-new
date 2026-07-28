@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { defaultSegmentForProgramType } from '../../data/programsData'
+import { smartLists } from '../../data/crmData'
 import type { ProgramRecord, ProgramSegmentCondition, ProgramSegmentConfig, ProgramSegmentGroup } from '../../types/programs'
 import { WireframeIcon } from '../common/WireframeIcon'
 
@@ -48,6 +49,7 @@ export function ProgramSegmentEditor({ program, onChange }: ProgramSegmentEditor
   const [previewCount, setPreviewCount] = useState<number | null>(1842)
   const [previewState, setPreviewState] = useState<'idle' | 'updating' | 'ready'>('ready')
   const [openLogicMenu, setOpenLogicMenu] = useState<string | null>(null)
+  const [sourceMode, setSourceMode] = useState<'create' | 'add'>('create')
   const savedSegment = program.segment ?? defaultSegmentForProgramType(program.type)
   const segment = savedSegment.mode === 'filter' ? savedSegment : { ...savedSegment, mode: 'filter' as const }
   const includeGroups = segment.groups.filter((group) => !group.id.startsWith('segment-exclude-'))
@@ -67,10 +69,33 @@ export function ProgramSegmentEditor({ program, onChange }: ProgramSegmentEditor
     return () => document.removeEventListener('click', closeMenu)
   }, [openLogicMenu])
 
-  function update(next: ProgramSegmentConfig) {
+  useEffect(() => {
+    if (sourceMode !== 'add') return
+    const closeMenu = () => setSourceMode('create')
+    document.addEventListener('click', closeMenu)
+    return () => document.removeEventListener('click', closeMenu)
+  }, [sourceMode])
+
+  function estimateMembers(next: ProgramSegmentConfig) {
+    const groups = next.groups.filter((group) => !group.id.startsWith('segment-exclude-'))
+    const conditions = groups.flatMap((group) => group.conditions)
+    const completedConditions = conditions.filter((condition) => condition.value.trim()).length
+    const signature = conditions.map((condition) => `${condition.field}:${condition.operator}:${condition.value}:${condition.logic ?? ''}`).join('|')
+    const variation = [...signature].reduce((total, character) => total + character.charCodeAt(0), 0) % 137
+    return Math.max(12, Math.round(12840 / (1 + completedConditions * 1.75 + Math.max(groups.length - 1, 0)) + variation))
+  }
+
+  function queuePreview(next: ProgramSegmentConfig, delay = 360) {
     if (previewTimer.current) clearTimeout(previewTimer.current)
-    setPreviewCount(null)
-    setPreviewState('idle')
+    setPreviewState('updating')
+    previewTimer.current = setTimeout(() => {
+      setPreviewCount(estimateMembers(next))
+      setPreviewState('ready')
+    }, delay)
+  }
+
+  function update(next: ProgramSegmentConfig) {
+    queuePreview(next)
     onChange(next)
   }
 
@@ -91,16 +116,16 @@ export function ProgramSegmentEditor({ program, onChange }: ProgramSegmentEditor
     update({ ...segment, groups: segment.groups.map((group) => group.id === groupId ? updater(group) : group) })
   }
 
-  function previewMembers() {
-    const conditionCount = segment.groups.reduce((total, group) => total + group.conditions.length, 0)
-    setPreviewState('updating')
-    setPreviewCount(null)
-    if (previewTimer.current) clearTimeout(previewTimer.current)
-    previewTimer.current = setTimeout(() => {
-      const base = 12840
-      setPreviewCount(Math.max(12, Math.round(base / (1 + conditionCount * 1.75 + Math.max(includeGroups.length - 1, 0)))))
-      setPreviewState('ready')
-    }, 550)
+  function addExistingSegment(name: string) {
+    const condition = createCondition('Member of Smart List')
+    condition.value = name
+    if (includeGroups.length === 0) {
+      update({ ...segment, groups: [...segment.groups, { id: `segment-group-${nextId.current++}`, logic: 'AND', conditions: [condition] }] })
+    } else {
+      const targetGroup = includeGroups[0]
+      update({ ...segment, groups: segment.groups.map((group) => group.id === targetGroup.id ? { ...group, conditions: [...group.conditions, condition] } : group) })
+    }
+    setSourceMode('create')
   }
 
   function renderConditionGroup(group: ProgramSegmentGroup, groupIndex: number) {
@@ -120,19 +145,18 @@ export function ProgramSegmentEditor({ program, onChange }: ProgramSegmentEditor
 
   const resultsPane = <aside className='segmentResultsPane' aria-label='Estimated results'>
     <div className='segmentResultsTop'>
-      <div className='segmentResultsHeading'><span className={`segmentResultStatus ${previewState}`}></span><div><strong>Estimated results</strong><small>{previewState === 'updating' ? 'Updating estimate…' : previewState === 'ready' ? 'Estimate is ready' : 'Ready to estimate'}</small></div></div>
+      <div className='segmentResultsHeading'><div><strong>Estimated results</strong><small>{previewState === 'updating' ? 'Updating automatically…' : 'Estimate is up to date'}</small></div><button type='button' className={`segmentRefreshResults ${previewState === 'updating' ? 'updating' : ''}`} onClick={() => queuePreview(segment, 180)} disabled={previewState === 'updating'} aria-label='Refresh estimated results' title='Refresh results'><svg viewBox='0 0 24 24' aria-hidden='true'><path d='M20 7v5h-5M4 17v-5h5M6.1 8.2A7 7 0 0 1 18.7 9M17.9 15.8A7 7 0 0 1 5.3 15' /></svg></button></div>
       <div className='segmentResultsMetrics'>
-        <div className='segmentResultsMetric'><span>Members</span><strong>{previewState === 'updating' ? '•••' : previewCount === null ? '—' : previewCount.toLocaleString()}</strong></div>
-        <div className='segmentResultsMetric secondary'><span>Database</span><strong>{previewState === 'updating' ? '•••' : previewPercentage === null ? '—' : `${previewPercentage < .1 && previewPercentage > 0 ? '<0.1' : previewPercentage.toFixed(1)}%`}</strong></div>
+        <div className='segmentResultsMetric'><span>Members</span><strong>{previewCount === null ? '—' : previewCount.toLocaleString()}</strong></div>
+        <div className='segmentResultsMetric secondary'><span>Database</span><strong>{previewPercentage === null ? '—' : `${previewPercentage < .1 && previewPercentage > 0 ? '<0.1' : previewPercentage.toFixed(1)}%`}</strong></div>
       </div>
-      <button type='button' className='button solid segmentResultsAction' onClick={previewMembers} disabled={previewState === 'updating'}>{previewState === 'updating' ? 'Updating…' : previewState === 'ready' ? 'Refresh preview' : 'Preview member count'}</button>
     </div>
     <div className='segmentMemberPreview'>
       <div className='segmentMemberPreviewHeading'><div><strong>Member preview</strong><small>{previewCount === null ? 'Run an estimate to preview matching people.' : `Showing ${visiblePreviewMembers.length} of ${previewCount.toLocaleString()} matching people`}</small></div></div>
       <div className='segmentMemberTableWrap'>
         <table className='segmentMemberTable'>
           <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Lifecycle Stage</th><th>Score</th></tr></thead>
-          <tbody>{previewState === 'updating' ? <tr><td colSpan={5} className='segmentMemberTableEmpty'>Refreshing member preview…</td></tr> : visiblePreviewMembers.length > 0 ? visiblePreviewMembers.map((member) => <tr key={member.email}><td><strong>{member.name}</strong></td><td>{member.email}</td><td>{member.company}</td><td><span>{member.lifecycle}</span></td><td>{member.score}</td></tr>) : <tr><td colSpan={5} className='segmentMemberTableEmpty'>No preview loaded yet.</td></tr>}</tbody>
+          <tbody>{visiblePreviewMembers.length > 0 ? visiblePreviewMembers.map((member) => <tr key={member.email}><td><strong>{member.name}</strong></td><td>{member.email}</td><td>{member.company}</td><td><span>{member.lifecycle}</span></td><td>{member.score}</td></tr>) : <tr><td colSpan={5} className='segmentMemberTableEmpty'>No matching people found.</td></tr>}</tbody>
         </table>
       </div>
     </div>
@@ -141,7 +165,7 @@ export function ProgramSegmentEditor({ program, onChange }: ProgramSegmentEditor
 
   return <div className='programSegmentEditor'>
     <div className='segmentEditorWorkspace'><main className='segmentDefinitionPane'><div className='segmentFilterCanvas'>
-        <p className='segmentPageInstruction'>People are included when they match your filter group criteria.</p>
+        <div className='segmentPageTopbar'><p className='segmentPageInstruction'>People are included when they match your filter group criteria.</p><div className='segmentSourceControl' onClick={(event) => event.stopPropagation()}><div className='segmentSourceToggle' role='group' aria-label='Segment source'><button type='button' className={sourceMode === 'create' ? 'active' : ''} aria-pressed={sourceMode === 'create'} onClick={() => setSourceMode('create')}>Create</button><button type='button' className={sourceMode === 'add' ? 'active' : ''} aria-pressed={sourceMode === 'add'} onClick={() => setSourceMode('add')}>Add</button></div>{sourceMode === 'add' && <div className='segmentExistingMenu'><strong>Select existing segment</strong>{smartLists.map((list) => <button type='button' key={list.id} onClick={() => addExistingSegment(list.name)}><span>{list.name}</span><small>{list.memberCount.toLocaleString()} members</small></button>)}</div>}</div></div>
         <section className='segmentAudienceSection'>
           <div className='segmentConditionGroups'>{includeGroups.map((group, groupIndex) => renderConditionGroup(group, groupIndex))}{includeGroups.length === 0 && <button type='button' className='segmentAddFirstGroup' onClick={addGroup}>＋ Add the first filter group</button>}</div>
           {includeGroups.length > 0 && <button type='button' className='segmentAddGroupBottom' onClick={addGroup}>＋ Add filter group</button>}

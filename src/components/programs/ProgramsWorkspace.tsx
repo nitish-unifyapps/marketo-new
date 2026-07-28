@@ -25,6 +25,7 @@ type DraggedNode = { kind: 'folder' | 'program'; id: string }
 type ContextTarget = { kind: 'folder' | 'program' | 'asset'; id: string; programId?: string; x: number; y: number }
 type AssetCreateState = { programId: string; type: ProgramAssetType; folder: ProgramAssetFolderKey }
 type AssetEditorState = { programId: string; assetId: string }
+type AssetFolderSelection = { programId: string; folder: 'assets' | ProgramAssetFolderKey }
 
 const assetTypeFolder: Record<ProgramAssetType, ProgramAssetFolderKey> = {
   Email: 'emails',
@@ -69,13 +70,9 @@ function descendantFolderIds(folders: ProgramFolderRecord[], folderId: string) {
   return ids
 }
 
-function ProgramObjectIcon({ type }: { type: ProgramType }) {
+function ProgramObjectIcon() {
   const shared = { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.7, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-  if (type === 'Automated Campaign') return <svg {...shared}><circle cx='12' cy='12' r='3' /><path d='M19 12a7 7 0 0 0-.1-1l2-1.6-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14 3h-4l-.7 2a7 7 0 0 0-1.8 1L5.1 5l-2 3.4L5 10a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 1.8 1L10 21h4l.7-2a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.6c.1-.3.1-.6.1-1Z' /></svg>
-  if (type === 'Simple Email') return <svg {...shared}><rect x='3' y='5' width='18' height='14' rx='2.5' /><path d='m4 7 8 6 8-6' /></svg>
-  if (type === 'Event') return <svg {...shared}><rect x='3' y='5' width='18' height='16' rx='2.5' /><path d='M8 3v4M16 3v4M3 10h18M8 14h3M14 14h2M8 17h2' /></svg>
-  if (type === 'Nurture') return <svg {...shared}><path d='M5 4v5a3 3 0 0 0 3 3h8a3 3 0 0 1 3 3v5M12 8l4 4-4 4' /><circle cx='5' cy='4' r='2' /><circle cx='19' cy='20' r='2' /></svg>
-  return <svg {...shared}><rect x='3' y='7' width='18' height='13' rx='2.5' /><path d='M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12h18' /></svg>
+  return <svg {...shared}><path d='M5 4v5a3 3 0 0 0 3 3h8a3 3 0 0 1 3 3v5M12 8l4 4-4 4' /><circle cx='5' cy='4' r='2' /><circle cx='19' cy='20' r='2' /></svg>
 }
 
 function FolderTreeIcon({ open }: { open: boolean }) {
@@ -91,9 +88,11 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
   const [folders, setFolders] = useState(initialProgramFolders)
   const [programs, setPrograms] = useState(initialPrograms)
   const [expandedFolders, setExpandedFolders] = useState(() => new Set(initialProgramFolders.map((folder) => folder.id)))
-  const [expandedPrograms, setExpandedPrograms] = useState(() => new Set<string>())
-  const [expandedAssetFolders, setExpandedAssetFolders] = useState(() => new Set<string>())
+  const [expandedPrograms, setExpandedPrograms] = useState(() => new Set(initialPrograms.map((program) => program.id)))
+  const [expandedAssetFolders, setExpandedAssetFolders] = useState(() => new Set(initialPrograms.map((program) => `${program.id}:assets`)))
   const [selectedProgramId, setSelectedProgramId] = useState<string | null>(null)
+  const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
+  const [selectedAssetFolder, setSelectedAssetFolder] = useState<AssetFolderSelection | null>(null)
   const [activeTab, setActiveTab] = useState<ProgramTab>('segment')
   const [internalQuery, setInternalQuery] = useState('')
   const query = embedded ? searchValue : internalQuery
@@ -112,6 +111,8 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
   const [notice, setNotice] = useState('')
 
   const selectedProgram = programs.find((program) => program.id === selectedProgramId)
+  const selectedFolder = folders.find((folder) => folder.id === selectedFolderId)
+  const selectedAssetProgram = programs.find((program) => program.id === selectedAssetFolder?.programId)
   const managedProgram = programs.find((program) => program.id === manageProgramId)
   const settingsProgram = programs.find((program) => program.id === settingsProgramId)
   const assetEditorProgram = programs.find((program) => program.id === assetEditorState?.programId)
@@ -159,6 +160,25 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     setPrograms((current) => current.map((program) => program.id === programId ? updater(program) : program))
   }
 
+  function openFolderDetail(folderId: string) {
+    setSelectedFolderId(folderId)
+    setSelectedProgramId(null)
+    setSelectedAssetFolder(null)
+  }
+
+  function openProgramDetail(program: ProgramRecord) {
+    setSelectedProgramId(program.id)
+    setSelectedFolderId(null)
+    setSelectedAssetFolder(null)
+    setActiveTab(initialTabForProgram(program.type))
+  }
+
+  function openAssetFolderDetail(programId: string, folder: AssetFolderSelection['folder']) {
+    setSelectedAssetFolder({ programId, folder })
+    setSelectedProgramId(null)
+    setSelectedFolderId(null)
+  }
+
   function toggleSet(setter: React.Dispatch<React.SetStateAction<Set<string>>>, id: string) {
     setter((current) => {
       const next = new Set(current)
@@ -171,7 +191,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
   function expandAll() {
     setExpandedFolders(new Set(folders.map((folder) => folder.id)))
     setExpandedPrograms(new Set(programs.filter((program) => program.enabledAssetFolders.length).map((program) => program.id)))
-    setExpandedAssetFolders(new Set(programs.flatMap((program) => program.enabledAssetFolders.map((folder) => `${program.id}:${folder}`))))
+    setExpandedAssetFolders(new Set(programs.flatMap((program) => [`${program.id}:assets`, ...program.enabledAssetFolders.map((folder) => `${program.id}:${folder}`)])))
   }
 
   function collapseAll() {
@@ -216,8 +236,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     }
     setPrograms((current) => [...current, program])
     if (parentId) setExpandedFolders((current) => new Set(current).add(parentId))
-    setSelectedProgramId(program.id)
-    setActiveTab(initialTabForProgram(type))
+    openProgramDetail(program)
     setNotice(`Program “${name}” created as Draft.`)
   }
 
@@ -236,12 +255,15 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     setFolders((current) => current.filter((folder) => !removedFolderIds.has(folder.id)))
     setPrograms((current) => current.filter((program) => !removedProgramIds.has(program.id)))
     if (selectedProgramId && removedProgramIds.has(selectedProgramId)) setSelectedProgramId(null)
+    if (selectedFolderId && removedFolderIds.has(selectedFolderId)) setSelectedFolderId(null)
+    if (selectedAssetFolder && removedProgramIds.has(selectedAssetFolder.programId)) setSelectedAssetFolder(null)
     setNotice('Folder and its contents deleted.')
   }
 
   function deleteProgram(programId: string) {
     setPrograms((current) => current.filter((program) => program.id !== programId))
     if (selectedProgramId === programId) setSelectedProgramId(null)
+    if (selectedAssetFolder?.programId === programId) setSelectedAssetFolder(null)
     setNotice('Program deleted.')
   }
 
@@ -261,8 +283,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
       createdAt: 'Just now',
     }
     setPrograms((current) => [...current, clone])
-    setSelectedProgramId(clonedId)
-    setActiveTab(initialTabForProgram(clone.type))
+    openProgramDetail(clone)
     setNotice(`“${source.name}” cloned as Draft.`)
   }
 
@@ -295,7 +316,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     const asset: ProgramAssetRecord = { id: `local-asset-${nextId.current++}`, name, type, folder }
     updateProgram(programId, (program) => ({ ...program, assets: [...program.assets, asset] }))
     setExpandedPrograms((current) => new Set(current).add(programId))
-    setExpandedAssetFolders((current) => new Set(current).add(`${programId}:${folder}`))
+    setExpandedAssetFolders((current) => new Set([...current, `${programId}:assets`, `${programId}:${folder}`]))
     setNotice(`${type} “${name}” created locally.`)
   }
 
@@ -321,34 +342,46 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
         onContextMenu={(event) => openContext(event, { kind: 'program', id: program.id })}
       >
         <button type='button' className='programTreeChevron' disabled={!hasFolders} onClick={(event) => { event.stopPropagation(); if (hasFolders) toggleSet(setExpandedPrograms, program.id) }} aria-label={`${open ? 'Collapse' : 'Expand'} ${program.name}`}>{hasFolders ? (open ? '⌄' : '›') : ''}</button>
-        <span className='programTypeIcon'><ProgramObjectIcon type={program.type} /></span>
-        <button type='button' className='programTreeName' onClick={() => { setSelectedProgramId(program.id); setActiveTab(initialTabForProgram(program.type)) }}>{program.name}</button>
+        <span className='programTypeIcon'><ProgramObjectIcon /></span>
+        <button type='button' className='programTreeName' onClick={() => openProgramDetail(program)}>{program.name}</button>
         <span className={`programStatusDot status-${program.status.toLowerCase()}`} title={program.status} />
       </div>
       {open && hasFolders && <div>
-        {program.enabledAssetFolders.map((folder) => {
-          const key = `${program.id}:${folder}`
-          const assets = program.assets.filter((asset) => asset.folder === folder).filter((asset) => !visibleTree || asset.name.toLowerCase().includes(visibleTree.normalized))
-          const folderOpen = query ? true : expandedAssetFolders.has(key)
-          return <div key={folder}>
-            <div className='programTreeRow assetFolderRow' style={{ '--program-level': level + 1 } as CSSProperties}>
-              <button type='button' className='programTreeChevron' onClick={() => toggleSet(setExpandedAssetFolders, key)} aria-label={`${folderOpen ? 'Collapse' : 'Expand'} ${programAssetFolderLabels[folder]}`}>{folderOpen ? '⌄' : '›'}</button>
-              <FolderTreeIcon open={folderOpen} />
-              <button type='button' className='programTreeName' onClick={() => toggleSet(setExpandedAssetFolders, key)}>{programAssetFolderLabels[folder]}</button>
-              <span className='programTreeCount'>{assets.length}</span>
+        {(() => {
+          const assetsKey = `${program.id}:assets`
+          const assetsOpen = query ? true : expandedAssetFolders.has(assetsKey)
+          return <>
+            <div className={`programTreeRow assetRootRow ${selectedAssetFolder?.programId === program.id && selectedAssetFolder.folder === 'assets' ? 'selected' : ''}`} style={{ '--program-level': level + 1 } as CSSProperties}>
+              <button type='button' className='programTreeChevron' onClick={() => toggleSet(setExpandedAssetFolders, assetsKey)} aria-label={`${assetsOpen ? 'Collapse' : 'Expand'} Assets`}>{assetsOpen ? '⌄' : '›'}</button>
+              <FolderTreeIcon open={assetsOpen} />
+              <button type='button' className='programTreeName folderName' onClick={() => openAssetFolderDetail(program.id, 'assets')}>Assets</button>
+              <span className='programTreeCount'>{program.enabledAssetFolders.length}</span>
             </div>
-            {folderOpen && assets.map((asset) => <div
-              className='programTreeRow assetRow'
-              style={{ '--program-level': level + 2 } as CSSProperties}
-              key={asset.id}
-              onContextMenu={(event) => openContext(event, { kind: 'asset', id: asset.id, programId: program.id })}
-            >
-              <span className='programTreeChevron' />
-              <AssetTypeIcon type={asset.type} />
-              <button type='button' className='programTreeName' onClick={() => asset.type === 'File' ? setNotice(`Previewing file “${asset.name}”.`) : setAssetEditorState({ programId: program.id, assetId: asset.id })}>{asset.name}</button>
-            </div>)}
-          </div>
-        })}
+            {assetsOpen && program.enabledAssetFolders.map((folder) => {
+              const key = `${program.id}:${folder}`
+              const assets = program.assets.filter((asset) => asset.folder === folder).filter((asset) => !visibleTree || asset.name.toLowerCase().includes(visibleTree.normalized))
+              const folderOpen = query ? true : expandedAssetFolders.has(key)
+              return <div key={folder}>
+                <div className={`programTreeRow assetFolderRow ${selectedAssetFolder?.programId === program.id && selectedAssetFolder.folder === folder ? 'selected' : ''}`} style={{ '--program-level': level + 2 } as CSSProperties}>
+                  <button type='button' className='programTreeChevron' onClick={() => toggleSet(setExpandedAssetFolders, key)} aria-label={`${folderOpen ? 'Collapse' : 'Expand'} ${programAssetFolderLabels[folder]}`}>{folderOpen ? '⌄' : '›'}</button>
+                  <FolderTreeIcon open={folderOpen} />
+                  <button type='button' className='programTreeName' onClick={() => openAssetFolderDetail(program.id, folder)}>{programAssetFolderLabels[folder]}</button>
+                  <span className='programTreeCount'>{assets.length}</span>
+                </div>
+                {folderOpen && assets.map((asset) => <div
+                  className='programTreeRow assetRow'
+                  style={{ '--program-level': level + 3 } as CSSProperties}
+                  key={asset.id}
+                  onContextMenu={(event) => openContext(event, { kind: 'asset', id: asset.id, programId: program.id })}
+                >
+                  <span className='programTreeChevron' />
+                  <AssetTypeIcon type={asset.type} />
+                  <button type='button' className='programTreeName' onClick={() => asset.type === 'File' ? setNotice(`Previewing file “${asset.name}”.`) : setAssetEditorState({ programId: program.id, assetId: asset.id })}>{asset.name}</button>
+                </div>)}
+              </div>
+            })}
+          </>
+        })()}
       </div>}
     </div>
   }
@@ -360,7 +393,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     const childPrograms = programs.filter((program) => program.parentId === folder.id)
     return <div className='programTreeNode' key={folder.id}>
       <div
-        className={`programTreeRow folderRow ${dropTarget === `folder:${folder.id}` ? 'dropTarget' : ''}`}
+        className={`programTreeRow folderRow ${selectedFolderId === folder.id ? 'selected' : ''} ${dropTarget === `folder:${folder.id}` ? 'dropTarget' : ''}`}
         style={{ '--program-level': level } as CSSProperties}
         draggable
         onDragStart={() => setDraggedNode({ kind: 'folder', id: folder.id })}
@@ -371,7 +404,7 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
       >
         <button type='button' className='programTreeChevron' onClick={() => toggleSet(setExpandedFolders, folder.id)} aria-label={`${open ? 'Collapse' : 'Expand'} ${folder.name}`}>{open ? '⌄' : '›'}</button>
         <FolderTreeIcon open={open} />
-        <button type='button' className='programTreeName folderName' onClick={() => toggleSet(setExpandedFolders, folder.id)}>{folder.name}</button>
+        <button type='button' className='programTreeName folderName' onClick={() => openFolderDetail(folder.id)}>{folder.name}</button>
       </div>
       {open && <div>{childFolders.map((child) => renderFolder(child, level + 1))}{childPrograms.map((program) => renderProgram(program, level + 1))}</div>}
     </div>
@@ -426,7 +459,19 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
     </aside>
 
     <main className='programsDetailPane'>
-      {selectedProgram ? <ProgramDetails
+      {selectedAssetFolder && selectedAssetProgram ? <ProgramAssetsFolderDetail
+        program={selectedAssetProgram}
+        folder={selectedAssetFolder.folder}
+        onOpenProgram={() => openProgramDetail(selectedAssetProgram)}
+        onOpenFolder={(folder) => openAssetFolderDetail(selectedAssetProgram.id, folder)}
+        onOpenAsset={(asset) => asset.type === 'File' ? setNotice(`Previewing file “${asset.name}”.`) : setAssetEditorState({ programId: selectedAssetProgram.id, assetId: asset.id })}
+      /> : selectedFolder ? <ProgramFolderDetail
+        folder={selectedFolder}
+        childFolders={folders.filter((folder) => folder.parentId === selectedFolder.id)}
+        childPrograms={programs.filter((program) => program.parentId === selectedFolder.id)}
+        onOpenFolder={openFolderDetail}
+        onOpenProgram={openProgramDetail}
+      /> : selectedProgram ? <ProgramDetails
         program={selectedProgram}
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -457,8 +502,8 @@ export function ProgramsWorkspace({ onExit, embedded = false, searchValue = '', 
         if (target.kind === 'program') {
           const program = programs.find((item) => item.id === target.id)
           if (!program) return
-          if (action === 'open') { setSelectedProgramId(program.id); setActiveTab(initialTabForProgram(program.type)) }
-          if (action === 'edit') { setSelectedProgramId(program.id); setSettingsProgramId(program.id) }
+          if (action === 'open') openProgramDetail(program)
+          if (action === 'edit') { openProgramDetail(program); setSettingsProgramId(program.id) }
           if (action === 'clone') cloneProgram(program.id)
           if (action === 'activate') updateProgram(program.id, (item) => { const active = item.status !== 'Active'; return { ...item, status: active ? 'Active' : 'Paused', schedule: item.schedule ? { ...item.schedule, active } : item.schedule } })
           if (action === 'archive') updateProgram(program.id, (item) => ({ ...item, status: 'Archived' }))
@@ -513,13 +558,38 @@ function ProgramContextMenu({ target, folders, programs, copiedProgramId, onActi
   </div>
 }
 
+function ProgramFolderDetail({ folder, childFolders, childPrograms, onOpenFolder, onOpenProgram }: { folder: ProgramFolderRecord; childFolders: ProgramFolderRecord[]; childPrograms: ProgramRecord[]; onOpenFolder: (folderId: string) => void; onOpenProgram: (program: ProgramRecord) => void }) {
+  return <div className='programFolderDetail programDetailTransition'>
+    <header><nav><span>Programs</span><i>›</i><strong>{folder.name}</strong></nav><div><span><FolderTreeIcon open /></span><div><h1>{folder.name}</h1><p>{childFolders.length} folders · {childPrograms.length} programs</p></div></div></header>
+    <section><div className='programFolderSectionHeading'><div><h2>Contents</h2><p>Direct folders and programs in {folder.name}</p></div></div><div className='programFolderContentGrid'>
+      {childFolders.map((child) => <button type='button' className='programFolderContentCard folder' key={child.id} onClick={() => onOpenFolder(child.id)}><span><FolderTreeIcon open={false} /></span><div><strong>{child.name}</strong><small>Folder</small></div><em>›</em></button>)}
+      {childPrograms.map((program) => <button type='button' className='programFolderContentCard program' key={program.id} onClick={() => onOpenProgram(program)}><span><ProgramObjectIcon /></span><div><strong>{program.name}</strong><small>{program.status} · {program.enabledAssetFolders.length} asset folders</small></div><em>›</em></button>)}
+      {childFolders.length === 0 && childPrograms.length === 0 && <div className='programFolderEmpty'>This folder is empty.</div>}
+    </div></section>
+  </div>
+}
+
+function ProgramAssetsFolderDetail({ program, folder, onOpenProgram, onOpenFolder, onOpenAsset }: { program: ProgramRecord; folder: 'assets' | ProgramAssetFolderKey; onOpenProgram: () => void; onOpenFolder: (folder: 'assets' | ProgramAssetFolderKey) => void; onOpenAsset: (asset: ProgramAssetRecord) => void }) {
+  const isRoot = folder === 'assets'
+  const title = isRoot ? 'Assets' : programAssetFolderLabels[folder]
+  const assets = isRoot ? [] : program.assets.filter((asset) => asset.folder === folder)
+  return <div className='programFolderDetail programAssetsDetail programDetailTransition'>
+    <header><nav><button type='button' onClick={onOpenProgram}>{program.name}</button><i>›</i>{!isRoot && <><button type='button' onClick={() => onOpenFolder('assets')}>Assets</button><i>›</i></>}<strong>{title}</strong></nav><div><span><FolderTreeIcon open /></span><div><h1>{title}</h1><p>{isRoot ? `${program.enabledAssetFolders.length} enabled asset folders` : `${assets.length} local assets`}</p></div></div></header>
+    <section><div className='programFolderSectionHeading'><div><h2>{isRoot ? 'Asset folders' : 'Local assets'}</h2><p>{isRoot ? 'Open a folder to manage its local assets' : `Assets available only inside ${program.name}`}</p></div></div><div className='programFolderContentGrid'>
+      {isRoot && program.enabledAssetFolders.map((assetFolder) => <button type='button' className='programFolderContentCard folder' key={assetFolder} onClick={() => onOpenFolder(assetFolder)}><span><FolderTreeIcon open={false} /></span><div><strong>{programAssetFolderLabels[assetFolder]}</strong><small>{program.assets.filter((asset) => asset.folder === assetFolder).length} assets</small></div><em>›</em></button>)}
+      {!isRoot && assets.map((asset) => <button type='button' className='programFolderContentCard asset' key={asset.id} onClick={() => onOpenAsset(asset)}><AssetTypeIcon type={asset.type} /><div><strong>{asset.name}</strong><small>{asset.type} · Local asset</small></div><em>›</em></button>)}
+      {!isRoot && assets.length === 0 && <div className='programFolderEmpty'>No assets in this folder.</div>}
+    </div></section>
+  </div>
+}
+
 function ProgramDetails({ program, activeTab, onTabChange, onUpdate, onOpenSettings, onActivate, onEditAsset }: { program: ProgramRecord; activeTab: ProgramTab; onTabChange: (tab: ProgramTab) => void; onUpdate: (updater: (program: ProgramRecord) => ProgramRecord) => void; onOpenSettings: () => void; onActivate: () => void; onEditAsset: (assetId: string) => void }) {
   const detailTabs: ProgramTab[] = program.type === 'Container' ? ['reports'] : ['segment', 'flow', 'schedule', 'reports']
-  const displayType = program.convertedToNurture ? 'Nurture (converted)' : program.type
+  const displayType = 'Program'
 
   return <div className='programDetails'>
     <header className='programDetailsHeader'>
-      <div className='programDetailsIdentity'><span className='programDetailTypeIcon'><ProgramObjectIcon type={program.type} /></span><div><small>Programs / {displayType}</small><h1>{program.name}</h1><p>{program.description || 'No description added yet.'}</p></div></div>
+      <div className='programDetailsIdentity'><span className='programDetailTypeIcon'><ProgramObjectIcon /></span><div><small>Programs / {displayType}</small><h1>{program.name}</h1><p>{program.description || 'No description added yet.'}</p></div></div>
       <div><span className={`programStatusBadge status-${program.status.toLowerCase()}`}><i />{program.status}</span>{program.type !== 'Container' && <button type='button' className='button solid programHeaderActivate' disabled={program.status === 'Active'} onClick={onActivate}>{program.status === 'Active' ? 'Active' : 'Activate'}</button>}<button type='button' className='programSettingsGear' onClick={onOpenSettings} aria-label='Open Program Settings'>⚙</button></div>
     </header>
     <nav className='programDetailTabs' aria-label='Program details'>{detailTabs.map((tab) => <button type='button' key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => onTabChange(tab)}>{tab[0].toUpperCase() + tab.slice(1)}</button>)}</nav>

@@ -819,12 +819,33 @@
   margin-bottom: 20px;
 }
 
+.segmentPageTopbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 34px;
+  margin-bottom: 12px;
+}
+
 .segmentPageInstruction {
-  margin: 0 0 12px;
+  margin: 0;
   color: #697384;
   font-size: 11px;
   line-height: 1.5;
 }
+
+.segmentSourceControl { position: relative; flex: 0 0 auto; }
+.segmentSourceToggle { display: flex; align-items: center; padding: 3px; border: 1px solid #dfe3e8; border-radius: 7px; background: #f4f6f8; }
+.segmentSourceToggle button { min-width: 58px; height: 28px; padding: 0 10px; border: 0; border-radius: 5px; color: #697384; background: transparent; font-size: 9px; font-weight: 700; }
+.segmentSourceToggle button.active { color: #a8563c; background: #fff; box-shadow: 0 1px 4px rgb(25 35 45 / 12%); }
+.segmentExistingMenu { position: absolute; top: 42px; right: 0; z-index: 45; width: 255px; padding: 6px; border: 1px solid #dfe3e8; border-radius: 8px; background: #fff; box-shadow: 0 14px 32px rgb(16 24 40 / 15%); }
+.segmentExistingMenu > strong { display: block; padding: 7px 9px; color: #697384; font-size: 9px; letter-spacing: .04em; text-transform: uppercase; }
+.segmentExistingMenu > button { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 37px; padding: 0 9px; border: 0; border-radius: 5px; color: #34404d; background: transparent; text-align: left; }
+.segmentExistingMenu > button:hover { color: #a8563c; background: #fff3ef; }
+.segmentExistingMenu button span { overflow: hidden; font-size: 10px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.segmentExistingMenu button small { flex: 0 0 auto; color: #8a94a3; font-size: 8px; }
 
 .segmentCanvasIntro h3 {
   margin-top: 5px;
@@ -1128,7 +1149,8 @@
 .segmentResultsHeading {
   display: flex;
   align-items: center;
-  gap: 11px;
+  justify-content: space-between;
+  gap: 12px;
   padding: 0;
 }
 
@@ -1147,33 +1169,12 @@
   font-size: 11px;
 }
 
-.segmentResultStatus {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #a8b0bb;
-  box-shadow: 0 0 0 4px rgb(168 176 187 / 13%);
-}
-
-.segmentResultStatus.updating {
-  background: #d97757;
-  box-shadow: 0 0 0 4px rgb(217 119 87 / 14%);
-  animation: segmentStatusPulse 1s ease-in-out infinite;
-}
-
-.segmentResultStatus.ready {
-  background: #43835f;
-  box-shadow: 0 0 0 4px rgb(67 131 95 / 13%);
-}
-
-.segmentResultStatus.warning {
-  background: #c48537;
-  box-shadow: 0 0 0 4px rgb(196 133 55 / 13%);
-}
-
-@keyframes segmentStatusPulse {
-  50% { opacity: .45; }
-}
+.segmentRefreshResults { display: grid; place-items: center; width: 29px; height: 29px; padding: 0; border: 1px solid #dfe3e8; border-radius: 6px; color: #697384; background: #fff; }
+.segmentRefreshResults:hover { color: #a8563c; border-color: #efc2b3; background: #fff8f5; }
+.segmentRefreshResults:disabled { cursor: wait; opacity: .75; }
+.segmentRefreshResults svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.segmentRefreshResults.updating svg { animation: segmentRefreshSpin .7s linear infinite; }
+@keyframes segmentRefreshSpin { to { transform: rotate(360deg); } }
 
 .segmentResultsMetrics {
   display: grid;
@@ -1215,18 +1216,6 @@
 
 .segmentResultsMetric.secondary > strong {
   color: #b35f43;
-}
-
-.segmentResultsAction {
-  width: 100%;
-  min-height: 38px;
-  margin-top: 12px;
-  font-size: 11px;
-}
-
-.segmentResultsAction:disabled {
-  cursor: wait;
-  opacity: .7;
 }
 
 .segmentMemberPreview {
@@ -1423,6 +1412,11 @@
 
 @media (max-width: 640px) {
   .segmentEditorHeader h2 { font-size: 21px; }
+  .segmentPageTopbar { align-items: flex-start; flex-direction: column; }
+  .segmentSourceControl,
+  .segmentSourceToggle { width: 100%; }
+  .segmentSourceToggle button { flex: 1; }
+  .segmentExistingMenu { right: auto; left: 0; width: min(100%, 300px); }
   .segmentModeToggle { width: 100%; }
   .segmentModeToggle button { min-width: 0; flex: 1; }
   .segmentAudienceSection { padding: 0; }

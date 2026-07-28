@@ -314,6 +314,18 @@
   font-size: 9px;
 }
 
+.assetRootRow {
+  min-height: 32px;
+  color: #556170;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.assetRootRow .programFolderIcon {
+  width: 16px;
+  height: 16px;
+}
+
 .assetFolderRow .programFolderIcon {
   width: 15px;
 }
@@ -1237,6 +1249,206 @@
 
 .newAssetDestination strong {
   color: #303846;
+}
+
+/* Folder and Assets detail navigation */
+.programDetailTransition {
+  animation: programDetailEnter .18s ease-out;
+}
+
+@keyframes programDetailEnter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.programFolderDetail {
+  min-height: 100vh;
+  background: #f7f8fa;
+}
+
+.programFolderDetail > header {
+  min-height: 132px;
+  padding: 20px 28px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.programFolderDetail > header nav {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 15px;
+  color: #98a2b3;
+  font-size: 11px;
+}
+
+.programFolderDetail > header nav button,
+.programFolderDetail > header nav span {
+  padding: 0;
+  border: 0;
+  color: #667085;
+  background: transparent;
+  font-size: inherit;
+}
+
+.programFolderDetail > header nav button:hover {
+  color: #d97757;
+}
+
+.programFolderDetail > header nav i {
+  font-style: normal;
+}
+
+.programFolderDetail > header nav strong {
+  color: #303846;
+  font-weight: 650;
+}
+
+.programFolderDetail > header > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.programFolderDetail > header > div > span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #efc2b3;
+  border-radius: 11px;
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.programFolderDetail > header > div > span svg {
+  width: 25px;
+  height: 25px;
+}
+
+.programFolderDetail h1 {
+  margin: 0;
+  color: #202733;
+  font-size: 23px;
+  letter-spacing: -.35px;
+}
+
+.programFolderDetail > header p {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 12px;
+}
+
+.programFolderDetail > section {
+  padding: 24px 28px 48px;
+}
+
+.programFolderSectionHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.programFolderSectionHeading h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.programFolderSectionHeading p {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 11px;
+}
+
+.programFolderContentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 12px;
+}
+
+.programFolderContentCard {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 11px;
+  min-height: 84px;
+  padding: 12px 14px;
+  border: 1px solid #e2e6ea;
+  border-radius: 10px;
+  color: #303846;
+  background: #fff;
+  box-shadow: 0 2px 7px rgb(16 24 40 / 4%);
+  text-align: left;
+  transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.programFolderContentCard:hover {
+  border-color: #efc2b3;
+  box-shadow: 0 8px 20px rgb(16 24 40 / 8%);
+  transform: translateY(-1px);
+}
+
+.programFolderContentCard > span:first-child,
+.programFolderContentCard > .programAssetTypeIcon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 9px;
+  color: #d97757;
+  background: #fff3ef;
+}
+
+.programFolderContentCard > span:first-child svg {
+  width: 23px;
+  height: 23px;
+}
+
+.programFolderContentCard > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.programFolderContentCard strong,
+.programFolderContentCard small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.programFolderContentCard strong {
+  font-size: 13px;
+}
+
+.programFolderContentCard small {
+  color: #667085;
+  font-size: 10px;
+}
+
+.programFolderContentCard > em {
+  color: #98a2b3;
+  font-size: 17px;
+  font-style: normal;
+}
+
+.programFolderEmpty {
+  grid-column: 1 / -1;
+  padding: 48px;
+  border: 1px dashed #cfd5dc;
+  border-radius: 10px;
+  color: #98a2b3;
+  background: #fff;
+  text-align: center;
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .programFolderDetail > header { padding: 16px; }
+  .programFolderDetail > section { padding: 18px 16px 40px; }
+  .programFolderContentGrid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 900px) {
